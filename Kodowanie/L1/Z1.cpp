@@ -201,5 +201,6 @@ int main(int argc, char** argv) {
 
     cout << "PDF saved as output.pdf" << endl;
     cout << "Entropy diff: " << abs(entropy1 - entropy2) << endl;
+    cout << "Entropy conditional: " << entropy2 << endl;
     return 0;
 }
