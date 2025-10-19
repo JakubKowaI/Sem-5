@@ -84,3 +84,86 @@ pa(n)
 pb(n)
 pc(n)
 pd(n)
+
+function pa32(n)
+    sum = Float32(0.0)
+    for i in 1:n
+        sum += convert(Float32,x[i])*convert(Float32,y[i])
+    end
+    println("pb32: ", sum)
+end
+
+function pb32(n)
+    sum = Float32(0.0)
+    for i in n:-1:1
+        sum += convert(Float32,x[i])*convert(Float32,y[i])
+    end
+    println("pb32: ", sum)
+end
+
+function pc32(n)
+    minus=Vector{Float32}()
+    plus=Vector{Float32}()
+    for i in x
+        if i<Float32(0.0)
+            push!(minus,convert(Float32,i))
+        else
+            push!(plus,convert(Float32,i))
+        end
+    end
+    for i in y
+        if i<Float32(0.0)
+            push!(minus,convert(Float32,i))
+        else
+            push!(plus,convert(Float32,i))
+        end
+    end
+    sorted_plus=sort(plus,rev = true)
+    sorted_minus=sort(minus)
+    sum_plus=Float32(0.0)
+    sum_minus=Float32(0.0)
+    for i in sorted_plus
+        sum_plus+=i
+    end
+    for i in sorted_minus
+        sum_minus+=i
+    end
+    sum=sum_plus+sum_minus
+    println("pc32: ", sum)
+end
+
+function pd32(n)
+    minus=Vector{Float32}()
+    plus=Vector{Float32}()
+    for i in x
+        if i<Float32(0.0)
+            push!(minus,convert(Float32,i))
+        else
+            push!(plus,convert(Float32,i))
+        end
+    end
+    for i in y
+        if i<Float32(0.0)
+            push!(minus,convert(Float32,i))
+        else
+            push!(plus,convert(Float32,i))
+        end
+    end
+    sorted_plus=sort(plus)
+    sorted_minus=sort(minus,rev = true)
+    sum_plus=Float32(0.0)
+    sum_minus=Float32(0.0)
+    for i in sorted_plus
+        sum_plus+=i
+    end
+    for i in sorted_minus
+        sum_minus+=i
+    end
+    sum=sum_plus+sum_minus
+    println("pd32: ", sum)
+end
+
+pa32(n)
+pb32(n)
+pc32(n)
+pd32(n)
