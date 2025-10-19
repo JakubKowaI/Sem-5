@@ -1,0 +1,86 @@
+x = [2.718281828,−3.141592654,1.414213562,0.5772156649,0.3010299957]
+y = [1486.2497,878366.9879,−22.37492,4773714.647,0.000185049]
+n = 5
+
+function pa(n)
+    sum = 0.0
+    for i in 1:n
+        sum += x[i]*y[i]
+    end
+    println("pb: ", sum)
+end
+
+function pb(n)
+    sum = 0.0
+    for i in n:-1:1
+        sum += x[i]*y[i]
+    end
+    println("pb: ", sum)
+end
+
+function pc(n)
+    minus=Vector{Float64}()
+    plus=Vector{Float64}()
+    for i in x
+        if i<0.0
+            push!(minus,i)
+        else
+            push!(plus,i)
+        end
+    end
+    for i in y
+        if i<0.0
+            push!(minus,i)
+        else
+            push!(plus,i)
+        end
+    end
+    sorted_plus=sort(plus,rev = true)
+    sorted_minus=sort(minus)
+    sum_plus=0.0
+    sum_minus=0.0
+    for i in sorted_plus
+        sum_plus+=i
+    end
+    for i in sorted_minus
+        sum_minus+=i
+    end
+    sum=sum_plus+sum_minus
+    println("pc: ", sum)
+end
+
+function pd(n)
+    minus=Vector{Float64}()
+    plus=Vector{Float64}()
+    for i in x
+        if i<0.0
+            push!(minus,i)
+        else
+            push!(plus,i)
+        end
+    end
+    for i in y
+        if i<0.0
+            push!(minus,i)
+        else
+            push!(plus,i)
+        end
+    end
+    sorted_plus=sort(plus)
+    sorted_minus=sort(minus,rev = true)
+    sum_plus=0.0
+    sum_minus=0.0
+    for i in sorted_plus
+        sum_plus+=i
+    end
+    for i in sorted_minus
+        sum_minus+=i
+    end
+    sum=sum_plus+sum_minus
+    println("pd: ", sum)
+end
+
+pa(n)
+pb(n)
+pc(n)
+pd(n)

@@ -81,7 +81,102 @@ function F16()
 end
 
 F64()
-
 F32()
-
 F16()
+
+# FLT_MIN         = 1.175494e-38
+# FLT_MAX         = 3.402823e+38
+# FLT_EPSILON     = 1.192093e-07
+# headery z float.h
+
+function E64()
+    temp=convert(Float64,1.0)
+    print("E64:")
+    println(typeof(temp))
+    while temp/Float64(2) > Float64(0)
+        temp = temp / Float64(2)
+        # println(i)
+    end
+    # println(temp)
+    print("eta: ")
+    println(temp)
+end
+
+function E32()
+    temp=convert(Float32,1.0)
+    print("E32:")
+    println(typeof(temp))
+    while temp/Float32(2) > Float32(0)
+        temp = temp / Float32(2)
+        # println(i)
+    end
+    # println(temp)
+    print("eta: ")
+    println(temp)
+end
+
+function E16()
+    temp=convert(Float16,1.0)
+    print("E16:")
+    println(typeof(temp))
+    while temp/Float16(2) > Float16(0)
+        temp = temp / Float16(2)
+        # println(i)
+    end
+    # println(temp)
+    print("eta: ")
+    println(temp)
+end
+
+println("NextFloat64: ", nextfloat(Float64(0.0)))
+println("NextFloat32: ", nextfloat(Float32(0.0)))
+println("NextFloat16: ", nextfloat(Float16(0.0)))
+E64()
+E32()
+E16()
+
+function M64()
+    temp=convert(Float64,1.0)
+    print("Max 64:")
+    println(typeof(temp))
+    while !isinf(temp*Float64(2))
+        temp = temp * Float64(2)
+        # println(i)
+    end
+    # println(temp)
+    print("Max: ")
+    println(temp)
+end
+
+function M32()
+    temp=convert(Float32,1.0)
+    print("Max 32:")
+    println(typeof(temp))
+    while !isinf(temp*Float32(2))
+        temp = temp * Float32(2)
+        # println(i)
+    end
+    # println(temp)
+    print("Max: ")
+    println(temp)
+end
+
+function M16()
+    temp=convert(Float16,1.0)
+    print("Max 16:")
+    println(typeof(temp))
+    while !isinf(temp*Float16(2))
+        temp = temp * Float16(2)
+        # println(i)
+    end
+    # println(temp)
+    print("Max: ")
+    println(temp)
+end
+
+println("MaxFloat64: ", floatmax(Float64))
+println("MaxFloat32: ", floatmax(Float32))
+println("MaxFloat16: ", floatmax(Float16))
+M64()
+M32()
+M16()
