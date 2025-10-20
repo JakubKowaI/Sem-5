@@ -12,9 +12,11 @@ function fprim(x::Float64)
 end
 
 function test()
+    x=Float64(1.0)
     for n in 0:54
         global h=2.0^-n
-        println("h: ", h, " f'(x): ", fprimtylda(h, 1.0), " f'(x) true: ", fprim(1.0), " error: ", abs(fprimtylda(h, 1.0)-fprim(1.0)))
+        println("h: ", h, " f'(x): ", fprimtylda(h, x), " f'(x) true: ", fprim(x), " error: ", abs(fprimtylda(h, x)-fprim(x)))
     end
 end
+
 test()
