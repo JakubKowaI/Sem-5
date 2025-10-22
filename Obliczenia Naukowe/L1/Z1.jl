@@ -25,61 +25,49 @@ info(z)
 
 
 function F64()
-    i =1.0 
     temp=1.0
     print("F64:")
-    println(typeof(i))
+    println(typeof(temp))
     while true
-        i = 1.0+ temp
-        if i== 1.0
+        if Float64(1.0) + temp/Float64(2.0)== Float64(1.0)
             break
         end
-        temp = temp / 2.0
-        # println(i)
+        temp = temp / Float64(2.0)
     end
-    println(i)
-    print("eps: ")
+    print("Macheps64: ")
     println(temp)
+    println(Float64(1.0) + temp)
 end
 
 function F32()
-    i =convert(Float32,1.0)
-    temp=convert(Float32,1.0)
+    temp=Float32(1.0)
     print("F32:")
-    println(typeof(i))
+    println(typeof(temp))
     while true
-        i = Float32(1)+ temp
-        if i== Float32(1)
+        if Float32(1.0) + temp/Float32(2.0)== Float32(1.0)
             break
         end
-        temp = temp / Float32(2)
-        # println(i)
+        temp = temp / Float32(2.0)
     end
-    # println(typeof(i))
-    println(i)
-    # println(typeof(temp))
-    print("eps: ")
+    print("Macheps32: ")
     println(temp)
+    println(Float32(1.0) + temp)
 end
 
 function F16()
-    i =convert(Float16,1.0)
-    temp=convert(Float16,1.0)
+    temp=Float16(1.0)
     print("F16:")
-    println(typeof(i))
+    println(typeof(temp))
     while true
-        i = Float16(1)+ temp
-        if i== Float16(1)
+        if Float16(1.0) + temp/Float16(2.0)== Float16(1.0)
             break
         end
-        temp = temp / Float16(2)
-        # println(i)
+        temp = temp / Float16(2.0)
     end
-    println(i)
-    print("eps: ")
+    print("Macheps16: ")
     println(temp)
+    println(Float16(1.0) + temp)
 end
-
 F64()
 F32()
 F16()
@@ -143,7 +131,7 @@ function M64()
         temp = temp * Float64(2)
         # println(i)
     end
-    # println(temp)
+    temp= temp*(Float64(2.0)-(eps(Float64)))
     print("Max: ")
     println(temp)
 end
@@ -157,6 +145,7 @@ function M32()
         # println(i)
     end
     # println(temp)
+    temp= temp*(Float32(2.0)-(eps(Float32)))
     print("Max: ")
     println(temp)
 end
@@ -170,6 +159,7 @@ function M16()
         # println(i)
     end
     # println(temp)
+    temp= temp*(Float16(2.0)-(eps(Float16)))
     print("Max: ")
     println(temp)
 end
@@ -180,3 +170,8 @@ println("MaxFloat16: ", floatmax(Float16))
 M64()
 M32()
 M16()
+
+println("MinFloat64: ", floatmin(Float64))
+println("MinFloat32: ", floatmin(Float32))
+println("MINnor Float64: ", Float64(2.0)^(-1022))
+println("MINnor Float64: ", Float32(2.0)^(-126))

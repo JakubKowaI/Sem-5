@@ -27,13 +27,9 @@ function R16()
     println(result)
 end
 
+println("eps64: ", eps(Float64))
 R64()
+println("eps32: ", eps(Float32))
 R32()
+println("eps16: ", eps(Float16))
 R16()
-
-function test()
-    result= Float16(4/3 - 1) * Float16(3) - Float16(1)
-    println(result)
-end
-
-test()

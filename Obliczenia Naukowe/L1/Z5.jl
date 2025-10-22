@@ -7,7 +7,7 @@ function pa(n)
     for i in 1:n
         sum += x[i]*y[i]
     end
-    println("pb: ", sum)
+    println("pa: ", sum)
 end
 
 function pb(n)
@@ -90,7 +90,7 @@ function pa32(n)
     for i in 1:n
         sum += convert(Float32,x[i])*convert(Float32,y[i])
     end
-    println("pb32: ", sum)
+    println("pa32: ", sum)
 end
 
 function pb32(n)
