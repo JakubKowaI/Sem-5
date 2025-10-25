@@ -1,3 +1,4 @@
+#Jakub Kowal
 #3(4/3−1)−1
 
 function R64()

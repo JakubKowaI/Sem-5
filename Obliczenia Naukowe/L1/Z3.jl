@@ -1,4 +1,4 @@
-
+#Jakub Kowal
 function onetwo()
     o=2.0^-52
     i =1.0

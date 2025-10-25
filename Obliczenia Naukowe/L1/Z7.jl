@@ -1,4 +1,4 @@
-
+#Jakub Kowal
 function f(x::Float64)
     return sin(x)+cos(3.0 * x)
 end
