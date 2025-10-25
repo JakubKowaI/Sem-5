@@ -1,0 +1,17 @@
+# Fdb version 4
+["pdflatex"] 1761420943.33038 "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L1/test.tex" "test.pdf" "test" 1761420943.67334 0
+  "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L1/test.tex" 1761414376.74865 145 1617619f85899d5f7fc61f58553f2489 ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1755987285 35752 024fb6c41858982481f6968b5fc26508 ""
+  "/usr/share/texmf-dist/tex/latex/base/article.cls" 1755987285 20144 63d8bacaf52e5abf4db3bc322373e1d4 ""
+  "/usr/share/texmf-dist/tex/latex/base/size10.clo" 1755987285 8448 5cf247d4bd0c7d5d711bbbdf111fae2e ""
+  "/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1755987285 29785 9f93ab201fe5dd053afcc6c1bcf7d266 ""
+  "/usr/share/texmf-dist/web2c/texmf.cnf" 1755987285 42087 b0f9697c952c8f5a8eede4134282cb0d ""
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1761420915 5317539 992b4394a71edd1db544202da8fce254 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1761420896 2021044 7219092b61e7806f62e87ca6969f73de ""
+  "test.aux" 1761420943.63539 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "test.tex" 1761414376.74865 145 1617619f85899d5f7fc61f58553f2489 ""
+  (generated)
+  "test.aux"
+  "test.log"
+  "test.pdf"
+  (rewritten before read)
