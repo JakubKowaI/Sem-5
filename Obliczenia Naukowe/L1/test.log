@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  26 OCT 2025 13:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  26 OCT 2025 18:32
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -63,93 +63,331 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
+) (/usr/share/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2025/02/14 v25.4 The multilingual framework for pdfLaTeX, LuaLaTeX and XeLaTeX
+\babel@savecnt=\count270
+\U@D=\dimen142
+\l@unhyphenated=\language4
+ (/usr/share/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count271
+ (/usr/share/texmf-dist/tex/generic/babel-polish/polish.ldf
+Language: polish 2022/03/12 1.3 Babel support for Polish
+)) (/usr/share/texmf-dist/tex/generic/babel/locale/pl/babel-polish.tex
+Package babel Info: Importing font and identification data for polish
+(babel)             from babel-pl.ini. Reported on input line 11.
+) (/usr/share/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+ (/usr/share/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks19
+) (/usr/share/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+ (/usr/share/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+) (/usr/share/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 5.
+Package graphics Info: Driver file: pdftex.def on input line 106.
+ (/usr/share/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen143
+\Gin@req@width=\dimen144
+) (/usr/share/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+\f@nch@headwidth=\skip51
+\f@nch@offset@elh=\skip52
+\f@nch@offset@erh=\skip53
+\f@nch@offset@olh=\skip54
+\f@nch@offset@orh=\skip55
+\f@nch@offset@elf=\skip56
+\f@nch@offset@erf=\skip57
+\f@nch@offset@olf=\skip58
+\f@nch@offset@orf=\skip59
+\f@nch@height=\skip60
+\f@nch@footalignment=\skip61
+\f@nch@widthL=\skip62
+\f@nch@widthC=\skip63
+\f@nch@widthR=\skip64
+\@temptokenb=\toks20
+)
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 16.
  (/usr/share/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count270
+\l__color_backend_stack_int=\count272
 \l__pdf_internal_box=\box52
 ) (./test.aux)
 \openout1 = `test.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 5.
-LaTeX Font Info:    ... okay on input line 5.
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 11.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+ (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count273
+\scratchdimen=\dimen145
+\scratchbox=\box53
+\nofMPsegments=\count274
+\nofMParguments=\count275
+\everyMPshowfont=\toks21
+\MPscratchCnt=\count276
+\MPscratchDim=\dimen146
+\MPnumerator=\count277
+\makeMPintoPDFobject=\count278
+\everyMPtoPDFconversion=\toks22
+) (/usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
+ (/usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
+))
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 22.
  (/usr/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 11.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 22.
  (/usr/share/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 11.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 22.
  (/usr/share/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 11.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 22.
  (/usr/share/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 11.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 22.
  (/usr/share/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 11.
+(Font)              <10> on input line 22.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 11.
+(Font)              <7> on input line 22.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 11.
+(Font)              <5> on input line 22.
 
-Overfull \hbox (3.41321pt too wide) in paragraph at lines 12--13
-[]$\OML/lmm/m/it/10 eta$ \T1/lmr/m/n/10 --- na-jm-niejsza do-dat-nia liczba zmi-enno-przecinkowa (na-jm-niejsza liczba
+Overfull \hbox (3.41321pt too wide) in paragraph at lines 23--24
+[]$\OML/lmm/m/it/10 eta$ \T1/lmr/m/n/10 --- naj-mniej-sza do-dat-nia liczba zmien-no-prze-cin-kowa (naj-mniej-sza liczba
  []
 
 
-LaTeX Warning: Command \k invalid in math mode on input line 17.
+LaTeX Warning: Command \k invalid in math mode on input line 28.
+
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 33.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 33.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 33.
+
+Underfull \hbox (badness 10000) in paragraph at lines 35--37
+
+ []
 
 
-Overfull \hbox (6.47263pt too wide) in paragraph at lines 19--20
-[]\T1/lmr/m/n/10 Co zwracaj¡ funkcje float-min(Float32) i float-min(Float64) i jaki jest zwi¡zek
+Underfull \hbox (badness 10000) in paragraph at lines 38--40
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--43
+
  []
 
 
 
-[1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}] (./test.aux)
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}
+
+{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 55--57
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 58--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--63
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--68
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 69--72
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 73--76
+
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[2]
+
+LaTeX Warning: Command \k invalid in math mode on input line 78.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--93
+
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[3{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 105--108
+
+ []
+
+
+Overfull \hbox (12.49995pt too wide) in paragraph at lines 109--114
+\T1/lmr/m/n/10 1+$\OT1/lmr/m/n/10 2[]$\T1/lmr/m/n/10 : 0011111111110000000000000000000000000000000000000000000000000001 
+ []
+
+
+Overfull \hbox (12.49995pt too wide) in paragraph at lines 115--120
+\T1/lmr/m/n/10 2+$\OT1/lmr/m/n/10 2[]$\T1/lmr/m/n/10 : 0100000000000000000000000000000000000000000000000000000000000000 
+ []
+
+
+Overfull \hbox (13.88594pt too wide) in paragraph at lines 121--125
+[]$\T1/lmr/m/n/10 +$\OT1/lmr/m/n/10 2[]$\T1/lmr/m/n/10 : 0011111111100000000000000000000000000000000000000000000000000010 
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[4]
+Overfull \hbox (1.77634pt too wide) in paragraph at lines 135--138
+\T1/lmr/m/n/10 W za-da-niu na-le-»aªo za-im-ple-men-to-wa¢ funk-cje ob-li-cza-j¡ce ilo-czyn ska-larny dwóch
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 135--138
+
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 167--187
+
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[6]
+<plot_1.jpg, id=35, 1882.03125pt x 1254.6875pt>
+File: plot_1.jpg Graphic file (type jpg)
+<use plot_1.jpg>
+Package pdftex.def Info: plot_1.jpg  used on input line 195.
+(pdftex.def)             Requested size: 275.99173pt x 183.98311pt.
+<plot_2.jpg, id=36, 1882.03125pt x 1254.6875pt>
+File: plot_2.jpg Graphic file (type jpg)
+<use plot_2.jpg>
+Package pdftex.def Info: plot_2.jpg  used on input line 200.
+(pdftex.def)             Requested size: 275.99173pt x 183.98311pt.
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[7]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 22.48878pt, for example:
+(fancyhdr)                \setlength{\headheight}{22.48878pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-10.48878pt}.
+
+[8 <./plot_1.jpg> <./plot_2.jpg>] (./test.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 880 strings out of 475136
- 15070 string characters out of 5766290
- 394698 words of memory out of 5000000
- 23913 multiletter control sequences out of 15000+600000
- 585959 words of font info for 53 fonts, out of 8000000 for 9000
+ 3195 strings out of 475136
+ 54166 string characters out of 5766290
+ 447783 words of memory out of 5000000
+ 26165 multiletter control sequences out of 15000+600000
+ 599755 words of font info for 63 fonts, out of 8000000 for 9000
  34 hyphenation exceptions out of 8191
- 35i,5n,50p,371b,176s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr7.pfb>
-Output written on test.pdf (1 page, 89622 bytes).
+ 57i,11n,65p,668b,366s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr5.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
+Output written on test.pdf (8 pages, 543114 bytes).
 PDF statistics:
- 38 PDF objects out of 1000 (max. 8388607)
- 24 compressed objects within 1 object stream
+ 104 PDF objects out of 1000 (max. 8388607)
+ 65 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 
