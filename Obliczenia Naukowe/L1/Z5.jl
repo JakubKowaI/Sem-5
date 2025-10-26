@@ -20,20 +20,14 @@ function pb(n)
 end
 
 function pc(n)
+    sum = 0.0
     minus=Vector{Float64}()
     plus=Vector{Float64}()
-    for i in x
-        if i<0.0
-            push!(minus,i)
+    for i in 1:n
+        if x[i]*y[i]<0.0
+            push!(minus,x[i]*y[i])
         else
-            push!(plus,i)
-        end
-    end
-    for i in y
-        if i<0.0
-            push!(minus,i)
-        else
-            push!(plus,i)
+            push!(plus,x[i]*y[i])
         end
     end
     sorted_plus=sort(plus,rev = true)
@@ -41,30 +35,24 @@ function pc(n)
     sum_plus=0.0
     sum_minus=0.0
     for i in sorted_plus
-        sum_plus+=i
+        sum_plus=sum_plus + i
     end
     for i in sorted_minus
-        sum_minus+=i
+        sum_minus= sum_minus + i
     end
     sum=sum_plus+sum_minus
     println("pc: ", sum)
 end
 
 function pd(n)
+    sum = 0.0
     minus=Vector{Float64}()
     plus=Vector{Float64}()
-    for i in x
-        if i<0.0
-            push!(minus,i)
+    for i in 1:n
+        if x[i]*y[i]<0.0
+            push!(minus,x[i]*y[i])
         else
-            push!(plus,i)
-        end
-    end
-    for i in y
-        if i<0.0
-            push!(minus,i)
-        else
-            push!(plus,i)
+            push!(plus,x[i]*y[i])
         end
     end
     sorted_plus=sort(plus)
@@ -72,14 +60,78 @@ function pd(n)
     sum_plus=0.0
     sum_minus=0.0
     for i in sorted_plus
-        sum_plus+=i
+        sum_plus=sum_plus + i
     end
     for i in sorted_minus
-        sum_minus+=i
+        sum_minus= sum_minus + i
     end
+    # println("sum_plus: ", sum_plus)
+    # println("sum_minus: ", sum_minus)
     sum=sum_plus+sum_minus
     println("pd: ", sum)
 end
+
+# function pc(n)
+#     minus=Vector{Float64}()
+#     plus=Vector{Float64}()
+#     for i in x
+#         if i<0.0
+#             push!(minus,i)
+#         else
+#             push!(plus,i)
+#         end
+#     end
+#     for i in y
+#         if i<0.0
+#             push!(minus,i)
+#         else
+#             push!(plus,i)
+#         end
+#     end
+#     sorted_plus=sort(plus,rev = true)
+#     sorted_minus=sort(minus)
+#     sum_plus=0.0
+#     sum_minus=0.0
+#     for i in sorted_plus
+#         sum_plus+=i
+#     end
+#     for i in sorted_minus
+#         sum_minus+=i
+#     end
+#     sum=sum_plus+sum_minus
+#     println("pc: ", sum)
+# end
+
+# function pd(n)
+#     minus=Vector{Float64}()
+#     plus=Vector{Float64}()
+#     for i in x
+#         if i<0.0
+#             push!(minus,i)
+#         else
+#             push!(plus,i)
+#         end
+#     end
+#     for i in y
+#         if i<0.0
+#             push!(minus,i)
+#         else
+#             push!(plus,i)
+#         end
+#     end
+#     sorted_plus=sort(plus)
+#     sorted_minus=sort(minus,rev = true)
+#     sum_plus=0.0
+#     sum_minus=0.0
+#     for i in sorted_plus
+#         sum_plus+=i
+#     end
+#     for i in sorted_minus
+#         sum_minus+=i
+#     end
+#     sum=sum_plus+sum_minus
+#     println("pd: ", sum)
+# end
 
 pa(n)
 pb(n)
@@ -103,20 +155,14 @@ function pb32(n)
 end
 
 function pc32(n)
+    sum = Float32(0.0)
     minus=Vector{Float32}()
     plus=Vector{Float32}()
-    for i in x
-        if i<Float32(0.0)
-            push!(minus,convert(Float32,i))
+    for i in 1:n
+        if convert(Float32,x[i])*convert(Float32,y[i])<Float32(0.0)
+            push!(minus,convert(Float32,x[i])*convert(Float32,y[i]))
         else
-            push!(plus,convert(Float32,i))
-        end
-    end
-    for i in y
-        if i<Float32(0.0)
-            push!(minus,convert(Float32,i))
-        else
-            push!(plus,convert(Float32,i))
+            push!(plus,convert(Float32,x[i])*convert(Float32,y[i]))
         end
     end
     sorted_plus=sort(plus,rev = true)
@@ -124,30 +170,26 @@ function pc32(n)
     sum_plus=Float32(0.0)
     sum_minus=Float32(0.0)
     for i in sorted_plus
-        sum_plus+=i
+        sum_plus=sum_plus + i
     end
     for i in sorted_minus
-        sum_minus+=i
+        sum_minus= sum_minus + i
     end
+    # println("sum_plus: ", sum_plus)
+    # println("sum_minus: ", sum_minus)
     sum=sum_plus+sum_minus
     println("pc32: ", sum)
 end
 
 function pd32(n)
+    sum = Float32(0.0)
     minus=Vector{Float32}()
     plus=Vector{Float32}()
-    for i in x
-        if i<Float32(0.0)
-            push!(minus,convert(Float32,i))
+    for i in 1:n
+        if convert(Float32,x[i])*convert(Float32,y[i])<Float32(0.0)
+            push!(minus,convert(Float32,x[i])*convert(Float32,y[i]))
         else
-            push!(plus,convert(Float32,i))
-        end
-    end
-    for i in y
-        if i<Float32(0.0)
-            push!(minus,convert(Float32,i))
-        else
-            push!(plus,convert(Float32,i))
+            push!(plus,convert(Float32,x[i])*convert(Float32,y[i]))
         end
     end
     sorted_plus=sort(plus)
@@ -155,11 +197,13 @@ function pd32(n)
     sum_plus=Float32(0.0)
     sum_minus=Float32(0.0)
     for i in sorted_plus
-        sum_plus+=i
+        sum_plus=sum_plus + i
     end
     for i in sorted_minus
-        sum_minus+=i
+        sum_minus= sum_minus + i
     end
+    # println("sum_plus: ", sum_plus)
+    # println("sum_minus: ", sum_minus)
     sum=sum_plus+sum_minus
     println("pd32: ", sum)
 end

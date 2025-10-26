@@ -1,5 +1,24 @@
 \documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
 \begin{document}
-First document. This is a simple example, with no 
-extra parameters or packages included.
+\section{Zadanie 1}
+Opis problemu:
+W zadaniu należało wyznaczyć następujące wartości:
+\begin{itemize}
+        % \item $pc_{32}$ - suma iloczynów odpowiadających sobie
+    \item $Macheps$ --- najmniejsza liczba $\mathrm{macheps}>0$ taka, że $\mathrm{fl}(1.0+\mathrm{macheps})>1.0$ i $\mathrm{fl}(1.0+\mathrm{macheps})=1+\mathrm{macheps}$
+    \item $eta$ --- najmniejsza dodatnia liczba zmiennoprzecinkowa (najmniejsza liczba nieznormalizowana --- $\mathrm{MIN}_{\mathrm{sub}}$)
+    \item liczba $MAX$ --- największa liczba nieznormalizowana --- $\mathrm{MAX}_{\mathrm{sub}}$
+\end{itemize}
+Oraz odpowiedzieć na pytania:
+\begin{itemize}
+    \item Jaki związek ma liczba $macheps$ z $precyzją$ $arytmetyki$ (oznaczaną na wykładzie przez $\epsilon$)?
+    \item Jaki związek ma liczba $eta$ z liczbą $\mathrm{MIN}_{\mathrm{sub}}$?
+    \item Co zwracają funkcje floatmin(Float32) i floatmin(Float64) i jaki jest związek zwracanych wartości z liczbą $\mathrm{MIN}_{\mathrm{nor}}$?
+\end{itemize}
+\subsection{test}
+\section{Zadanie 2}
+This is the second section.
 \end{document}
