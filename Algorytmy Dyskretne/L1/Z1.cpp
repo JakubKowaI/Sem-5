@@ -4,21 +4,28 @@
 #include <queue>
 #include <stack>
 #include <algorithm>
+#include <fstream>
 
 using namespace std;
 
 struct Node{
     vector<Node*> edges;
     int label;
-    Node* pred;
+    Node* pred=nullptr;
     int order;
-    bool marked;
+    bool marked=0;
 
     Node(int label,Node* pred,int order,bool marked){
         this->label=label;
         this->order=order;
         this->pred=pred;
         this->marked=marked;
+    }
+    Node(int label){
+        this->label=label;
+        this->pred = nullptr;
+        this->order = 0;
+        this->marked = false;
     }
 };
 
@@ -27,45 +34,38 @@ Node* findNode(int label,vector<Node*> nodes){
         return nullptr;
 }
 
-Node* buildGraph(const vector<pair<int,int>>& edges, bool directed) {
-    vector<Node*> nodes;
-
-    for (auto t : edges) {
-        int a = t.first, b = t.second;
-        Node* left = findNode(a,nodes);
-        Node* right = findNode(b,nodes);
-
-        if (!left) {
-            left = new Node(a, nullptr, -1, 0);
-            nodes.push_back(left);
+vector<Node> buildGraph(int n,int m,vector<pair<int,int>> edges,bool directed){
+    vector<Node> N;
+    N.reserve(n); // avoid reallocation so addresses &N[i] remain stable
+    for(int i=0;i<n;i++){
+        N.emplace_back(i+1);
+    }
+    for(auto e : edges){
+        int l = get<0>(e);
+        int p = get<1>(e); // was get<0>(e) previously (bug)
+        // validate 1-based labels
+        if(l < 1 || l > n || p < 1 || p > n) continue;
+        if(find(N[l-1].edges.begin(),N[l-1].edges.end(),&N[p-1])==N[l-1].edges.end()){
+            N[l-1].edges.push_back(&N[p-1]);
         }
-
-        if (!right) {
-            right = new Node(b, nullptr, -1, 0);
-            nodes.push_back(right);
-        }
-
-        if (find(left->edges.begin(), left->edges.end(), right) == left->edges.end())
-            left->edges.push_back(right);
-
-        if (!directed) {
-            if (find(right->edges.begin(), right->edges.end(), left) == right->edges.end())
-                right->edges.push_back(left);
+        if(!directed){
+            if(find(N[p-1].edges.begin(),N[p-1].edges.end(),&N[l-1])==N[p-1].edges.end()){
+                N[p-1].edges.push_back(&N[l-1]);
+            }
         }
     }
-
-    if (!nodes.empty()) return nodes[0];
-    return nullptr;
+    return N;
 }
 
-void BFS(Node* root){
-    root->marked=1;
-    root->pred=nullptr;
-    int next=1;
-    root->order=next;
+void BFS(vector<Node>& N){
+    if (N.empty()) return;
+    N[0].marked = true;
+    N[0].pred = nullptr;
+    int next = 1;
+    N[0].order = next;
     queue<Node*> LIST;
-    LIST.push(root);
-    cout<<"Node: "<<root->label<<" order: "<<root->order<<endl;
+    LIST.push(&N[0]);
+    cout<<"Node: "<<N[0].label<<" order: "<<N[0].order<<endl;
     while(LIST.empty()!=1){
         Node* i=LIST.front();
         bool incident=0;        
@@ -84,14 +84,15 @@ void BFS(Node* root){
     }
 }
 
-void DFS(Node* root){
-    root->marked=1;
-    root->pred=nullptr;
-    int next=1;
-    root->order=next;
+void DFS(vector<Node>& N){
+    if (N.empty()) return;
+    N[0].marked = 1;
+    N[0].pred = nullptr;
+    int next = 1;
+    N[0].order = next;
     stack<Node*> LIST;
-    LIST.push(root);
-    cout<<"Node: "<<root->label<<" order: "<<root->order<<endl;
+    LIST.push(&N[0]);
+    cout<<"Node: "<<N[0].label<<" order: "<<N[0].order<<endl;
     while(LIST.empty()!=1){
         Node* i=LIST.top();
         bool incident=0;        
@@ -117,83 +118,60 @@ void DFS(Node* root){
 //     }
 // }
 
-void printTree(Node* root){
-    for(Node* n : root->edges){
-        if(n->pred==root){
-            cout<<"Edge "<<root->label<<" - "<<n->label<<endl;
-            printTree(n);
+void printTree(Node* n){
+    if (!n) return;
+    for(auto e : n->edges){
+        if(e->pred==n){
+            cout<<"Edge: "<<n->label<<" - "<<e->label<<endl;
+            printTree(e);
         }
     }
 }
 
 int main(int argc, char** argv) {
     bool treeMode = false;
-    bool directed = true;
-    if(argc != 3) {
-        cerr << "Usage: " << argv[0] << " <integer>" << endl;
-        return 1;
+    if(argc!=3){
+        cerr<<"Wrong argument number!"<<endl;
+        return -1;
     }
-    if(string(argv[1]) == "--tree") {
-        cout << "Tree mode activated." << endl;
-        treeMode = true;
+    ifstream input(argv[1]);
+    bool directed=true;
+    string firstLine;
+    input>>firstLine;
+    if(firstLine!="D"&&firstLine!="U"){
+        cerr<<"Problem z danymi"<<endl;
     }
-    if(string(argv[2]) == "--undirected") {
-        cout << "Directed mode deactivated. Going off script." << endl;
-        directed = false;
+    if(firstLine=="U")directed=false;
+    if(string(argv[2])=="--tree"){
+        cout<<"TreeMode activated"<<endl;
+        treeMode=true;
     }
-    vector<pair<int, int>> edges;
 
-    //case 1
-    // edges.push_back({1, 2});
-    // edges.push_back({1, 3});
-    // edges.push_back({2, 4});
-    // edges.push_back({2, 5});
-    // edges.push_back({3, 6});
-    // edges.push_back({3, 5});
-    // edges.push_back({4, 5});
-    // edges.push_back({5, 6});
-    // Node* root=buildGraph(edges,directed);
-    
-
-    //case 2
-    // edges.push_back({1, 2});
-    // edges.push_back({1, 4});
-    // edges.push_back({2, 3});
-    // edges.push_back({2, 6});
-    // edges.push_back({3, 4});
-    // edges.push_back({6, 7});
-    // edges.push_back({6, 5});
-    // edges.push_back({4, 8});
-    // edges.push_back({7, 3});
-    // edges.push_back({5, 8});
-    // edges.push_back({5, 1});
-    // edges.push_back({8, 7});
-    // Node* root=buildGraph(edges,directed);
-
-    //case 3
-    edges.push_back({1, 2});
-    edges.push_back({1, 5});
-    edges.push_back({1, 3});
-    edges.push_back({2, 4});
-    edges.push_back({2, 5});
-    edges.push_back({3, 5});
-    edges.push_back({3, 6});
-    edges.push_back({5, 6});
-    edges.push_back({4, 8});
-    edges.push_back({4, 5});
-    edges.push_back({6, 7});
-    edges.push_back({6, 9});
-    edges.push_back({7, 5});
-    edges.push_back({7, 4});
-    edges.push_back({7, 8});
-    edges.push_back({9, 7});
-    edges.push_back({9, 8});
-    Node* root=buildGraph(edges,directed);
-
-    //BFS(root);
-    DFS(root);
+    vector<pair<int,int>> edges;
+    int n,m;
+    try{
+        input>>firstLine;
+        n=stoi(firstLine);
+        input>>firstLine;
+        m=stoi(firstLine);
+        string temp,temp2;
+        while (input>> temp>>temp2)
+        {
+            edges.push_back(pair<int,int>(stoi(temp),stoi(temp2)));
+        }
+    }catch(exception e){
+        cerr<<e.what()<<endl;
+    }
+    vector<Node> N=buildGraph(n,m,edges,directed);
+    vector<Node> B=buildGraph(n,m,edges,directed);
+    BFS(N);
     if(treeMode){
-        printTree(root);
+        printTree(&N[0]);
+    }
+    
+    DFS(B);
+    if(treeMode){
+        printTree(&B[0]);
     }
     
     return 0;
