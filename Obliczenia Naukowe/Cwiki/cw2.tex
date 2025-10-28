@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{cancel}
+\usepackage{graphicx,pict2e}
+\usepackage{fancybox,multido}
+
+\title{Ćwiczenia}
+\author{Jakub Kowal}
+
+\begin{document}
+\maketitle
+\renewcommand{\thesubsubsection}{\thesubsection.\alph{subsubsection})}
+
+    \section{Lista 1}
+    \setcounter{subsection}{4}
+    \subsection{}
+    33-bitowe słowo $x=sm2^{c}$\newline
+    cecha 8 bitów ze znakiem\newline
+    mantysa 24 bity $\in [\frac{1}{2},1)$\newline
+    
+    \subsubsection{}
+    $x_{max}=(0.11...1)_{2}*2^{127}=(1-2^{-24})*2^{127}=1,7*10^{38}$\newline
+    $x_{min}=(0.10...0)_{2}*2^{-127}=2^{-1}*2^{-127}=2^{-128}$\newline
+    $[-x_{max},-x_{min}]\cup[x_{min},x_{max}]$\newline
+    
+    \subsubsection{}
+    $(-x_{min},x_{min})$\newline
+    
+    \subsubsection{}
+    $\epsilon=\frac{1}{2}*\beta^{1-t}=2^{-1}*2^{-23}=2^{-24}$
+    
+    \subsection*{Single}
+    \setcounter{subsubsection}{0}
+    \subsubsection{}
+    $x_{max}=(2*2^{-23})*2^{127}\approx3,4*10^{38}$\newline
+    $x_{min}=1*2{-126}=2^{-126}$\newline
+    $x_{minsub}=(0.00.....01)_{2}*2^{-126}=2^{-23}*2^{-126}=2^{-149}$\newline
+    $[-x_{max},-x_{min}]\cup\{0\}\cup[x_{min},x_{max}]$\newline
+    
+    \subsubsection{}
+    $(-x_{minsub},x_{minsub})$\newline
+
+    \subsubsection{}
+    $\epsilon=\frac{1}{2}\beta^{1-t}=2^{-1}*2^{-23}=2^{-24}$\newline
+
+    \subsection{}
+    \subsubsection{}
+    x = $1+2^{-24}$\newline
+    $\epsilon = 2^{-23}$\newline
+    $x^{-} = 1$\newline
+    $x^{+} = 1 + 2^{-23}$\newline
+    
+    \subsubsection{}
+    $x \bigoplus 1 = 1$\newline
+    $x \in (0,2^{-24}+2^{-25}]$\newline
+    
+    \subsubsection{}
+    $x \bigoplus =x$\newline
+    $x<\frac{x}{2^{23}}$
+
+    \subsection{}
+
+    % \fancyput(3.25in,-4.5in){%
+    % \setlength{\unitlength}{1in}\fancyoval(7,10)}
+    % \multido{\iA=1+1}{20}{\fbox{\includegraphics[page=\iA,scale=0.75]{/home/kuba/Projects/Sem-5/Obliczenia Naukowe/listy/scnal1cw.pdf}}\par}
+
+    $A(a_{1},...,a_{n})=(...(a_{1}\oplus a_{2})\oplus a_{3})\oplus ...)\oplus a_{n} = (...(a_{1}+a_{2})(1+\delta_{1})+a_{3})(1+\delta_{2})+...)+a_{n})(1+\delta_{n-1})=a_{1}+a_{1}*E_{1}+a_{2}+a_{2}*E_{1}+a_{3}+a_{3}*E_{2}...+a_{n}+a_{n}*E_{n-1}=(a_{1}+a_{2}+...+a_{n})+(a_{1}*E_{1}+a_{2}*E_{1}+...+a_{n}*E_{n-1})=S+(a_{1}*E_{1}+a_{2}*E_{1}+...+a_{n}*E_{n-1})$\newline
+    $|\delta|\le\epsilon$\newline 
+    $1+E_{k}=\prod_{i=1}^{k}(1+\delta_{k})\leftarrow wprowadzamy$\newline
+    $(a_{1}*E_{1}+a_{2}*E_{1}+...+a_{n}*E_{n-1})=E_{max}=\prod_{i=1}^{n-1}(1+|\delta_{i}|)-1\le \prod_{i=1}^{n-1}(1+\epsilon)-1$\newline
+    $a_{1}*E_{1}+a_{2}*E_{1}+...+a_{n}*E_{n-1}\le (a_{1}+a_{2}+...+a_{n})*E_{max}\le ((a_{1}+a_{2}+...+a_{n})*\prod_{i=1}^{n-1}(1+\epsilon))-1 = S(1+\epsilon)^{n-1}-1$\newline
+    $\frac{|\tilde{S}-S|}{|S|}\le \frac{\cancel{S}+S*(1+s)}{|S|} \leftarrow$ Zmazał za szybko\newline
+    $\tilde{S}\le S+S*(1+\epsilon)^{n-1}-1$
+    \section{Lista 2}
+    
+    \subsection{}
+    $y=\sqrt{x^{2}+1}-1$\newline
+    TW z wykładu:\newline
+    Jeśli x,y - dodatnie liczby w dwójkowej arytmetyce float, takie że:\newline
+    $x>y, 2^{-q}\le 1-\frac{y}{x}$\newline
+    to przy odejmowaniu tracimy najwyżej q bitów q = 2\newline
+    $2^{-2}\le 1-\frac{1}{\sqrt{x^{2}+1}}$\newline
+    $\frac{1}{4}=1-\frac{1}{\sqrt{x^{2}+1}}$\newline
+    $\frac{1}{\sqrt{x^{2}+1}}\le \frac{3}{4}$\newline
+    $\sqrt{x^{2}+1}>=\frac{3}{4}$\newline
+
+    \setcounter{subsection}{3}
+    
+    \subsection{}
+    $f(x)=\sqrt{x+2}-\sqrt{x}$\newline
+    Problem dla dużych x : $\sqrt{x}\approx\sqrt{x+2}$\newline
+    $\sqrt{x+2}-\sqrt{x} /*\frac{\sqrt{x+2}+\sqrt{x}}{\sqrt{x+2}+\sqrt{x}}$\newline
+    $\frac{x+2-x}{\sqrt{x+2}+\sqrt{x}}=\frac{2}{\sqrt{x+2}+\sqrt{x}}$\newline
+    $a^{2}-b^{2}=(a-b)(a+b)$\newline
+
+\end{document}

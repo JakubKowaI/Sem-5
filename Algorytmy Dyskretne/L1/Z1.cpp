@@ -36,14 +36,13 @@ Node* findNode(int label,vector<Node*> nodes){
 
 vector<Node> buildGraph(int n,int m,vector<pair<int,int>> edges,bool directed){
     vector<Node> N;
-    N.reserve(n); // avoid reallocation so addresses &N[i] remain stable
+    N.reserve(n); 
     for(int i=0;i<n;i++){
         N.emplace_back(i+1);
     }
     for(auto e : edges){
         int l = get<0>(e);
-        int p = get<1>(e); // was get<0>(e) previously (bug)
-        // validate 1-based labels
+        int p = get<1>(e); 
         if(l < 1 || l > n || p < 1 || p > n) continue;
         if(find(N[l-1].edges.begin(),N[l-1].edges.end(),&N[p-1])==N[l-1].edges.end()){
             N[l-1].edges.push_back(&N[p-1]);
@@ -168,7 +167,7 @@ int main(int argc, char** argv) {
     if(treeMode){
         printTree(&N[0]);
     }
-    
+    cout<< endl;
     DFS(B);
     if(treeMode){
         printTree(&B[0]);

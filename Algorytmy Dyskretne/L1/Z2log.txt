@@ -1,0 +1,171 @@
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2a-1.txt
+Done
+Nie ma cykli w grafie
+Topologiczne porzadek (label : order):
+1 : 1
+2 : 2
+3 : 4
+4 : 7
+5 : 3
+6 : 5
+7 : 8
+8 : 11
+9 : 6
+10 : 9
+11 : 12
+12 : 14
+13 : 10
+14 : 13
+15 : 15
+16 : 16
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2b-1.txt
+Done
+Jest cykl w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2a-2.txt
+Done
+Nie ma cykli w grafie
+Topologiczne porzadek (label : order):
+1 : 1
+2 : 2
+3 : 4
+4 : 7
+5 : 11
+6 : 16
+7 : 22
+8 : 29
+9 : 37
+10 : 46
+11 : 3
+12 : 5
+13 : 8
+14 : 12
+15 : 17
+16 : 23
+17 : 30
+18 : 38
+19 : 47
+20 : 56
+21 : 6
+22 : 9
+23 : 13
+24 : 18
+25 : 24
+26 : 31
+27 : 39
+28 : 48
+29 : 57
+30 : 65
+31 : 10
+32 : 14
+33 : 19
+34 : 25
+35 : 32
+36 : 40
+37 : 49
+38 : 58
+39 : 66
+40 : 73
+41 : 15
+42 : 20
+43 : 26
+44 : 33
+45 : 41
+46 : 50
+47 : 59
+48 : 67
+49 : 74
+50 : 80
+51 : 21
+52 : 27
+53 : 34
+54 : 42
+55 : 51
+56 : 60
+57 : 68
+58 : 75
+59 : 81
+60 : 86
+61 : 28
+62 : 35
+63 : 43
+64 : 52
+65 : 61
+66 : 69
+67 : 76
+68 : 82
+69 : 87
+70 : 91
+71 : 36
+72 : 44
+73 : 53
+74 : 62
+75 : 70
+76 : 77
+77 : 83
+78 : 88
+79 : 92
+80 : 95
+81 : 45
+82 : 54
+83 : 63
+84 : 71
+85 : 78
+86 : 84
+87 : 89
+88 : 93
+89 : 96
+90 : 98
+91 : 55
+92 : 64
+93 : 72
+94 : 79
+95 : 85
+96 : 90
+97 : 94
+98 : 97
+99 : 99
+100 : 100
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2b-2.txt
+Done
+Jest cykl w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2a-3.txt
+Done
+Nie ma cykli w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2b-3.txt
+Done
+Jest cykl w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2a-4.txt
+Done
+Nie ma cykli w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2b-4.txt
+Done
+Jest cykl w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2a-5.txt
+Done
+Nie ma cykli w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2b-5.txt
+Done
+Jest cykl w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2a-6.txt
+Done
+Nie ma cykli w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/g2b-6.txt
+Done
+Jest cykl w grafie
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/mya.txt
+Done
+Nie ma cykli w grafie
+Topologiczne porzadek (label : order):
+1 : 1
+2 : 2
+3 : 4
+4 : 3
+5 : 5
+6 : 6
+7 : 8
+8 : 7
+9 : 9
+10 : 10
+./Z2.out /home/kuba/Projects/Sem-5/Algorytmy Dyskretne/listy/aod_testy1/2/myb.txt
+Done
+Jest cykl w grafie
