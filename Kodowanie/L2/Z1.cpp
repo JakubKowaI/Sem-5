@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <set>
 #include <utility>
 #include <string>
 
@@ -21,6 +22,7 @@ double p;
 bool branch=0;
 Node* right=nullptr;
 Node* left=nullptr;
+int hmax;
 Node(char k, double p){
     this->key=k;
     this->p=p;
@@ -47,29 +49,51 @@ void printTree(Node* node,string prefix){
         printTree(node->right,prefix+"1");
         printTree(node->left,prefix+"0");
     }else{
-        cout<<node->key<<" : "<<prefix<<endl;
+        if(prefix.empty()) cout<<node->key<<" : "<<"0"<<endl;
+        else cout<<node->key<<" : "<<prefix<<endl;
     }
 }
 
 Node* huffman(vector<pair<char,double>> P){
-    vector<Node*> treePointers;
-    treePointers.reserve(P.size());
-    for(auto [key,value]:P){
-        Node* leaf = new Node(key, value);
-        treePointers.push_back(leaf);
+    struct Cmp {
+        bool operator()(const Node* a, const Node* b) const {
+            if (a->p != b->p) return a->p < b->p; 
+            return a < b; 
+        }
+    };
+
+    multiset<Node*, Cmp> q;
+    multiset<Node*, Cmp> after; 
+    for (auto &pr : P) {
+        q.insert(new Node(pr.first, pr.second));
     }
-    while (treePointers.size()>1)
-    {
-        Node* a=treePointers.back();
-        treePointers.pop_back();
-        Node* b=treePointers.back();
-        treePointers.pop_back();
-        treePointers.push_back(joinTrees(b,a));
-    }
-    if(!treePointers.empty()){
-        printTree(treePointers[0],"");
-    }
-    return treePointers[0];
+    // for(auto it:q){
+    //     cout<<it->p<<it->key<<endl;
+    // }
+    
+        while (q.size() > 1) {
+            
+            after.clear();
+            auto it1 = q.begin();
+            Node* n1 = *it1;
+            q.erase(it1);
+
+            auto it2 = q.begin();
+            Node* n2 = *it2;
+            q.erase(it2);
+            cout<<"lacze: "<<n1->key<<" ^ "<<n2->key<<endl;
+            Node* parent;
+            if(n1->p<n2->p){
+                parent = new Node(n1->p + n2->p, n1, n2);
+            }else{
+                parent = new Node(n1->p + n2->p, n2, n1);
+            }
+            q.insert(parent);
+        }
+
+    Node* root = q.empty() ? nullptr : *q.begin();
+    //if (root) printTree(root, "");
+    return root;
 }
 
 int main(int argc,char** argv){
@@ -110,5 +134,37 @@ int main(int argc,char** argv){
         entropy1 += p * info;
     }
     Node* kod = huffman(P);
+    unordered_map<char,string> codes;
+    if (kod!=nullptr) {
+        vector<pair<Node*, string>> st;
+        st.emplace_back(kod, "");
+        while (!st.empty()) {
+            auto [node, pref] = st.back();
+            st.pop_back();
+            if (!node) continue;
+            if (!node->branch) {
+                codes[node->key] = pref.empty() ? string("0") : pref;
+            } else {
+                if (node->right) st.emplace_back(node->right, pref + "1");
+                if (node->left)  st.emplace_back(node->left,  pref + "0");
+            }
+        }
+    }
+    for (auto &pr : codes) cout << pr.first << " -> " << pr.second << endl;
+    ofstream output("compressed.txt");
+    output<<codes.size()<<endl;
+    for(auto el: codes){
+        output<<el.first<<" "<<el.second<<endl;
+    }
+    ifstream input2(filename, ios::binary);
+    if (!input2.is_open()) {
+        cerr << "File not found: " << endl;
+        return -1;
+    }
+    while (input2.get(c)) {
+        output<<codes[c];
+    }
+    input2.close();
+
     cout<<"Entropia: "<<entropy1<<endl;
 }
