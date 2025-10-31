@@ -81,7 +81,7 @@ Node* huffman(vector<pair<char,double>> P){
             auto it2 = q.begin();
             Node* n2 = *it2;
             q.erase(it2);
-            cout<<"lacze: "<<n1->key<<" ^ "<<n2->key<<endl;
+            //cout<<"lacze: "<<n1->key<<" ^ "<<n2->key<<endl;
             Node* parent;
             if(n1->p<n2->p){
                 parent = new Node(n1->p + n2->p, n1, n2);
@@ -151,19 +151,66 @@ int main(int argc,char** argv){
         }
     }
     for (auto &pr : codes) cout << pr.first << " -> " << pr.second << endl;
-    ofstream output("compressed.txt");
-    output<<codes.size()<<endl;
+    ofstream output("compressed.bin");
+    string size=bitset<16>(codes.size()).to_string();
+    cout<<codes.size()<<" bin: "<<size<<endl;
+    //bitset<8> k(size.substr(0,8));
+    output<<(char)bitset<8>(size.substr(0,8)).to_ulong()<<(char)bitset<8>(size.substr(8,16)).to_ulong();
     for(auto el: codes){
-        output<<el.first<<" "<<el.second<<endl;
+        output<<el.first<<(char)el.second.size();
+        //cout<<"Koduje "<<el.first<<" jako: "<<el.second<<" "<<el.second.size()<<endl;
+        for(int i=0;i<(el.second.size()/8)+1;i++){
+            if((8*i)+8<=el.second.size()){
+                output<<(char)bitset<8>(el.second.substr(8*i,(8*i)+8)).to_ulong();
+                //cout<<bitset<8>(el.second.substr(8*i,(8*i)+8));
+            }else{
+                string tt=el.second.substr(8*i);
+                //cout<<tt<<endl;
+                while(tt.size()<8){
+                    tt=tt+"0";
+                }
+                output<<(char)bitset<8>(tt).to_ulong();
+                //cout<<bitset<8>(tt);
+            }
+        }
+        //cout<<endl;
     }
     ifstream input2(filename, ios::binary);
     if (!input2.is_open()) {
         cerr << "File not found: " << endl;
         return -1;
     }
+    string przerob="";
     while (input2.get(c)) {
-        output<<codes[c];
+        przerob=przerob+ codes[c];
+        //cout<<"Coding: "<<c<<" to temp: "<<przerob<<endl;
+        if(przerob.size()>=8){
+            char zapis=(char)bitset<8>(przerob.substr(0,8)).to_ulong();
+            output<<zapis;
+            //cout<<"Zapis: "<<bitset<8>(zapis)<<endl;
+            if(przerob.size()==8){
+                przerob="";
+            }else{
+                przerob=przerob.substr(8);
+            }
+        }
+        //char temp =(char)bitset<8>(codes[c]).to_ulong();
+        //cout<<bitset<8>(temp)<<endl;
     }
+    while(przerob.size()>8){
+        output<<(char)bitset<8>(przerob.substr(0,8)).to_ulong();
+            if(przerob.size()==8){
+                przerob="";
+            }else{
+                przerob=przerob.substr(8);
+            }
+    }
+    if(przerob.size()>0){
+        while(przerob.size()<8){
+            przerob=przerob+"0";
+        }
+    }
+    output<<(char)bitset<8>(przerob.substr(0,8)).to_ulong();
     input2.close();
 
     cout<<"Entropia: "<<entropy1<<endl;
