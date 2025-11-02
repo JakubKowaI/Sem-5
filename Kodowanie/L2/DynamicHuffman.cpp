@@ -39,8 +39,8 @@ Node(int w,Node* a, Node* b,Node* p){
     this->left=a;
     this->right=b;
     this->parent=p;
-}
-};
+}};
+
 Node* getRoot(Node* node){
     while(node && node->parent){
         node=node->parent;
@@ -151,48 +151,6 @@ void printTree(Node* node,string prefix){
         else cout<<node->key<<" : "<<prefix<<endl;
     }
 }
-
-// Node* huffman(vector<pair<char,double>> P){
-//     struct Cmp {
-//         bool operator()(const Node* a, const Node* b) const {
-//             if (a->p != b->p) return a->p < b->p; 
-//             return a < b; 
-//         }
-//     };
-
-//     multiset<Node*, Cmp> q;
-//     multiset<Node*, Cmp> after; 
-//     for (auto &pr : P) {
-//         q.insert(new Node(pr.first, pr.second));
-//     }
-//     // for(auto it:q){
-//     //     cout<<it->p<<it->key<<endl;
-//     // }
-    
-//         while (q.size() > 1) {
-            
-//             after.clear();
-//             auto it1 = q.begin();
-//             Node* n1 = *it1;
-//             q.erase(it1);
-
-//             auto it2 = q.begin();
-//             Node* n2 = *it2;
-//             q.erase(it2);
-//             //cout<<"lacze: "<<n1->key<<" ^ "<<n2->key<<endl;
-//             Node* parent;
-//             if(n1->p<n2->p){
-//                 parent = new Node(n1->p + n2->p, n1, n2);
-//             }else{
-//                 parent = new Node(n1->p + n2->p, n2, n1);
-//             }
-//             q.insert(parent);
-//         }
-
-//     Node* root = q.empty() ? nullptr : *q.begin();
-//     //if (root) printTree(root, "");
-//     return root;
-// }
 
 void fixUp(Node* start){
     Node* node=start;
