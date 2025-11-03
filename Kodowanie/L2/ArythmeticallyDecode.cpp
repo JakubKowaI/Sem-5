@@ -65,7 +65,7 @@ int main(int argc,char** argv){
         frac=frac+bitset<8>(c).to_string();
         P.push_back(pair<char,long double>(z,binaryFracToDecimal(frac)));
     }
-    sort(P.begin(),P.end(),comp);
+    // sort(P.begin(),P.end(),comp);
     for(auto it:P){
         cout<<it.first<<" : "<<it.second<<endl;
     }
@@ -98,6 +98,7 @@ int main(int argc,char** argv){
     }
     long double z=binaryFracToDecimal(tempRead);
     cout<<tempRead<<endl;
+    cout<<"Z: "<<z<<endl;
     //cout<<binaryFracToDecimal("01110010")<<endl;
     input.close();
     

@@ -99,12 +99,12 @@ int main(int argc,char** argv){
     
     
     vector<pair<char,long double>> P;
-    // for(auto [key, value]:freq){
-    //     P.push_back(pair<char,double>(key,(double)value/count));
-    // }
-    P.push_back(pair<char,long double>('A',0.7));
-    P.push_back(pair<char,long double>('B',0.1));
-    P.push_back(pair<char,long double>('C',0.2));
+    for(auto [key, value]:freq){
+        P.push_back(pair<char,double>(key,(double)value/count));
+    }
+    // P.push_back(pair<char,long double>('A',0.7));
+    // P.push_back(pair<char,long double>('B',0.1));
+    // P.push_back(pair<char,long double>('C',0.2));
 
     unordered_map<char,pair<long double,long double>> F;
     F[P.begin()->first]=pair<long double,long double>(P.begin()->second,0.0);
@@ -140,8 +140,10 @@ int main(int argc,char** argv){
     long double Px=0.0;
     int underflow = 0;
     string op;
+    int itt=0;
     while (input2.get(c)) {
-        // cout<<"Przed: "<<range.first<<" , "<<range.second<<" Char: "<<c<<endl;
+        if(itt<100)
+            std::cout<<"Przed: "<<range.first<<" , "<<range.second<<" Char: "<<c<<endl;
         Px+=F[c].first-F[c].second;
         long double d=range.second-range.first;
         // cout<<"D: "<<d<<endl;
@@ -150,17 +152,24 @@ int main(int argc,char** argv){
         range.first=range.first+F[c].second*d;
         // cout<<"Left: "<<range.first<<" F(i) "<<F[c].second<<endl;
         // cout<<"Char: "<<c<<" - "<<F[c].first<<" - "<<F[c].second<<endl;
-        // cout<<"Po: "<<range.first<<" , "<<range.second<<endl;
-
+        if(itt<100)
+            std::cout<<"Po: "<<range.first<<" , "<<range.second<<endl;
+        itt++;
+        
         while(true){
             if(range.first<0.5&&range.second<0.5){
+                
                 op.push_back('0');
                 for (; underflow > 0; underflow--) op.push_back('1'); // "odwrócone" bity z underflow
+                
+                
                 range.first *= 2;
                 range.second *= 2;
             }else if(range.first>=0.5&&range.second<1){
                 op.push_back('1');
                 for (; underflow > 0; underflow--) op.push_back('0');
+                
+                
                 range.first = 2 * range.first - 1;
                 range.second = 2 * range.second - 1;
             }else if((range.first<0.5&&range.second>0.5)&&(range.first>0.25&&range.second<0.75)){
@@ -170,6 +179,9 @@ int main(int argc,char** argv){
             }else{
                 break;
             }
+            if(itt<100)
+        std::cout<<"PoPo: "<<range.first<<" , "<<range.second<<endl;
+
         }
 
         
@@ -177,7 +189,7 @@ int main(int argc,char** argv){
     cout<<range.first<<" : "<<range.second<<endl;
 
     long double z=(range.first+range.second)/2;
-    //cout<<"Z: "<<z<<endl;
+    cout<<"Z: "<<z<<endl;
     int mx=ceil(log(1/Px))+1;
     if(mx%8!=0){
         mx+=8-mx%8;

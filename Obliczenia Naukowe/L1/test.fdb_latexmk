@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1761499930.23343 "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L1/test.tex" "test.pdf" "test" 1761499930.70624 0
-  "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L1/test.tex" 1761499930.02207 11984 076a4ae9c93bd11f7b8d7cf9baeb35f6 ""
+["pdflatex"] 1762162479.45387 "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L1/test.tex" "test.pdf" "test" 1762162479.9256 0
+  "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L1/test.tex" 1762162478.7657 11989 55f828cbd268aa5f4609454dedec23e3 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1755987285 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1755987285 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc" 1755987285 2840 216e6e45ad352e2456e1149f28885bee ""
@@ -75,8 +75,8 @@
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1761420896 2021044 7219092b61e7806f62e87ca6969f73de ""
   "plot_1.jpg" 1761490247.97935 173860 c7b8b9277f45c949b046105b45b94fb5 ""
   "plot_2.jpg" 1761490258.27665 163629 b9a63b42aaeb818d3a7d6492cc47335d ""
-  "test.aux" 1761499930.64074 4703 fef1d28de95ade95093d191335bbb2a1 "pdflatex"
-  "test.tex" 1761499930.02207 11984 076a4ae9c93bd11f7b8d7cf9baeb35f6 ""
+  "test.aux" 1762162479.8563 4703 fef1d28de95ade95093d191335bbb2a1 "pdflatex"
+  "test.tex" 1762162478.7657 11989 55f828cbd268aa5f4609454dedec23e3 ""
   (generated)
   "test.aux"
   "test.log"
