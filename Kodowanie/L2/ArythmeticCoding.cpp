@@ -74,6 +74,14 @@ string bitset16ToSave(bitset<16> x){
     return t;
 }
 
+// long double F(int n,const vector<pair<char,long double>> P){
+//     long double sum=0.0L;
+//     for(int i=0;i<n;i++){
+//         sum+=P[i].second;
+//     }
+//     return sum;
+// }
+
 int main(int argc,char** argv){
     if (argc < 2) {
         cerr << "Using: " << argv[0] << endl;
@@ -97,28 +105,23 @@ int main(int argc,char** argv){
     }
     input.close();
     
-    
     vector<pair<char,long double>> P;
     for(auto [key, value]:freq){
         P.push_back(pair<char,double>(key,(double)value/count));
     }
-    // P.push_back(pair<char,long double>('A',0.7));
-    // P.push_back(pair<char,long double>('B',0.1));
-    // P.push_back(pair<char,long double>('C',0.2));
+    sort(P.begin(), P.end(), [](const auto& a, const auto& b) {
+        return a.first < b.first;
+    });
 
     unordered_map<char,pair<long double,long double>> F;
-    F[P.begin()->first]=pair<long double,long double>(P.begin()->second,0.0);
-    long double upToThis=P.begin()->second;
-    for(auto it:P){
-        //cout<<"F dla "<<it.first<<endl;
-        if(it==*P.begin())continue;
+    long double upToThis=0.0;
+    for(auto const& it:P){
         long double Fminus = upToThis;
         upToThis+=it.second;
         F[it.first]=pair<long double,long double>(upToThis,Fminus);
-        //cout<<"F(i+1): "<<upToThis<<" F(i): "<<Fminus<<endl;
     }
-    for(auto it:F){
-        cout<<it.first<<" . "<<it.second.first<<" . "<<it.second.second<<endl;
+    for(auto const& it:P){
+        cout<<it.first<<" . "<<F[it.first].first<<" . "<<F[it.first].second<<endl;
     }
     long double entropy1 = 0.0;
 
@@ -128,7 +131,7 @@ int main(int argc,char** argv){
         entropy1 += p * info;
     }
     
-    ofstream output("ArythmeticallyCompressed.bin");
+    ofstream output("ArythmeticallyCompressed.bin", ios::binary);
 
     ifstream input2(filename, ios::binary);
     if (!input2.is_open()) {
@@ -136,90 +139,88 @@ int main(int argc,char** argv){
         return -1;
     }
 
-    pair<long double,long double> range(0.0,1.0);
-    long double Px=0.0;
+    pair<long double,long double> range(0.0,1.0); //Kodowanie
     int underflow = 0;
     string op;
-    int itt=0;
+    long double Px=1.0L;
+    int n=0;
     while (input2.get(c)) {
-        if(itt<100)
-            std::cout<<"Przed: "<<range.first<<" , "<<range.second<<" Char: "<<c<<endl;
-        Px+=F[c].first-F[c].second;
+        n++;
+        for(auto [a,b]:P){
+            if(c==a){
+                Px*=b;
+                break;
+            }
+        }
         long double d=range.second-range.first;
-        // cout<<"D: "<<d<<endl;
         range.second=range.first+F[c].first*d;
-        // cout<<"Right: "<<range.second<<endl;
         range.first=range.first+F[c].second*d;
-        // cout<<"Left: "<<range.first<<" F(i) "<<F[c].second<<endl;
-        // cout<<"Char: "<<c<<" - "<<F[c].first<<" - "<<F[c].second<<endl;
-        if(itt<100)
-            std::cout<<"Po: "<<range.first<<" , "<<range.second<<endl;
-        itt++;
         
         while(true){
-            if(range.first<0.5&&range.second<0.5){
-                
+            if(range.second<0.5){
                 op.push_back('0');
-                for (; underflow > 0; underflow--) op.push_back('1'); // "odwrócone" bity z underflow
-                
+                for (; underflow > 0; underflow--) op.push_back('1');
                 
                 range.first *= 2;
                 range.second *= 2;
-            }else if(range.first>=0.5&&range.second<1){
+            }else if(range.first>=0.5){
                 op.push_back('1');
                 for (; underflow > 0; underflow--) op.push_back('0');
                 
-                
                 range.first = 2 * range.first - 1;
                 range.second = 2 * range.second - 1;
-            }else if((range.first<0.5&&range.second>0.5)&&(range.first>0.25&&range.second<0.75)){
+            }else if(range.first>=0.25&&range.second<0.75){
                 underflow++;
                 range.first = 2 * range.first - 0.5;
                 range.second = 2 * range.second - 0.5;
             }else{
                 break;
             }
-            if(itt<100)
-        std::cout<<"PoPo: "<<range.first<<" , "<<range.second<<endl;
-
         }
-
-        
     }
-    cout<<range.first<<" : "<<range.second<<endl;
+    
+    long double z =range.first+(range.second-range.first)/2;
 
-    long double z=(range.first+range.second)/2;
-    cout<<"Z: "<<z<<endl;
-    int mx=ceil(log(1/Px))+1;
-    if(mx%8!=0){
-        mx+=8-mx%8;
-    }
+    //Zapis
+
     string zapis=bitset32ToSave(bitset<32>(P.size()));
-    //cout<<"Zapis: "<<zapis<<endl;
     output<<zapis;
     for(auto it:P){
         output<<it.first;
-        string p =fracToBinary(it.second,16);
-        output<<bitset16ToSave(bitset<16>(p));
+        string p =fracToBinary(it.second,32);
+        output<<bitset32ToSave(bitset<32>(p));
     }
-    string out=fracToBinary(z,mx);
+
     output<<bitset32ToSave(bitset<32>(count));
-    //cout<<"Z: "<<binaryFracToDecimal(out)<<" : "<<z<<endl;
+    cout<<"Pn: "<<P.size()<<endl;
+    long mx=ceil(log(1/Px))+1;
+    
     string realOut;
-    //cout<<"Out: "<<out<<endl;
-    for(int i=0;i<out.size()/8;i++){
+    op+=fracToBinary(z,128);
+    if(mx>0)
+        op=op.substr(0,mx);
+
+    for(int i=0;i<op.size()/8;i++){
         bitset<8>temp;
         for(int j=0;j<8;j++){
-            //cout<<out[8*i+j]<<endl;
-            temp[7-j] = (out[8*i+j] == '1');
+            temp[7-j] = (op[8*i+j] == '1');
         }
-        //cout<<temp<<endl;
         realOut=realOut+(char)bitset<8>(temp.to_string()).to_ulong();
     }
-    //cout<<"RealOut: "<<realOut<<endl;
+    if (op.size() % 8 != 0) {
+        bitset<8> temp;
+        for (int j = 0; j < op.size() % 8; ++j) {
+            temp[7 - j] = (op[op.size() / 8 * 8 + j] == '1');
+        }
+        realOut += (char)temp.to_ulong();
+    }
+    
+    cout<<"Z: "<<binaryFracToDecimal(op)<<endl;
+    cout<<"N: "<<n<<endl;
+    //cout<<"Op: "<<op<<endl;
+    //cout<<"mx: "<<mx<<endl;
     output<<realOut;
     input2.close();
     output.close();
-    cout<<z<<endl;
     cout<<"Entropia: "<<entropy1<<endl;
 }
