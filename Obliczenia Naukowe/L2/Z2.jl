@@ -1,3 +1,4 @@
+#Jakub Kowal
 using Plots
 
 f(x) = exp(x) * log(1 + exp(-x))

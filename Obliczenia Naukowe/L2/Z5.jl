@@ -1,23 +1,29 @@
-function Pn(n::Int,r)
-    if n==0
-        return convert(typeof(r),0.01)
+#Jakub Kowal
+using Plots
+
+function Pn(p0,r,obciecie::Bool)
+    x=zeros(typeof(p0),40)
+    x[1]=p0
+    for n in 2:40
+        if n==12
+            x[11]=floor(x[11],digits=3)
+        end
+        x[n]=x[n-1]+r*x[n-1]*(1-x[n-1])
     end
-    temp=Pn(n-1,r)
-    return temp+r*temp*(1-temp)
+    return x
 end
 
-function PnWithStop(n::Int,r,tick::Int)
-    if n==0
-        return convert(typeof(r),0.01)
-    end
-    if tick==0
-        floor(r,digits=3)
-        println("R: ",r)
-    end
-    temp=PnWithStop(n-1,r,tick-1)
-    return temp+r*temp*(1-temp)
-end
+plt = plot(title="Wykresy Funkcji Pn",
+           xlabel="n",
+           ylabel="Wynik",
+           legend=:outerright)
 
-println(Pn(40,Float32(3)))
-# println(PnWithStop(40,Float64(3),10))
-println(trunc(Pn(40,Float64(3)),digits=3,base=10))
+y1=Pn(Float64(0.01),3,false)
+y2=Pn(Float32(0.01),3,false)
+y3=Pn(Float32(0.01),3,true)
+
+plot!(plt, 1:40, y1, label="Float64", color=:blue, linestyle=:solid, linewidth=6)
+plot!(plt, 1:40, y2, label="Float32", color=:red, linestyle=:dash, linewidth=4)
+plot!(plt, 1:40, y3, label="Float32 + Obcięcie", color=:green, linestyle=:dot, linewidth=2)
+
+display(plt)

@@ -7,6 +7,8 @@
 \usepackage{siunitx}
 \usepackage{multirow}
 \usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{float}
 \title{Sprawozdanie obliczenia naukowe\\Lista 2}
 \author{Jakub Kowal}
 \date{}
@@ -14,32 +16,105 @@
 \maketitle
 
 \section{Zadanie 1}
+\subsection{Opis problemu}
+Zadanie polega na wprowadzeniu niewielkich zmian do danych wejściowych, żeby sprawdzić uwaronkowanie zadania 5 z listy 1\\
 \subsection{Wyniki}
-pa: -0.004296342739891585\\
-pb: -0.004296342998713953\\
-pc: -0.004296342842280865\\
-pd: -0.004296342842280865\\
-pa32: -0.4999443\\
-pb32: -0.4543457\\
-pc32: -0.5\\
-pd32: -0.5\\
-og:\\
-pa: 1.0251881368296672e-10\\
-pb: -1.5643308870494366e-10\\
-pc: 0.0\\
-pd: 0.0\\
-pa32: -0.4999443\\
-pb32: -0.4543457\\
-pc32: -0.5\\
-pd32: -0.5\\
+Float64:\\
+\\
+\begin{tabular}{|c|c|c|}
+    \hline
+    Operacja & Typ & Wynik\\
+    \hline
+    \multirow{3}{*}{pa}&Stare Dane&\num{1.0251881368296672e-10}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.004296342739891585}\\
+    \cline{2-3}
+    &Cond()&\num{4.19078478190021e7}\\
+    \hline
+    \multirow{3}{*}{pb}&Stare Dane&\num{-1.5643308870494366e-10}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.004296342998713953}\\
+    \cline{2-3}
+    &Cond()&\num{2.7464412279069766e7}\\
+    \hline
+    \multirow{3}{*}{pc}&Stare Dane&\num{0.0}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.004296342842280865}\\
+    \cline{2-3}
+    &Cond()&Inf\\
+    \hline
+    \multirow{3}{*}{pd}&Stare Dane&\num{0.0}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.004296342842280865}\\
+    \cline{2-3}
+    &Cond()&Inf\\
+    \hline
+\end{tabular}\\\\
+Float32:\\\\
+\begin{tabular}{|c|c|c|}
+    \hline
+    Operacja & Typ & Wynik\\
+    \hline
+    \multirow{3}{*}{pa32}&Stare Dane&\num{-0.4999443}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.4999443}\\
+    \cline{2-3}
+    &Cond()&\num{0.0}\\
+    \hline
+    \multirow{3}{*}{pb32}&Stare Dane&\num{-0.4543457}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.4543457}\\
+    \cline{2-3}
+    &Cond()&\num{0.0}\\
+    \hline
+    \multirow{3}{*}{pc32}&Stare Dane&\num{-0.5}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.5}\\
+    \cline{2-3}
+    &Cond()&\num{0.0}\\
+    \hline
+    \multirow{3}{*}{pd32}&Stare Dane&\num{-0.5}\\
+    \cline{2-3}
+    &Nowe Dane&\num{-0.5}\\
+    \cline{2-3}
+    &Cond()&\num{0.0}\\
+    \hline
+\end{tabular}\\
 \subsection{Wnioski}
-Zadanie źle uwarunkowane --- patrz wykład\\
+Dla Float64 zadanie jest bardzo źle uwarunkowane, ponieważ wskaźnik uwarunkowania zadania, jest bardzo duży. W przykładach c i d sięga nawet nieskończoności. Dla Float32 te zmiany nie wpływają na uwarunkowanie zadania, ponieważ nasze zmiany gubiły się podczas redukcji cyfr znaczących.\\
+
 \section{Zadanie 2}
+\subsection{Opis problemu}
+W zadaniu trzeba narysować wykres funkcji:\\
+\begin{center}
+    $f(x)=e^{x}\ln(1+e^{-x})$
+\end{center}
+Następnie policzyć granicę:
+\begin{center}
+    $\lim_{x \to \infty}f(x)  $
+\end{center}
+Oraz porównać wykresy z wyliczoną granicą.
 \subsection{Wyniki}
-//wykresy
+Granice:
+\begin{center}
+    $x\rightarrow -\infty$ lim = 0\\
+    $x\rightarrow \infty$ lim = 1
+\end{center}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=120mm]{Z2_plot_julia.pdf}
+    \caption{Wykres funkcji $f(x)$ wygenerowany w Julii}
+    \label{fig:Z2_plot_julia}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=120mm]{Z2_plot_py.png}
+    \caption{Wykres funkcji $f(x)$ wygenerowany w pythonie}
+    \label{fig:Z2_plot_python}
+\end{figure}
 \subsection{Wnioski}
-dla $x\rightarrow -\infty$ lim = 0\\
-dla $x\rightarrow \infty$ lim =1
+Jak widać na wykresie \ref{fig:Z2_plot_julia} wygenerowanym w Julii, lub na wykresie \ref{fig:Z2_plot_python} wygenerowanym w pythonie, funkcja ta zbiega do $1$ zgodnie z wyliczoną granicą.
+
 \section{Zadanie 3}
 \subsection{Wyniki}
 Wyniki dla Macierzy Hilb:\\
@@ -214,8 +289,12 @@ Wyniki cond dla macierzy rzędu 6 (oraz c = $10^{7}$)\\
 Cond A hilb: $1.4951058642254665*10^{7}$\\
 Cond A matcond: $1.000000003815985*10^{8}$\\
 \subsection{Wnioski}
+Błędy względne tych dwóch algorytmów są bardzo zbliżone, ale wydaje mi się, że algorytm z inwersją osiągał niższe błędy.\\
+Warto dodać, że rank(A) czasami zwracał niższy rząd macierzy, niż prawdziwy, ponieważ pomijał wartości w macierzy, które były za niskie.
+
 \section{Zadanie 4}
 \subsection{Wyniki}
+\centering
 \subsubsection*{A)}
 \centering
     \begin{longtable}{|c|c|c|}

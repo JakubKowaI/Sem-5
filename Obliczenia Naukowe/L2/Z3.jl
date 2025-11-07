@@ -1,3 +1,4 @@
+#Jakub Kowal
 include("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/listy/L2/hilb.jl")
 include("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/listy/L2/matcond.jl")
 
