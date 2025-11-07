@@ -115,7 +115,7 @@ int main(int argc,char** argv){
     int underflow = 0;
 
     // zainicjalizuj z z pierwszych np. 64 bitów
-    int initBits = min(127, (int)tempRead.size());
+    int initBits = min(112, (int)tempRead.size());
     for (int i = 0; i < initBits; ++i) {
         z = z * 2.0L + (tempRead[i] == '1' ? 1.0L : 0.0L);
     }
@@ -168,7 +168,7 @@ int main(int argc,char** argv){
                             z = 2.0L * z + (tempRead[bit_index] == '1' ? 1.0L : 0.0L);
                         }
                     }
-                    else if (range.first >= 0.25L && range.second < 0.75L) {
+                    else if (range.first >= 0.25L && range.second < 0.75L&&range.first<0.5L&&range.second>0.5L) {
                         // E3 – underflow
                         underflow++;
                         range.first = 2.0L * range.first - 0.5L;
