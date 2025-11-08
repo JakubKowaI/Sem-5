@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1762539545.96487 "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" "Sprawko.pdf" "Sprawko" 1762539547.26438 0
-  "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" 1762539545.73253 20275 011ef0de414c32b03fe839b2951164e6 ""
+["pdflatex"] 1762628700.31619 "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" "Sprawko.pdf" "Sprawko" 1762628701.69773 0
+  "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" 1762628700.08829 23565 b26b69eb08939ca778c5c9dd48c3a4e8 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1755987285 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1755987285 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc" 1755987285 2840 216e6e45ad352e2456e1149f28885bee ""
@@ -108,11 +108,15 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1755987285 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1761420915 5317539 992b4394a71edd1db544202da8fce254 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1761420896 2021044 7219092b61e7806f62e87ca6969f73de ""
-  "Sprawko.aux" 1762539547.18755 2566 898365c899853f84b5d601c2b2f5dec3 "pdflatex"
-  "Sprawko.out" 1762539547.18855 1335 cd5b9bbebfd90a7f0aabbadf039d77f9 "pdflatex"
-  "Sprawko.tex" 1762539545.73253 20275 011ef0de414c32b03fe839b2951164e6 ""
+  "Sprawko.aux" 1762628701.62666 4483 f0a22d2c960fbe667258700f95914d61 "pdflatex"
+  "Sprawko.out" 1762628701.62766 2254 f57851adafc722569ce2bf722320d7ee "pdflatex"
+  "Sprawko.tex" 1762628700.08829 23565 b26b69eb08939ca778c5c9dd48c3a4e8 ""
   "Z2_plot_julia.pdf" 1762537196.70505 49829 db3ac0a1fe877938dcc53418e9b87749 ""
   "Z2_plot_py.png" 1762430742.71582 97641 39594dba141efd216da6bb136f9763bb ""
+  "Z5_plot.pdf" 1762626140.23652 66336 aeb54fec377c827ea692b7af32396b0c ""
+  "Z6_plot_v1.pdf" 1762628088.77521 61445 78de25091aedb78d2607271dd21fd4d6 ""
+  "Z6_plot_v2.pdf" 1762628091.0372 55540 a8e6eb0e966ac14608317acaf32d9bd7 ""
+  "Z6_plot_v3.pdf" 1762628092.2992 56850 61e94b313f7928c6e6250904f6dd374b ""
   (generated)
   "Sprawko.aux"
   "Sprawko.log"

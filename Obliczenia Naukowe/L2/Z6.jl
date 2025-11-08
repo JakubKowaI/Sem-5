@@ -21,10 +21,10 @@ plt = plot(title="Iteracje",
 
 
 plot!(plt,1:n,rek_iter(40,1.0,-2.0),label="x0=1.0 r=-2.0")
-plot!(plt,1:n,rek_iter(40,2.0,-2.0),label="x0=2.0 r=-2.0")
-plot!(plt,1:n,rek_iter(40,1.99999999999999,-2.0),label="x0=1.99999999999999 r=-2.0")
-plot!(plt,1:n,rek_iter(40,1.0,-1.0),label="x0=1.0 r=-1.0")
-plot!(plt,1:n,rek_iter(40,-1.0,-1.0),label="x0=-1.0 r=-1.0")
+# plot!(plt,1:n,rek_iter(40,2.0,-2.0),label="x0=2.0 r=-2.0")
+# plot!(plt,1:n,rek_iter(40,1.99999999999999,-2.0),label="x0=1.99999999999999 r=-2.0")
+# plot!(plt,1:n,rek_iter(40,1.0,-1.0),label="x0=1.0 r=-1.0",color=:red)
+# plot!(plt,1:n,rek_iter(40,-1.0,-1.0),label="x0=-1.0 r=-1.0",linestyle=:dash)
 plot!(plt,1:n,rek_iter(40,0.75,-1.0),label="x0=0.75 r=-1.0")
 plot!(plt,1:n,rek_iter(40,0.25,-1.0),label="x0=0.25 r=-1.0")
 

@@ -101,13 +101,11 @@ Granice:
     $x\rightarrow \infty$ lim = 1
 \end{center}
 \begin{figure}[H]
-    \centering
     \includegraphics[width=120mm]{Z2_plot_julia.pdf}
     \caption{Wykres funkcji $f(x)$ wygenerowany w Julii}
     \label{fig:Z2_plot_julia}
 \end{figure}
 \begin{figure}[H]
-    \centering
     \includegraphics[width=120mm]{Z2_plot_py.png}
     \caption{Wykres funkcji $f(x)$ wygenerowany w pythonie}
     \label{fig:Z2_plot_python}
@@ -293,11 +291,14 @@ Błędy względne tych dwóch algorytmów są bardzo zbliżone, ale wydaje mi si
 Warto dodać, że rank(A) czasami zwracał niższy rząd macierzy, niż prawdziwy, ponieważ pomijał wartości w macierzy, które były za niskie.
 
 \section{Zadanie 4}
+\subsection{Opis problemu}
+Mamy obliczyć miejsca zerowe wielomianu funkcją $roots()$, następnie porównać obliczone miejsca zerowe do prawdziwych (liczby od 1 do 20). Dodatkowo spróbować obliczyć te wielomiany za pomocą miejsc zerowych oraz wyjaśnić skąd się biorą rozbieżności. Powtórzyć eksperyment dla zaburzonych danych oraz wyjaśnić zjawisko.
 \subsection{Wyniki}
-\centering
 \subsubsection*{A)}
-\centering
+\begin{center}
     \begin{longtable}{|c|c|c|}
+        \caption*{Tabela bez zmian współczynnika}
+    \label{tab:table1}\\
     \hline
     Obliczone miejsce zerowe & Operacja & Wynik \\
     \hline
@@ -427,10 +428,14 @@ Warto dodać, że rank(A) czasami zwracał niższy rząd macierzy, niż prawdziw
     & $|k - z_k|$ & \num{0.00019070876336257925} \\
     \hline
     \end{longtable}
+\end{center}
 
     \subsubsection*{B) }
-\centering
+
+    \begin{center}
     \begin{longtable}{|c|c|c|}
+        \caption*{Tabela ze zmianą współczynnika}
+        \label{tab:table2}\\
     \hline
     Obliczone miejsce zerowe & Operacja & Wynik \\
     \hline
@@ -560,5 +565,50 @@ Warto dodać, że rank(A) czasami zwracał niższy rząd macierzy, niż prawdziw
         & $|k - z_k|$ & \num{0.8469102151947894} \\
         \hline
     \end{longtable}
+     \end{center}
+
 \subsection{Wnioski}
+Proces jest niestabilny, bo widać że niewielkie zmiany w danych nakładają się i kumulują w większe dysproporcje. Dodatkowo zauważamy jak zaokrąglanie liczb powoduje niepoprawne wyniki przy obliczaniu wyników wielomianów. W tabelach \ref{tab:table1} i \ref{tab:table2} jasno ukazuje się wielka dysproporcja w wynikach (które powinny być równe 0). Wielomian Wilkinsona jest źle uwarunkowany, ponieważ delikatne zmiany w danych prowadzą do dużych zmian w wyniku. Ponadto poprzez zaburzenie jednego współczynnika o liczbę $\epsilon$ powoduje wielkie zmiany w miejscach zerowych wyliczanych przez $roots()$. Pojawiają się "zera zespolone" oraz miejsca zerowe się powtarzają. Dlaczego dochodzi do tak dużych błędów? Te minimalne zmiany w połączeniu z obrzymimi liczbami powodują redukcję cyfr znaczących, co prowadzi do kolejnych błędnych zaokrągleń i redukcji.
+
+\section{Zadanie 5}
+\subsection{Opis problemu}
+Rozważamy równanie:
+\begin{center}
+    $p_{n+1} = p_{n} + rp_{n}(1-p_{n})$
+\end{center}
+dla danych $p_{0} = 0,01$ i $r = 3$. Mamy wykonać 40 iteracji oraz 40 iteracji z obcięciem liczby po 10 iteracji w arytmetyce Float32. Ponadto wykonać 40 iteracji tego równania w arytmetyce Float64 i porównać wyniki.
+\subsection{Wyniki}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z5_plot.pdf}
+    \caption{Wyniki równań zadania 5}
+    \label{fig:Z5}
+\end{figure}
+\subsection{Wnioski}
+Wykres wyników zadania piątego \ref{fig:Z5} idealnie obrazuje nam zjawisko niestabilności. Porównując wykresy funkcji dla Float32 możemy zauważyć jak błędy wynikające z obcięcia cyfr rosną znacząco razem z kolejnymi iteracjami. Błędy zaczynają się od niewielkich różnic, ale wraz z kolejnymi iteracjami znacząco odbiegają od poprawnego wyniku. Wyniki dla Float64 odbiegają od tych dla Float32, co oznacza, że zaokrąglenia też powodują tutaj niestabilność. Mają one wpływ na kolejne iteracje co kumuluje błędy.
+
+\section{Zadanie 6}
+\subsection{Opis zadania}
+Rozważamy równanie:
+\begin{center}
+    $x_{n+1} = x^{2}_{n}+c$
+\end{center}
+dla różnych danych $c$ i $x_{0}$. Mamy zwrócić uwagę na zachowanie tych ciągów.
+\subsection{Wyniki}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_plot_v1.pdf}
+    \caption{Wyniki dla 1), 2), 3)}
+    \label{fig:Z6_1}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_plot_v2.pdf}
+    \caption{Wyniki dla 1), 4), 5)}
+    \label{fig:Z6_2}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_plot_v3.pdf}
+    \caption{Wyniki dla 1), 6), 7)}
+    \label{fig:Z6_3}
+\end{figure}
+\subsection{Wnioski}
+Na wykresie \ref{fig:Z6_1} możemy zauważyć jak drobne zaburzenie danych może prowadzić do błędnych wyników.
 \end{document}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  7 NOV 2025 19:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  8 NOV 2025 20:05
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -409,15 +409,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 88--89
 
  []
 
-<Z2_plot_julia.pdf, id=74, 451.6875pt x 301.125pt>
+<Z2_plot_julia.pdf, id=110, 451.6875pt x 301.125pt>
 File: Z2_plot_julia.pdf Graphic file (type pdf)
 <use Z2_plot_julia.pdf>
-Package pdftex.def Info: Z2_plot_julia.pdf  used on input line 105.
+Package pdftex.def Info: Z2_plot_julia.pdf  used on input line 104.
 (pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
-<Z2_plot_py.png, id=75, 499.1448pt x 337.9827pt>
+<Z2_plot_py.png, id=111, 499.1448pt x 337.9827pt>
 File: Z2_plot_py.png Graphic file (type png)
 <use Z2_plot_py.png>
-Package pdftex.def Info: Z2_plot_py.png  used on input line 111.
+Package pdftex.def Info: Z2_plot_py.png  used on input line 109.
 (pdftex.def)             Requested size: 341.43306pt x 231.197pt.
 
 
@@ -427,71 +427,127 @@ Package pdftex.def Info: Z2_plot_py.png  used on input line 111.
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.118 \section
+l.116 \section
               {Zadanie 3}
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.118 \section
+l.116 \section
               {Zadanie 3} <./Z2_plot_julia.pdf> <./Z2_plot_py.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 120--121
+Underfull \hbox (badness 10000) in paragraph at lines 118--119
 
  []
 
 
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 208--209
+Underfull \hbox (badness 10000) in paragraph at lines 206--207
 
  []
 
 
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 288--291
+Underfull \hbox (badness 10000) in paragraph at lines 286--289
 
  []
 
 
 
 [6] [7]
-Overfull \hbox (66.23842pt too wide) in alignment at lines 433--437
+Overfull \hbox (66.23842pt too wide) in alignment at lines 436--442
  [] [] [] 
  []
 
 
-Overfull \hbox (66.23842pt too wide) in alignment at lines 437--441
+Overfull \hbox (66.23842pt too wide) in alignment at lines 442--446
  [] [] [] 
  []
 
 
-Overfull \hbox (66.23842pt too wide) in alignment at lines 441--562
+Overfull \hbox (66.23842pt too wide) in alignment at lines 446--567
  [] [] [] 
  []
+
+
 
 [8] [9]
+<Z5_plot.pdf, id=436, 451.6875pt x 301.125pt>
+File: Z5_plot.pdf Graphic file (type pdf)
+<use Z5_plot.pdf>
+Package pdftex.def Info: Z5_plot.pdf  used on input line 582.
+(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
 
-[10] (./Sprawko.aux)
+
+[10]
+<Z6_plot_v1.pdf, id=442, 451.6875pt x 301.125pt>
+File: Z6_plot_v1.pdf Graphic file (type pdf)
+<use Z6_plot_v1.pdf>
+Package pdftex.def Info: Z6_plot_v1.pdf  used on input line 598.
+(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
+<Z6_plot_v2.pdf, id=443, 451.6875pt x 301.125pt>
+File: Z6_plot_v2.pdf Graphic file (type pdf)
+<use Z6_plot_v2.pdf>
+Package pdftex.def Info: Z6_plot_v2.pdf  used on input line 603.
+(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
+
+
+[11
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.606 \end{figure}
+                   <./Z5_plot.pdf>]
+<Z6_plot_v3.pdf, id=808, 451.6875pt x 301.125pt>
+File: Z6_plot_v3.pdf Graphic file (type pdf)
+<use Z6_plot_v3.pdf>
+Package pdftex.def Info: Z6_plot_v3.pdf  used on input line 608.
+(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
+
+
+[12
+pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.611 \end{figure}
+                   <./Z6_plot_v1.pdf>]
+
+[13
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.614 \end{document}
+                    
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.614 \end{document}
+                     <./Z6_plot_v2.pdf> <./Z6_plot_v3.pdf
+
+pdfTeX warning: pdflatex (file ./Z6_plot_v3.pdf): PDF inclusion: multiple pdfs with page group included in a single page
+>]
+
+[14] (./Sprawko.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `Sprawko.out' has not changed.
-(rerunfilecheck)             Checksum: CD5B9BBEBFD90A7F0AABBADF039D77F9;1335.
+(rerunfilecheck)             Checksum: F57851ADAFC722569CE2BF722320D7EE;2254.
  ) 
 Here is how much of TeX's memory you used:
- 14240 strings out of 475136
- 284157 string characters out of 5766290
- 702495 words of memory out of 5000000
- 37044 multiletter control sequences out of 15000+600000
+ 14300 strings out of 475136
+ 285188 string characters out of 5766290
+ 702727 words of memory out of 5000000
+ 37087 multiletter control sequences out of 15000+600000
  602405 words of font info for 63 fonts, out of 8000000 for 9000
  34 hyphenation exceptions out of 8191
- 75i,10n,80p,384b,1166s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,80p,977b,1223s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Sprawko.pdf (10 pages, 315068 bytes).
+Output written on Sprawko.pdf (14 pages, 495233 bytes).
 PDF statistics:
- 461 PDF objects out of 1000 (max. 8388607)
- 330 compressed objects within 4 object streams
- 31 named destinations out of 1000 (max. 500000)
- 123 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1863 PDF objects out of 2073 (max. 8388607)
+ 1276 compressed objects within 13 object streams
+ 48 named destinations out of 1000 (max. 500000)
+ 215 words of extra memory for PDF output out of 10000 (max. 10000000)
 
