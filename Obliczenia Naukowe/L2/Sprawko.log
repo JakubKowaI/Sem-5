@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  8 NOV 2025 20:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  8 NOV 2025 21:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -453,19 +453,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 286--289
  []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 290--291
+
+ []
+
+
 
 [6] [7]
-Overfull \hbox (66.23842pt too wide) in alignment at lines 436--442
+Overfull \hbox (66.23842pt too wide) in alignment at lines 435--441
  [] [] [] 
  []
 
 
-Overfull \hbox (66.23842pt too wide) in alignment at lines 442--446
+Overfull \hbox (66.23842pt too wide) in alignment at lines 441--445
  [] [] [] 
  []
 
 
-Overfull \hbox (66.23842pt too wide) in alignment at lines 446--567
+Overfull \hbox (66.23842pt too wide) in alignment at lines 445--566
  [] [] [] 
  []
 
@@ -475,7 +480,7 @@ Overfull \hbox (66.23842pt too wide) in alignment at lines 446--567
 <Z5_plot.pdf, id=436, 451.6875pt x 301.125pt>
 File: Z5_plot.pdf Graphic file (type pdf)
 <use Z5_plot.pdf>
-Package pdftex.def Info: Z5_plot.pdf  used on input line 582.
+Package pdftex.def Info: Z5_plot.pdf  used on input line 581.
 (pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
 
 
@@ -483,12 +488,12 @@ Package pdftex.def Info: Z5_plot.pdf  used on input line 582.
 <Z6_plot_v1.pdf, id=442, 451.6875pt x 301.125pt>
 File: Z6_plot_v1.pdf Graphic file (type pdf)
 <use Z6_plot_v1.pdf>
-Package pdftex.def Info: Z6_plot_v1.pdf  used on input line 598.
+Package pdftex.def Info: Z6_plot_v1.pdf  used on input line 597.
 (pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
 <Z6_plot_v2.pdf, id=443, 451.6875pt x 301.125pt>
 File: Z6_plot_v2.pdf Graphic file (type pdf)
 <use Z6_plot_v2.pdf>
-Package pdftex.def Info: Z6_plot_v2.pdf  used on input line 603.
+Package pdftex.def Info: Z6_plot_v2.pdf  used on input line 602.
 (pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
 
 
@@ -496,12 +501,12 @@ Package pdftex.def Info: Z6_plot_v2.pdf  used on input line 603.
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.606 \end{figure}
+l.605 \end{figure}
                    <./Z5_plot.pdf>]
 <Z6_plot_v3.pdf, id=808, 451.6875pt x 301.125pt>
 File: Z6_plot_v3.pdf Graphic file (type pdf)
 <use Z6_plot_v3.pdf>
-Package pdftex.def Info: Z6_plot_v3.pdf  used on input line 608.
+Package pdftex.def Info: Z6_plot_v3.pdf  used on input line 607.
 (pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
 
 
@@ -509,25 +514,105 @@ Package pdftex.def Info: Z6_plot_v3.pdf  used on input line 608.
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.611 \end{figure}
+l.610 \end{figure}
                    <./Z6_plot_v1.pdf>]
+<Z6_spider_1.png, id=1142, 602.25pt x 401.5pt>
+File: Z6_spider_1.png Graphic file (type png)
+<use Z6_spider_1.png>
+Package pdftex.def Info: Z6_spider_1.png  used on input line 612.
+(pdftex.def)             Requested size: 341.43306pt x 227.6321pt.
+<Z6_spider_2.png, id=1143, 602.25pt x 401.5pt>
+File: Z6_spider_2.png Graphic file (type png)
+<use Z6_spider_2.png>
+Package pdftex.def Info: Z6_spider_2.png  used on input line 617.
+(pdftex.def)             Requested size: 341.43306pt x 227.6321pt.
+
 
 [13
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.614 \end{document}
-                    
+l.620 \end{figure}
+                  
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.614 \end{document}
-                     <./Z6_plot_v2.pdf> <./Z6_plot_v3.pdf
+l.620 \end{figure}
+                   <./Z6_plot_v2.pdf> <./Z6_plot_v3.pdf
 
 pdfTeX warning: pdflatex (file ./Z6_plot_v3.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 >]
+<Z6_spider_3.png, id=1797, 602.25pt x 401.5pt>
+File: Z6_spider_3.png Graphic file (type png)
+<use Z6_spider_3.png>
+Package pdftex.def Info: Z6_spider_3.png  used on input line 622.
+(pdftex.def)             Requested size: 341.43306pt x 227.6321pt.
+<Z6_spider_4.png, id=1798, 602.25pt x 401.5pt>
+File: Z6_spider_4.png Graphic file (type png)
+<use Z6_spider_4.png>
+Package pdftex.def Info: Z6_spider_4.png  used on input line 627.
+(pdftex.def)             Requested size: 341.43306pt x 227.6321pt.
 
-[14] (./Sprawko.aux)
+
+[14
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.630 \end{figure}
+                  
+pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.630 \end{figure}
+                   <./Z6_spider_1.png> <./Z6_spider_2.png>]
+<Z6_spider_5.png, id=1805, 602.25pt x 401.5pt>
+File: Z6_spider_5.png Graphic file (type png)
+<use Z6_spider_5.png>
+Package pdftex.def Info: Z6_spider_5.png  used on input line 632.
+(pdftex.def)             Requested size: 341.43306pt x 227.6321pt.
+<Z6_spider_6.png, id=1806, 602.25pt x 401.5pt>
+File: Z6_spider_6.png Graphic file (type png)
+<use Z6_spider_6.png>
+Package pdftex.def Info: Z6_spider_6.png  used on input line 637.
+(pdftex.def)             Requested size: 341.43306pt x 227.6321pt.
+
+
+[15
+pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.640 \end{figure}
+                  
+pdfTeX warning (ext4): destination with the same identifier (name{figure.10}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.640 \end{figure}
+                   <./Z6_spider_3.png> <./Z6_spider_4.png>]
+<Z6_spider_7.png, id=1814, 602.25pt x 401.5pt>
+File: Z6_spider_7.png Graphic file (type png)
+<use Z6_spider_7.png>
+Package pdftex.def Info: Z6_spider_7.png  used on input line 642.
+(pdftex.def)             Requested size: 341.43306pt x 227.6321pt.
+
+
+[16
+pdfTeX warning (ext4): destination with the same identifier (name{figure.11}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.646 \subsection
+                 {Wnioski}
+pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.646 \subsection
+                 {Wnioski} <./Z6_spider_5.png> <./Z6_spider_6.png>]
+
+[17
+pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.648 \end{document}
+                     <./Z6_spider_7.png>] (./Sprawko.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -536,18 +621,18 @@ Package rerunfilecheck Info: File `Sprawko.out' has not changed.
 (rerunfilecheck)             Checksum: F57851ADAFC722569CE2BF722320D7EE;2254.
  ) 
 Here is how much of TeX's memory you used:
- 14300 strings out of 475136
- 285188 string characters out of 5766290
- 702727 words of memory out of 5000000
- 37087 multiletter control sequences out of 15000+600000
+ 14366 strings out of 475136
+ 286424 string characters out of 5766290
+ 703114 words of memory out of 5000000
+ 37143 multiletter control sequences out of 15000+600000
  602405 words of font info for 63 fonts, out of 8000000 for 9000
  34 hyphenation exceptions out of 8191
  75i,10n,80p,977b,1223s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Sprawko.pdf (14 pages, 495233 bytes).
+Output written on Sprawko.pdf (17 pages, 658793 bytes).
 PDF statistics:
- 1863 PDF objects out of 2073 (max. 8388607)
- 1276 compressed objects within 13 object streams
- 48 named destinations out of 1000 (max. 500000)
- 215 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1891 PDF objects out of 2073 (max. 8388607)
+ 1294 compressed objects within 13 object streams
+ 58 named destinations out of 1000 (max. 500000)
+ 250 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -288,7 +288,6 @@ Cond A hilb: $1.4951058642254665*10^{7}$\\
 Cond A matcond: $1.000000003815985*10^{8}$\\
 \subsection{Wnioski}
 Błędy względne tych dwóch algorytmów są bardzo zbliżone, ale wydaje mi się, że algorytm z inwersją osiągał niższe błędy.\\
-Warto dodać, że rank(A) czasami zwracał niższy rząd macierzy, niż prawdziwy, ponieważ pomijał wartości w macierzy, które były za niskie.
 
 \section{Zadanie 4}
 \subsection{Opis problemu}
@@ -608,6 +607,41 @@ dla różnych danych $c$ i $x_{0}$. Mamy zwrócić uwagę na zachowanie tych ci�
     \includegraphics[width=120mm]{Z6_plot_v3.pdf}
     \caption{Wyniki dla 1), 6), 7)}
     \label{fig:Z6_3}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_spider_1.png}
+    \caption{Wykres pajęczynowy dla 1)}
+    \label{fig:Z6_s_1}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_spider_2.png}
+    \caption{Wykres pajęczynowy dla 2)}
+    \label{fig:Z6_s_2}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_spider_3.png}
+    \caption{Wykres pajęczynowy dla 3)\\ Julia sama zaokrągliła x0 do 2.0}
+    \label{fig:Z6_s_3}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_spider_4.png}
+    \caption{Wykres pajęczynowy dla 4)}
+    \label{fig:Z6_s_4}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_spider_5.png}
+    \caption{Wykres pajęczynowy dla 5)}
+    \label{fig:Z6_s_5}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_spider_6.png}
+    \caption{Wykres pajęczynowy dla 6)}
+    \label{fig:Z6_s_6}
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=120mm]{Z6_spider_7.png}
+    \caption{Wykres pajęczynowy dla 7)}
+    \label{fig:Z6_s_7}
 \end{figure}
 \subsection{Wnioski}
 Na wykresie \ref{fig:Z6_1} możemy zauważyć jak drobne zaburzenie danych może prowadzić do błędnych wyników.
