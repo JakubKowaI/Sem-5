@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  8 NOV 2025 21:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.10.25)  9 NOV 2025 14:32
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -477,23 +477,12 @@ Overfull \hbox (66.23842pt too wide) in alignment at lines 445--566
 
 
 [8] [9]
-<Z5_plot.pdf, id=436, 451.6875pt x 301.125pt>
+
+[10]
+<Z5_plot.pdf, id=440, 451.6875pt x 301.125pt>
 File: Z5_plot.pdf Graphic file (type pdf)
 <use Z5_plot.pdf>
 Package pdftex.def Info: Z5_plot.pdf  used on input line 581.
-(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
-
-
-[10]
-<Z6_plot_v1.pdf, id=442, 451.6875pt x 301.125pt>
-File: Z6_plot_v1.pdf Graphic file (type pdf)
-<use Z6_plot_v1.pdf>
-Package pdftex.def Info: Z6_plot_v1.pdf  used on input line 597.
-(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
-<Z6_plot_v2.pdf, id=443, 451.6875pt x 301.125pt>
-File: Z6_plot_v2.pdf Graphic file (type pdf)
-<use Z6_plot_v2.pdf>
-Package pdftex.def Info: Z6_plot_v2.pdf  used on input line 602.
 (pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
 
 
@@ -501,8 +490,18 @@ Package pdftex.def Info: Z6_plot_v2.pdf  used on input line 602.
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.605 \end{figure}
-                   <./Z5_plot.pdf>]
+l.595 \subsection
+                 {Wyniki} <./Z5_plot.pdf>]
+<Z6_plot_v1.pdf, id=806, 451.6875pt x 301.125pt>
+File: Z6_plot_v1.pdf Graphic file (type pdf)
+<use Z6_plot_v1.pdf>
+Package pdftex.def Info: Z6_plot_v1.pdf  used on input line 597.
+(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
+<Z6_plot_v2.pdf, id=807, 451.6875pt x 301.125pt>
+File: Z6_plot_v2.pdf Graphic file (type pdf)
+<use Z6_plot_v2.pdf>
+Package pdftex.def Info: Z6_plot_v2.pdf  used on input line 602.
+(pdftex.def)             Requested size: 341.43306pt x 227.63515pt.
 <Z6_plot_v3.pdf, id=808, 451.6875pt x 301.125pt>
 File: Z6_plot_v3.pdf Graphic file (type pdf)
 <use Z6_plot_v3.pdf>
@@ -606,12 +605,17 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) ha
                                                   \__shipout_drop_firstpage_...
 l.646 \subsection
                  {Wnioski} <./Z6_spider_5.png> <./Z6_spider_6.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 647--648
+
+ []
+
+
 
 [17
 pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.648 \end{document}
+l.652 \end{document}
                      <./Z6_spider_7.png>] (./Sprawko.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
@@ -621,18 +625,18 @@ Package rerunfilecheck Info: File `Sprawko.out' has not changed.
 (rerunfilecheck)             Checksum: F57851ADAFC722569CE2BF722320D7EE;2254.
  ) 
 Here is how much of TeX's memory you used:
- 14366 strings out of 475136
- 286424 string characters out of 5766290
+ 14367 strings out of 475136
+ 286434 string characters out of 5766290
  703114 words of memory out of 5000000
  37143 multiletter control sequences out of 15000+600000
  602405 words of font info for 63 fonts, out of 8000000 for 9000
  34 hyphenation exceptions out of 8191
- 75i,10n,80p,977b,1223s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,80p,1016b,1223s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Sprawko.pdf (17 pages, 658793 bytes).
+Output written on Sprawko.pdf (17 pages, 659942 bytes).
 PDF statistics:
- 1891 PDF objects out of 2073 (max. 8388607)
- 1294 compressed objects within 13 object streams
- 58 named destinations out of 1000 (max. 500000)
+ 1893 PDF objects out of 2073 (max. 8388607)
+ 1296 compressed objects within 13 object streams
+ 59 named destinations out of 1000 (max. 500000)
  250 words of extra memory for PDF output out of 10000 (max. 10000000)
 

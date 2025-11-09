@@ -1,3 +1,4 @@
+#Jakub Kowal i Gemini 2.5 Pro
 using Plots
 using Printf
 
@@ -19,16 +20,8 @@ function stworz_diagram_pajeczynowy(c::Float64, x0::Float64, n_iteracji::Int; pl
     # -----------------------------------
     x_seq = zeros(Float64, n_iteracji + 1)
     x_seq[1] = x0
-    for i in 1:n_iteracji
-        x_next = x_seq[i]^2 + c
-        if abs(x_next) > 1e6
-            println("Ostrzeżenie: Ciąg prawdopodobnie rozbiega się do nieskończoności. Przerywam.")
-            n_iteracji = i
-            x_seq = x_seq[1:i+1]
-            x_seq[i+1] = sign(x_next) * 1e6
-            break
-        end
-        x_seq[i+1] = x_next
+    for i in 2:n_iteracji
+        x_seq[i+1] = x_seq[i]^2 + c
     end
 
     # 2. Tworzenie ścieżki "pajęczyny"

@@ -81,7 +81,7 @@ Float32:\\\\
     \hline
 \end{tabular}\\
 \subsection{Wnioski}
-Dla Float64 zadanie jest bardzo źle uwarunkowane, ponieważ wskaźnik uwarunkowania zadania, jest bardzo duży. W przykładach c i d sięga nawet nieskończoności. Dla Float32 te zmiany nie wpływają na uwarunkowanie zadania, ponieważ nasze zmiany gubiły się podczas redukcji cyfr znaczących.\\
+Dla Float64 zadanie jest bardzo źle uwarunkowane, ponieważ wskaźnik uwarunkowania zadania, jest bardzo duży. W przykładach c i d sięga nawet nieskończoności (przez dzielenie przez 0). Dla Float32 te zmiany nie wpływają na uwarunkowanie zadania, ponieważ nasze zmiany gubiły się podczas redukcji cyfr znaczących.\\
 
 \section{Zadanie 2}
 \subsection{Opis problemu}
@@ -287,7 +287,7 @@ Wyniki cond dla macierzy rzędu 6 (oraz c = $10^{7}$)\\
 Cond A hilb: $1.4951058642254665*10^{7}$\\
 Cond A matcond: $1.000000003815985*10^{8}$\\
 \subsection{Wnioski}
-Błędy względne tych dwóch algorytmów są bardzo zbliżone, ale wydaje mi się, że algorytm z inwersją osiągał niższe błędy.\\
+Błędy względne tych dwóch algorytmów są bardzo zbliżone, ale wydaje mi się, że algorytm z inwersją osiągał niższe błędy. Ponadto macierz matcond podczas obliczeń wykazywała o wiele mniejsze błędy względne.\\
 
 \section{Zadanie 4}
 \subsection{Opis problemu}
@@ -567,7 +567,7 @@ Mamy obliczyć miejsca zerowe wielomianu funkcją $roots()$, następnie porówna
      \end{center}
 
 \subsection{Wnioski}
-Proces jest niestabilny, bo widać że niewielkie zmiany w danych nakładają się i kumulują w większe dysproporcje. Dodatkowo zauważamy jak zaokrąglanie liczb powoduje niepoprawne wyniki przy obliczaniu wyników wielomianów. W tabelach \ref{tab:table1} i \ref{tab:table2} jasno ukazuje się wielka dysproporcja w wynikach (które powinny być równe 0). Wielomian Wilkinsona jest źle uwarunkowany, ponieważ delikatne zmiany w danych prowadzą do dużych zmian w wyniku. Ponadto poprzez zaburzenie jednego współczynnika o liczbę $\epsilon$ powoduje wielkie zmiany w miejscach zerowych wyliczanych przez $roots()$. Pojawiają się "zera zespolone" oraz miejsca zerowe się powtarzają. Dlaczego dochodzi do tak dużych błędów? Te minimalne zmiany w połączeniu z obrzymimi liczbami powodują redukcję cyfr znaczących, co prowadzi do kolejnych błędnych zaokrągleń i redukcji.
+Proces jest niestabilny, bo widać że niewielkie zmiany w danych nakładają się i kumulują w większe dysproporcje. Dodatkowo zauważamy jak zaokrąglanie liczb powoduje niepoprawne wyniki przy obliczaniu wyników wielomianów. W tabelach \ref{tab:table1} i \ref{tab:table2} jasno ukazuje się wielka dysproporcja w wynikach (które powinny być równe 0). Wielomian Wilkinsona jest źle uwarunkowany, ponieważ delikatne zmiany w danych prowadzą do dużych zmian w wyniku. Ponadto poprzez zaburzenie jednego współczynnika o liczbę $\epsilon$ powoduje wielkie zmiany w miejscach zerowych wyliczanych przez $roots()$. Pojawiają się "zera zespolone" oraz miejsca zerowe się powtarzają z innym znakiem przy części urojonej. Dlaczego dochodzi do tak dużych błędów? Te minimalne zmiany w połączeniu z obrzymimi liczbami powodują redukcję cyfr znaczących, co prowadzi do kolejnych błędnych zaokrągleń i redukcji.
 
 \section{Zadanie 5}
 \subsection{Opis problemu}
@@ -644,5 +644,9 @@ dla różnych danych $c$ i $x_{0}$. Mamy zwrócić uwagę na zachowanie tych ci�
     \label{fig:Z6_s_7}
 \end{figure}
 \subsection{Wnioski}
-Na wykresie \ref{fig:Z6_1} możemy zauważyć jak drobne zaburzenie danych może prowadzić do błędnych wyników.
+Na wykresach i diagramach pajęczynowych można zauważyć, że to równanie rekurencyjne zmierza do powtarzających się liczb, najczęściej 0 oraz -1. Wyjątkiem od tych powtarzających się wyników jest \ref{fig:Z6_s_3}, gdzie zaburzenie danych względem \ref{fig:Z6_s_2} powoduje błędy, które nie wykazują żadnej powtarzalności.\\
+
+
+\section*{Adnotacje}
+Wykresy pajęczynowe i wykres do zadania 2 stworzony w pythonie zostały stworzone przez sztuczną inteligencję.
 \end{document}

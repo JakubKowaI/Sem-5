@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1762633683.93855 "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" "Sprawko.pdf" "Sprawko" 1762633685.9134 0
-  "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" 1762633683.60586 24476 284a5d37bd61ad6aa7ca22ad02996e19 ""
+["pdflatex"] 1762695131.81834 "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" "Sprawko.pdf" "Sprawko" 1762695133.44453 0
+  "/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L2/Sprawko.tex" 1762695131.57993 24995 9a7a85cdb3b5854a513d9a302c1e0dfb ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1755987285 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1755987285 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
   "/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc" 1755987285 2840 216e6e45ad352e2456e1149f28885bee ""
@@ -108,9 +108,9 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1755987285 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1761420915 5317539 992b4394a71edd1db544202da8fce254 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1761420896 2021044 7219092b61e7806f62e87ca6969f73de ""
-  "Sprawko.aux" 1762633685.80988 6036 420ef3c60713b916fa9e8fbd0306463d "pdflatex"
-  "Sprawko.out" 1762633685.81188 2254 f57851adafc722569ce2bf722320d7ee "pdflatex"
-  "Sprawko.tex" 1762633683.60586 24476 284a5d37bd61ad6aa7ca22ad02996e19 ""
+  "Sprawko.aux" 1762695133.37194 6036 420ef3c60713b916fa9e8fbd0306463d "pdflatex"
+  "Sprawko.out" 1762695133.37294 2254 f57851adafc722569ce2bf722320d7ee "pdflatex"
+  "Sprawko.tex" 1762695131.57993 24995 9a7a85cdb3b5854a513d9a302c1e0dfb ""
   "Z2_plot_julia.pdf" 1762631277.50824 49829 db3ac0a1fe877938dcc53418e9b87749 ""
   "Z2_plot_py.png" 1762631277.50904 97641 39594dba141efd216da6bb136f9763bb ""
   "Z5_plot.pdf" 1762631277.50904 66336 aeb54fec377c827ea692b7af32396b0c ""
