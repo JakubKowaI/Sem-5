@@ -3,3 +3,8 @@
 !/**/ 
 !*.* 
 */listy
+*.synctex.gz
+*.log
+*.fls
+*.aux
+*.fdb_latexmk

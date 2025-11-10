@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[polish,shorthands=off]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\title{Zadanie 6 z listy 2}
+\author{Jakub Kowal}
+\date{}
+\begin{document}
+    \maketitle
+    \section*{Polecenie}
+
+    \begin{quote}
+        Udowodnij, że jeśli dla pewnego języka L istnieje niedeterministyczny automat skończony
+rozpoznający go, to istnieje również niedeterministyczny automat skończony rozpoznający
+język $L^{R} = \{w : w^{R} \in L\}$.
+    \end{quote}
+    \section*{Rozwiązanie}
+    Zakładamy, że $L\subseteq \Sigma*$ jest rozpoznawalny przej jakiś NFA. Zdefiniujmy ten NFA jako:
+    \begin{center}
+        $N = (Q,\Sigma,\delta,q_{0},F)$
+    \end{center}
+    Wtedy NFA rozpoznające $L^{R}$ wygląda następująco:
+    \begin{center}
+        $N^{R} = (Q\cup \{q_{s}\},\Sigma,\delta^{R},q_{s},q_{0})$
+    \end{center}
+    gdzie $\delta^{R}$ jest odwróceniem $\delta$, tj dla każdego przejścia $q_{i} \rightarrow q_{j}$ w $\delta$ $\delta^{R}$ ma przejścia odwrotne: $q_{j} \rightarrow q_{i}$. Warto też dodać, że w $N^{R}$ muszą istnieć $\epsilon$ przejścia z $q_{s}$ do stanów $F$ z $N$.
+    \begin{center}
+        $\forall_{w \in L^{R}}w^{R}\in L$
+    \end{center}
+    Wtedy istnieją przejścia z $q_{0}$ do $F$ $\hat{q}(q_{0},w^{R})$, czyli $q_{0}\xrightarrow{w_{0}}q_{i}\xrightarrow{w_{2}}\ldots\xrightarrow{w_{n}}q_{F}\in F$. Odwracając te przejścia ($\delta^{R}$) uzyskujemy $q_{F}\xrightarrow{w_{n}}q_{j}\xrightarrow{w_{n-1}}\ldots\xrightarrow{w_{0}}q_{0}$, biorąc pod uwagę $\epsilon$ przejście z $q_{s}$ do $q_{F}$ widzimy, że jest to ścieżka w $N^{R}$. Oznacza to, że $N^{R}$ jest niedeterministycznym automatem rozpoznającym $L^{R}$.
+    \begin{flushright}
+        $\Box$
+    \end{flushright}
+\end{document}

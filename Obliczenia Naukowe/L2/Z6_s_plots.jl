@@ -21,7 +21,7 @@ function stworz_diagram_pajeczynowy(c::Float64, x0::Float64, n_iteracji::Int; pl
     x_seq = zeros(Float64, n_iteracji + 1)
     x_seq[1] = x0
     for i in 2:n_iteracji
-        x_seq[i+1] = x_seq[i]^2 + c
+        x_seq[i] = x_seq[i-1]^2 + c
     end
 
     # 2. Tworzenie ścieżki "pajęczyny"
