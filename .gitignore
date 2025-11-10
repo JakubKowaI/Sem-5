@@ -8,3 +8,6 @@
 *.fls
 *.aux
 *.fdb_latexmk
+*/.svn
+*.zip
+*.bin
