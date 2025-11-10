@@ -73,6 +73,30 @@
     $a_{1}*E_{1}+a_{2}*E_{1}+...+a_{n}*E_{n-1}\le (a_{1}+a_{2}+...+a_{n})*E_{max}\le ((a_{1}+a_{2}+...+a_{n})*\prod_{i=1}^{n-1}(1+\epsilon))-1 = S(1+\epsilon)^{n-1}-1$\newline
     $\frac{|\tilde{S}-S|}{|S|}\le \frac{\cancel{S}+S*(1+s)}{|S|} \leftarrow$ Zmazał za szybko\newline
     $\tilde{S}\le S+S*(1+\epsilon)^{n-1}-1$
+    
+    \subsection{}
+    P(n-1)=$\prod_{i=0}^{n-1}q_{i}$ --- dokładny wynik\\
+    Q(n-1)=fl(P(n-1)) ---wynik w fl\\
+    Q(n-1)=$P(n-1)(1+\sum_{i=1}^{n-1}q_{i}), \forall i |\delta_{i}|\le \epsilon$  
+    n=1 Q(1)=$a_{0}\odot a_{1}=a_{0}a_{1}(1+\delta_{1})=P(1)(1+\sum_{i=1}^{1}q_{i})$\\
+    Zachodzi dla 1\\
+    Q(n+1)=$a_{0}\odot a_{1}\odot \cdots \odot a_{n+1}$=Q(n)$\odot a_{n+1}=(Q(n)a_{n+1})(1+\delta_n+1)=P(n)(1+\sum_{i=1}^{n})a_{n+1}(1+\delta_{n+1})=P(n+1)(1+\sum_{i=1}^{n}\delta_{1})(1+\delta_{n+1})\approx P(n+1)(1+\delta_{n+1}+\sum_{i=1}^{n}\delta_{i})=P(n+1)(1+\sum_{i=1}^{n+1}\delta_{i})$\\
+    \begin{flushright}
+        % $\Box$ 
+    \end{flushright}
+    |P(n)-Q(n)|=$|P(n)\sum_{i=1}^{n}\delta_{i}|$
+
+
+    \subsection{}
+    $A1(a,b) = a^{2}-b^{2}$\\
+    $fl(a^{2}-b^{2})=fl(fl(a^{2})-fl(b^{2}))=(a^{2}(1+\delta_{1})-b^{2}(1+\delta_{2}))(1+\delta_{3})\approx a^{2}-b^{2}+(a^{2}-b^{2})\delta_{3}+a^{2}\delta_{1}-b^{2}\delta_{2}$\\
+    Błąd względny:\\
+    $\frac{|a^{2}-b^{2}+(a^{2}-b^{2})\delta_{3}+a^{2}\delta_{1}-b^{2}\delta_{2}-(a^{2}-b^{2})|}{|a^{2}-b^{2}|}= \frac{|(a^{2}-b^{2})\delta_{3}+a^{2}\delta_{1}-b^{2}\delta_{2}|}{|a^{2}-b^{2}|}\le |\delta_{3}|+ \frac{|a^{2}\delta_{1}-b^{2}\delta_{2}|}{|a^{2}-b^{2}|}\le |\delta_{3}|+ \frac{a^{2}|\delta_{1}|-b^{2}|\delta_{2}|}{|a^{2}-b^{2}|} \le \epsilon + \frac{a^{2}\epsilon + b^{2}\epsilon}{|a^{2}-b^{2}|}=\epsilon(1+\frac{a^{2}+b^{2}}{|a^{2}-b^{2}|})$\\
+    $A2(a,b)=(a-b)(a+b)$\\
+    $((a-b)(1+\delta_{1})(a+b)(1+\delta_{2}))(1+\delta_{3})= (a^{2}-b^{2})(1+\delta_{1})(1+\delta_{2})(1+\delta_{3})\approx (a^{2}-b^{2})(1+\delta_{1}+\delta_{2}+\delta_{3})$\\
+    Błąd względny:\\
+    $\frac{|(a^{2}-b^{2})(1+\delta_{1}+\delta_{2}+\delta_{3})-(a^{2}-b^{2})|}{|a^{2}-b^{2}|}=|\delta_{1}+\delta_{2}+\delta_{3}|\le |\delta_{1}|+|\delta_{2}|+|\delta_{3}|\le 3\epsilon$
+
     \section{Lista 2}
     
     \subsection{}
@@ -86,7 +110,25 @@
     $\frac{1}{\sqrt{x^{2}+1}}\le \frac{3}{4}$\newline
     $\sqrt{x^{2}+1}>=\frac{3}{4}$\newline
 
-    \setcounter{subsection}{3}
+    \subsection{}
+    Wskazówka:\\
+    Twierdzenie z 1 zadania:
+    $2^{-q}<=1-\frac{a}{b}<=2^{-P}$ $\land$ $b-a, b>a$\\
+    $x=\frac{1}{2}$\\
+    $\cos \frac{1}{2}=0,8775825$\\
+    $2^{-q}<=1-\frac{0,8775825}{1}<=2^{-P}$\\
+    $2^{-q}<=0,1224175<=2^{-P}$\\
+    $q=4 \land P=3$
+
+
+    \subsection{}
+    f(x)=$x^{-1}(1-\cos x)$\\
+    a) $\lim_{x \rightarrow 0}\frac{1-\cos x}{x}(De'Hospital)=\lim_{x\rightarrow 0}\frac{\sin x}{1}=0$\\
+    b) $\cos x\approx 1$\\
+    $x\approx 2\pi k, k \in Z$\\
+    $1-\cos x = 2\sin^{2}\frac{x}{2}$\\
+    f(x)=$\frac{2\sin^{2}\frac{x}{2}}{x}=(t=\frac{x}{2})=\frac{\cancel{2}\sin^{2}t}{\cancel{2}t}=t(\frac{\sin t}{t})^{2}=\frac{x}{2}(\frac{\sin\frac{x}{2}}{\frac{x}{2}})^{2}$\\
+    $\lim_{x\rightarrow0}\frac{\sin t}{t}=1$ dla $x\rightarrow 0(t\rightarrow 0)$ mamy $f(t)=t1^{2}=t=\frac{x}{2}$\\
     
     \subsection{}
     $f(x)=\sqrt{x+2}-\sqrt{x}$\newline
@@ -94,5 +136,34 @@
     $\sqrt{x+2}-\sqrt{x} /*\frac{\sqrt{x+2}+\sqrt{x}}{\sqrt{x+2}+\sqrt{x}}$\newline
     $\frac{x+2-x}{\sqrt{x+2}+\sqrt{x}}=\frac{2}{\sqrt{x+2}+\sqrt{x}}$\newline
     $a^{2}-b^{2}=(a-b)(a+b)$\newline
+
+    \setcounter{subsection}{5}
+
+    \subsection{}
+    $4ac\rightarrow0$\\
+    x=$\frac{-b\mp \sqrt{b^{2}-4ac}}{2a}$\\
+    $x_{1}x_{2}=\frac{c}{a}$
+    $q=\frac{1}{2a}(-b-sqm?(b)\sqrt{b^{2}-4ac})$\\
+    $x_{1}=\frac{-b+\sqrt{b^{2}-4ac}}{2a}$\\
+    $x_{2}=\frac{-b-\sqrt{b^{2}-4ac}}{2a}=\frac{-(b+\sqrt{b^{2}-4ac})}{2a}$\\
+    $x_{1}=\frac{c}{ax_{2}}$\\
+    \begin{flushright}
+        \parbox{100mm}{
+            $b=0    ax^{2}+c=0\\\Delta=-4ac$
+        }
+    \end{flushright}
+    $b< 0 $\\
+    $x_{1}=\frac{|b|+\sqrt{b^{2}-4ac}}{2a}$\\
+    $x_{2}=\frac{c}{2a}$
+
+    \setcounter{subsection}{7}
+
+    \subsection{}
+    $\frac{|f(\hat{x})-f(x)|}{|f(x)|}=\frac{|f(x+x\delta)-f(x)|}{|f(x)|}\approx \frac{|f`(x)x\delta|}{|f(x)|}=cond(x)|\delta|$\\
+    $x^{\alpha}   (x^{\alpha})`=\alpha x^{\alpha-1}       \frac{|(\alpha x^{alpha-1})x\delta|}{|x^{\alpha}|}=\frac{|\alpha x^{\alpha}\delta|}{|x^{\alpha}|}=\alpha \delta$\\
+    $\sin x (\sin x)`=\cos x      \frac{|(\cos x)x\delta|}{|\sin x|}=\frac{x\delta}{\tan x}$\\
+    $e^{x} (e^{x})`=e^{x}$\\
+    $x^{-1}e^{x} (x^{-1}e^{x})`=x^{-1}e^{x}+(-1)x^{-2}e^{x}=\frac{e^{x}}{x}-\frac{e^{x}}{x^{2}}$\\
+    $\arcsin x$
 
 \end{document}
