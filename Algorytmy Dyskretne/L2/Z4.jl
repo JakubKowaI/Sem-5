@@ -91,15 +91,22 @@ Gt = BudujGrafT(A, N)
 
 optimize!(model)
 println("Wynik: ",objective_value(model))
-print("    ")
-for t in N
-    print(t,"   ")
-end
-print("\n")
+# print("    ")
+# for t in N
+#     print(t,"   ")
+# end
+# print("\n")
+# for i in N
+#     print(i," - ")
+#     for j in N
+#         print(value(x[i,j])," ")
+#     end
+#     print("\n")
+# end
 for i in N
-    print(i," - ")
     for j in N
-        print(value(x[i,j])," ")
+        if value(x[i,j])!=0
+            println(i,"->",j," c: ",Gc[i,j]," t: ",Gt[i,j])
+        end
     end
-    print("\n")
 end

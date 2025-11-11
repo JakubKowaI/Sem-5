@@ -1,0 +1,375 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[polish,shorthands=off]{babel}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\title{Sprawozdanie algorytmy dyskretne\\Lista 2}
+\author{Jakub Kowal}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Zadanie 1}
+\subsection{Zmienne}
+\begin{center}
+    $x_{f,l}$ - liczba galonów zakupiona od firmy f na lotnisku l.
+\end{center}
+\subsection{Ograniczenia}
+\begin{center}
+    $\sum_{l\in L}^{}x_{fl}\le$ Zasoby firmy f\\
+    $\sum_{f \in F}^{}x_{fl}\le$ Zapotrzebowanie na lotnisku l
+\end{center}
+
+\subsection{Funkcja celu}
+    $c_{fl}$ - Koszt paliwa of firmy f na lotnisku l\\
+\begin{center}
+    min $\sum_{l\in L,f\in F}^{}x_{fl}*c_{fl}$
+\end{center}
+\subsection{Wyniki}
+\begin{quote}
+    Jaki jest minimalny łączny koszt dostaw wymaganych ilości paliwa na wszystkie lotniska?
+\end{quote}
+    Minimalny koszt dostaw paliwa: \num{8.525e6}
+\begin{quote}
+    Czy wszystkie firmy dostarczają paliwo?
+\end{quote}
+   Tak, w takich ilościach:\\
+   \begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Firma& Ilość zamówionego paliwa w galonach\\
+        \hline
+        Firma 1&275000\\
+        \hline
+        Firma 2&165000\\
+        \hline
+        Firma 3&660000\\
+        \hline
+    \end{tabular} 
+    \end{table}
+\begin{quote}
+    Czy możliwości dostaw paliwa przez firmy są wyczerpane?
+\end{quote}
+    Tylko firma 1 oraz firma 3 wyczerpały swoje możliwości dostaw paliwa.
+
+\section{Zadanie 2}
+\subsection{Zmienne}
+\begin{center}
+    $x_{m,p}$ - Ilość wyprodukowanego produktu p przez firmę m.
+\end{center}
+\subsection{Ograniczenia}
+$P_{p}$ - Maksymalny popyt na przedmiot p.\\
+$C_{mp}$ - Czas wyrobu produktu p na maszynie m.
+\begin{center}
+    $\sum_{m\in M}^{} x_{mp} \le P_{p}$\\
+    $\sum_{p\in P}^{} x_{mp}* C_{mp} \le 60h$
+\end{center}
+\subsection{Funkcja celu}
+$c_{p}$ - Cena produktu p.\\
+$K_{m}$ - Koszt pracy maszyny m przez minutę.\\
+$Km_{p}$ - Koszt materiałów potrzebnych do wyrobienia produktu p.
+\begin{center}
+    max $\sum_{p\in P, m \in M}^{}x_{mp}*c_{p} - \sum_{p\in P, m \in M}^{}x_{mp}*C_{mp}*K_{m} - \sum_{p\in P, m \in M}^{}x_{mp}*Km_{p}$
+\end{center}
+
+\subsection{Wyniki}
+\begin{quote}
+    Wyznacz optymalny tygodniowy plan produkcji poszczególnych wyrobów.
+\end{quote}
+    Tygodniowy plan produkcji:\\
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        &$m_{1}$&$m_{2}$&$m_{3}$\\
+        \hline
+        $p_{1}$&400&0&0\\
+        \hline
+        $p_{2}$&100&0&0\\
+        \hline
+        $p_{3}$&150&0&0\\
+        \hline
+        $p_{4}$&0&0&500\\
+        \hline
+    \end{tabular}
+\end{table}
+\begin{quote}
+    Oblicz zysk z produkcji:
+\end{quote}
+    Zysk z produkcji: \num{5228.333333333334}
+
+\section{Zadanie 3}
+\subsection{Zmienne}
+\begin{center}
+    $x_{j}$ - liczba wytwarzanego towaru w okresie j.\\
+    $o_{j}$ - liczba towaru wytwarzanego ponadwymiarowo w okresie j.\\
+    $m_{j}$ - liczba towaru magazynowanego w okresie j
+\end{center}
+\subsection{Ograniczenia}
+$a_{j}$ - maksymalna produkcja ponadwymiarowa w okresie j.\\
+$p_{j}$ - popyt w okresie j.
+\begin{center}
+    $o_{j}\le a_{j}$\\
+    $m_{j}=m_{j-1}+x_{j}+o_{j}-p_{j}$
+\end{center}
+\subsection{Funkcja celu}
+$c_{j}$ - koszt produkcji towaru w okresie j.\\
+$O_{j}$ - koszt produkcji towaru ponadwymiarowego w okresie j.\\
+$k_{j}$ - koszt magazynowania pojedynczej sztuki towaru.
+\begin{center}
+    min $\sum_{j}^{} x_{j}*c_{j} + o_{j}*O_{j} + m_{j}*k_{j}$
+\end{center}
+\subsection{Wyniki}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        j&$x_{j}$&$o_{j}$&$m_{j}$\\
+        \hline
+        1&100&15&0\\
+        \hline
+        2&100&50&70\\
+        \hline
+        3&100&0&45\\
+        \hline
+        4&100&50&0\\
+        \hline
+    \end{tabular}
+    \label{tab:Z3_wyniki}
+\end{table}
+\begin{quote}
+    Jaki jest minimalny łączny koszt produkcji i magazynowania towaru?
+\end{quote}
+    Łączny koszt produkcji i magazynowania towaru wynosi: \num{3.8425e6}
+\begin{quote}
+    W których okresach firma musi zaplanować produkcję ponadwymiarow ą?
+\end{quote}
+    Jak widać w tabelce \ref{tab:Z3_wyniki}, firma musi zaplanować dodatkową produkcję w okresach: 1, 2, 4.
+\begin{quote}
+    W których okresach możliwości magazynowania towaru są wyczerpane?
+\end{quote}
+    Jak przedstawia \ref{tab:Z3_wyniki}, w 2 okresie możliwości magazynowania towaru są wyczerpane.
+
+\section{Zadanie 4}
+\subsection{Zmienne}
+\begin{center}
+    $x_{ij}$ --- zmienna binarna informująca, czy krawędź z i do j jest częścią szukanej ścieżki.
+\end{center}
+\subsection{Ograniczenia}
+$c_{ij}$ --- waga krawędzi z i do j\\
+$t_{ij}$ --- czas krawędzi z i do j\\
+$T$ --- maksymalny akceptowalny czas ścieżki.\\
+\begin{center}
+    $\forall_{i,j \in N} c_{ij}=0 \rightarrow x_{ij}=0$ --- brak ścieżki, jeśli waga wynosi 0\\
+    $\sum_{i,j \in N}^{} x_{ij} - \sum_{i \in N, j \in N}^{} x_{ji}=B(i)$\\
+    $\sum_{i,j \in N}^{} x_{ij}*t_{ij} \le T$
+    \label{Z4_cons}
+\end{center}
+\subsection{Funkcja celu}
+\begin{center}
+    min $\sum_{i,j \in N}^{} x_{ij}*c_{ij}$
+\end{center}
+\subsection{Wyniki}
+\subsection*{A) --- przykład z zadania}
+N\_Start=\num{1}\\
+N\_End=\num{10}\\
+\begin{figure}[H]
+    \includegraphics[width=150mm]{rcsp_graph_ex4.pdf}
+    \label{fig:Z4_A}
+\end{figure}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Krawędź&Waga&Czas\\
+        \hline
+        $1\rightarrow2$&3&4\\
+        \hline
+        $2\rightarrow3$&2&3\\
+        \hline
+        $3\rightarrow5$&2&2\\
+        \hline
+        $5\rightarrow7$&3&3\\
+        \hline
+        $7\rightarrow9$&1&1\\
+        \hline
+        $9\rightarrow10$&2&2\\
+        \hline
+    \end{tabular}
+    \label{tab:Z4_A}
+\end{table}
+Koszt ścieżki: \num{13}\\
+\subsection*{B) --- mój przykład}
+N\_Start=\num{9}\\
+N\_End=\num{11}\\
+\begin{figure}[H]
+    \includegraphics[width=150mm]{Screenshot 2025-11-11 at 22-29-55 Graph Generator.png}
+    \label{fig:Z4_B}
+\end{figure}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Krawędź&Waga&Czas\\
+        \hline
+        $9\rightarrow11$&3&6\\
+        \hline
+        $11\rightarrow10$&9&3\\
+        \hline
+        $11\rightarrow10$&4&4\\
+        \hline
+    \end{tabular}
+    \label{tab:Z4_B}
+\end{table}
+Koszt ścieżki: \num{16}\\
+\subsection*{C)}
+\begin{quote}
+    Czy ograniczenie na całkowitoliczbowość zmiennych decyzyjnych jest potrzebne? Jeśli nie, to uzasadnij dlaczego. Jeśli tak, to zaproponuj kontrprzykład, w którym po usunięciu ogranicześ na całkowitoliczbowość (tj. mamy przypadek, w którym model jest modelem programowania liniowego) zmienne decyzyjne w rozwiązaniu optymalnym nie mają wartości całkowitych.
+\end{quote}
+Nie jest potrzebne, ponieważ macierz x wymnożona przez wektor b jest unimodularna. W przypadku, gdyby nie była unimodularna to nie spełniałaby 2 warunku z \ref{Z4_cons}.
+\subsection*{D)}
+\begin{quote}
+    Czy po usunięciu ograniczenia na czasy przejazdu w modelu bez ograniczeń na całkowitoliczbowość zmiennych decyzyjnych i rozwiązaniu problemu otrzymane połączenie zawsze jest akceptowalnym rozwiązaniem? Uzasadnij odpowiedź.
+\end{quote}
+W przypadku naszego zadania, bez ujemnych wag, to tak, jest akceptowalnym rozwiązaniem. Otrzymamy wtedy najtańsze rozwiązanie, niekoniecznie najszybsze. Ograniczenie na liczby całkowitoliczbowe nie ma tutaj dużego wpływu, ponieważ otrzymana macież musi być unimodularna.
+
+\section{Zadanie 5}
+\subsection{Zmienne}
+p --- dzielnica.
+\begin{center}
+    $s_{p}\ge$ minimalna liczba radiowozów w dzielnicy p.\\
+    $x_{pz}$ --- liczba radiowozów w dzielnicy p podczas z zmiany.\\
+    $sink$ --- węzeł końcowy (końcowa liczba radiowozów).
+\end{center}
+\subsection{Ograniczenia}
+\begin{center}
+    $MinRadio_{pz}\le x_{pz}\le MaxRadio_{pz}$\\
+    $\sum_{p \in P}^{} x_{pz} \ge $ liczba radiowozów, które powinny być dostępne podczas zmiany z.\\
+    $\sum_{p \in P}^{} s_{p} - sink == 0$
+\end{center}
+\subsection{Funkcja celu}
+\begin{center}
+    min sink $\vee$ min $\sum_{p}^{} s_{p}$ 
+\end{center}
+\subsection{Wyniki}
+Minimalna liczba radiowozów: \num{48}\\
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        p & z & Liczba radiowozów\\
+        \hline
+        \multirow{3}{*}{1}&1&\num{2}\\
+        \cline{2-3}
+        &2&\num{7}\\
+        \cline{2-3}
+        &3&\num{5}\\
+        \hline
+        \multirow{3}{*}{2}&1&\num{3}\\
+        \cline{2-3}
+        &2&\num{6}\\
+        \cline{2-3}
+        &3&\num{7}\\
+        \hline
+        \multirow{3}{*}{3}&1&\num{5}\\
+        \cline{2-3}
+        &2&\num{7}\\
+        \cline{2-3}
+        &3&6\\
+        \hline
+    \end{tabular} 
+    \label{tab:Z5}   
+\end{table}
+
+\section{Zadanie 6}
+\subsection{Zmienne}
+$m \in M$\\
+$n \in N$
+\begin{center}
+    $x_{mn}\in \{0,1\}$
+\end{center}
+$x_{ij}==1$ oznacza kamerę na polu i,j.\
+
+\subsection{Ograniczenia}
+k --- zasięg widzenia kamer.\\
+\begin{center}
+    $\sum_{m \in [m-k,m+k], n \in [n-k,n+k]}^{} x_{mn} \ge 1$
+\end{center}
+\subsection{Funkcja celu}
+\begin{center}
+    min $\sum_{m \in M, n \in N}^{} x_{mn}$ --- minimalna liczba kamer.
+\end{center}
+\subsection{Wyniki}
+Wyniki dla M = 10, N = 25, k = 3:\\
+\begin{table}[H]
+    \centering
+\begin{tabular}{|c c c c c c c c c c|}
+    \hline
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\hline
+\end{tabular}
+\label{tab:Z6_v1}
+\end{table}
+Liczba kamer: 12\\
+\\
+Wyniki dla M = 20, N = 15, k = 4:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c c c c c c c c c c c c c c c c c c c c|}
+        \hline
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\hline
+        
+    \end{tabular}
+    \label{tab:Z6_v2}
+\end{table}
+Liczba kamer: 8\\
+\end{document}
