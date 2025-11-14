@@ -1,0 +1,46 @@
+// Code documentation Using Doxygen Style Comments
+
+#include <iostream>
+using namespace std;
+/** 
+ * @brief Calculates the factorial of a number.
+ *
+ * This function computes the factorial of a given
+ * non-negative integer. It uses a recursive approach to
+ * calculate the factorial.
+ *
+ * @param n The number for which the factorial is to be
+ * calculated.
+ *
+ * @return The factorial of the number.
+ *
+ * @details
+ * The factorial of a non-negative integer n is the product
+ * of all positive integers less than or equal to n. For
+ * example, the factorial of 5 is 5 * 4 * 3 * 2 * 1 = 120.
+ * This function uses recursion to compute the factorial.
+ *
+ *  @example example.cpp
+ *
+ * @usage
+ * int result = factorial(5); // result will be 120
+ */
+int factorial(int n)
+{
+    // Base case: factorial of 0 is 1
+    if (n == 0)
+        return 1;
+
+    // Recursive case: n * factorial(n - 1)
+    /// test
+    //! test2
+    return n * factorial(n - 1);
+}
+
+int main()
+{
+    int n = 5;
+    cout << "Factorial of " << n << " is: " << factorial(n)
+         << endl;
+    return 0;
+}

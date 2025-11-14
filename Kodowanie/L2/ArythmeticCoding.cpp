@@ -142,44 +142,53 @@ int main(int argc,char** argv){
     pair<long double,long double> range(0.0,1.0); //Kodowanie
     int underflow = 0;
     string op;
-    long double Px=1.0L;
-    int n=0;
+    
     while (input2.get(c)) {
-        n++;
-        for(auto [a,b]:P){
-            if(c==a){
-                Px*=b;
-                break;
-            }
-        }
-        long double d=range.second-range.first;
-        range.second=range.first+F[c].first*d;
-        range.first=range.first+F[c].second*d;
+        long double d = range.second - range.first;
+        range.second = range.first + d * F[c].first;
+        range.first = range.first + d * F[c].second;
         
-        while(true){
-            if(range.second<0.5){
-                op.push_back('0');
-                for (; underflow > 0; underflow--) op.push_back('1');
-                
-                range.first *= 2;
-                range.second *= 2;
-            }else if(range.first>=0.5){
-                op.push_back('1');
-                for (; underflow > 0; underflow--) op.push_back('0');
-                
-                range.first = 2 * range.first - 1;
-                range.second = 2 * range.second - 1;
-            }else if(range.first>=0.25&&range.second<0.75){
+        while (true) {
+            if (range.second < 0.5) {
+                // E1
+                op += '0';
+                for (int i = 0; i < underflow; ++i) op += '1';
+                underflow = 0;
+                range.first *= 2.0;
+                range.second *= 2.0;
+            } else if (range.first >= 0.5) {
+                // E2
+                op += '1';
+                for (int i = 0; i < underflow; ++i) op += '0';
+                underflow = 0;
+                range.first = 2.0 * range.first - 1.0;
+                range.second = 2.0 * range.second - 1.0;
+            } else if (range.first >= 0.25 && range.second < 0.75) {
+                // E3
                 underflow++;
-                range.first = 2 * range.first - 0.5;
-                range.second = 2 * range.second - 0.5;
-            }else{
+                range.first = 2.0 * range.first - 0.5;
+                range.second = 2.0 * range.second - 0.5;
+            } else {
                 break;
             }
         }
     }
+    input2.close();
     
-    long double z =range.first+(range.second-range.first)/2;
+    underflow++;
+    if (range.first < 0.25) {
+        op += '0';
+        for (int i = 0; i < underflow; ++i) op += '1';
+    } else {
+        op += '1';
+        for (int i = 0; i < underflow; ++i) op += '0';
+    }
+    
+    cout<<"Dlugosc: "<<op.length()<<endl;
+    cout<<"H: "<<entropy1<<endl;
+    cout<<"Srednia dlugosc: "<<(double)op.length()/count<<endl;
+
+    while(op.length()%8!=0) op=op+'0';
 
     //Zapis
 
@@ -193,12 +202,12 @@ int main(int argc,char** argv){
 
     output<<bitset32ToSave(bitset<32>(count));
     cout<<"Pn: "<<P.size()<<endl;
-    long mx=ceil(log(1/Px))+1;
+    //long mx=ceil(log(1/Px))+1;
     
     string realOut;
-    op+=fracToBinary(z,128);
-    if(mx>0)
-        op=op.substr(0,mx);
+    //op+=fracToBinary(z,128);
+    //if(mx>0)
+    //    op=op.substr(0,mx);
 
     for(int i=0;i<op.size()/8;i++){
         bitset<8>temp;
@@ -216,7 +225,7 @@ int main(int argc,char** argv){
     }
     
     cout<<"Z: "<<binaryFracToDecimal(op)<<endl;
-    cout<<"N: "<<n<<endl;
+    //cout<<"N: "<<n<<endl;
     //cout<<"Op: "<<op<<endl;
     //cout<<"mx: "<<mx<<endl;
     output<<realOut;

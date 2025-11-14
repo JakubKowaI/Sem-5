@@ -101,103 +101,65 @@ int main(int argc,char** argv){
     string tempRead;
     while(input.get(c)){
         tempRead=tempRead+bitset<8>(c).to_string();
-        //cout<<bitset<8>(c)<<endl;
     }
-    //long double z=binaryFracToDecimal(tempRead);
-    //cout<<tempRead<<endl;
-    //
-    //cout<<binaryFracToDecimal("01110010")<<endl;
     input.close();
     
     pair<long double,long double> range(0.0L, 1.0L);
-    long double z = 0.0L;
-    int bit_index = 0;
-    int underflow = 0;
-
-    // zainicjalizuj z z pierwszych np. 64 bitów
-    int initBits = min(112, (int)tempRead.size());
-    for (int i = 0; i < initBits; ++i) {
-        z = z * 2.0L + (tempRead[i] == '1' ? 1.0L : 0.0L);
+    
+    const int PRECISION = 60;
+    unsigned long long z_val = 0;
+    if (tempRead.length() > 0) {
+        z_val = stoull(tempRead.substr(0, min((size_t)PRECISION, tempRead.length())), nullptr, 2);
     }
-    if (initBits > 0) z /= powl(2.0L, initBits);
-    bit_index = initBits;
-    //cout<<"Z: "<<tempRead.substr(0,initBits)<<endl;
-    cout<<"Z: "<<z<<endl;
+    int bit_index = min((size_t)PRECISION, tempRead.length());
+
     for (int i = 0; i < n; ++i) {
         long double d = range.second - range.first;
+        unsigned long long z_comp = (unsigned long long)((z_val - range.first * powl(2.0L, PRECISION)) / d);
 
+        char decoded_char = ' ';
         for (auto& [c,p] : P) {
-            long double lowBound  = range.first + F[c].second * d;
-            long double highBound = range.first + F[c].first  * d;
-            if(n<=150){
-                cout<<"Trying: "<<c<<" |"<<lowBound<<" : "<<highBound<<"| "<<z<<endl;
-            }
+            long double low_prob_bound = F[c].second;
+            long double high_prob_bound = F[c].first;
             
-            if (z >= lowBound && z < highBound) {
-                char decoded = c;
-                output << decoded;
-                range.first=lowBound;
-                range.second=highBound;
-                //cout<<"Hit"<<endl;
-                //cout<<"New range: "<<range.first<<" : "<<range.second<<endl;
-                
-                //cout<<"Z bin: "<<tempRead.substr(bit_index-initBits,bit_index)<<endl;
-                while (true) {
-                    //cout<<"Z bin: "<<tempRead.substr(bit_index-initBits,bit_index)<<endl;
-                    if (range.second < 0.5L) {
-                        // E1 – cały przedział w dolnej połowie
-                        range.first *= 2.0L;
-                        range.second *= 2.0L;
-                        z *= 2.0L;
-                        cout<<"z: "<<z<<endl;
-                        cout<<"E1 "<<bit_index<<endl;
-                        if (bit_index < (int)tempRead.size()){
-                            bit_index=bit_index+1;
-                            z = 2.0L * z + (tempRead[bit_index] == '1' ? 1.0L : 0.0L);
-                        }
-                    }
-                    else if (range.first >= 0.5L) {
-                        // E2 – cały przedział w górnej połowie
-                        range.first = 2.0L * range.first - 1.0L;
-                        range.second = 2.0L * range.second - 1.0L;
-                        z = 2.0L * z - 1.0L;
-                        cout<<"z: "<<z<<endl;
-                        cout<<"E2 "<<bit_index<<endl;
-                        if (bit_index < (int)tempRead.size()){
-                            bit_index=bit_index+1;
-                            z = 2.0L * z + (tempRead[bit_index] == '1' ? 1.0L : 0.0L);
-                        }
-                    }
-                    else if (range.first >= 0.25L && range.second < 0.75L&&range.first<0.5L&&range.second>0.5L) {
-                        // E3 – underflow
-                        underflow++;
-                        range.first = 2.0L * range.first - 0.5L;
-                        range.second = 2.0L * range.second - 0.5L;
-                        z = 2.0L * z - 0.5L;
-                        cout<<"z: "<<z<<endl;
-
-                        cout<<"E3 "<<bit_index<<endl;
-                        if (bit_index < (int)tempRead.size()){
-                            bit_index=bit_index+1;
-                            z = 2.0L * z + (tempRead[bit_index] == '1' ? 1.0L : 0.0L);
-                        }
-                            
-
-                        //cout<<"PoBIT"<<bit_index<<endl;
-                    }
-                    else {
-                        //cout<<"Z bin: "<<tempRead.substr(bit_index-initBits,bit_index)<<endl;
-                        break;
-                    }
-                    //cout<<"Z bin: "<<tempRead.substr(bit_index-initBits,bit_index)<<endl;
-                    // Bezpiecznik
-                    if (z < 0.0L) z = 0.0L;
-                    if (z >= 1.0L) z = nextafterl(1.0L, 0.0L);
-                }
-                //cout<<"Z bin: "<<tempRead.substr(bit_index-initBits,bit_index)<<endl;
+            if (z_comp >= (unsigned long long)(low_prob_bound * powl(2.0L, PRECISION)) && z_comp < (unsigned long long)(high_prob_bound * powl(2.0L, PRECISION))) {
+                decoded_char = c;
+                output << decoded_char;
+                range.first = range.first + d * low_prob_bound;
+                range.second = range.first + d * high_prob_bound;
                 break;
+            }
         }
-    }
+
+        while (true) {
+            if (range.second < 0.5) {
+                range.first *= 2.0;
+                range.second *= 2.0;
+                z_val = (z_val << 1);
+                if (bit_index < tempRead.length()) {
+                    z_val |= (tempRead[bit_index] - '0');
+                    bit_index++;
+                }
+            } else if (range.first >= 0.5) {
+                range.first = 2.0 * range.first - 1.0;
+                range.second = 2.0 * range.second - 1.0;
+                z_val = (z_val - (1ULL << (PRECISION -1))) << 1;
+                 if (bit_index < tempRead.length()) {
+                    z_val |= (tempRead[bit_index] - '0');
+                    bit_index++;
+                }
+            } else if (range.first >= 0.25 && range.second < 0.75) {
+                range.first = 2.0 * range.first - 0.5;
+                range.second = 2.0 * range.second - 0.5;
+                z_val = (z_val - (1ULL << (PRECISION -2))) << 1;
+                 if (bit_index < tempRead.length()) {
+                    z_val |= (tempRead[bit_index] - '0');
+                    bit_index++;
+                }
+            } else {
+                break;
+            }
+        }
     }
     output.close();
     
