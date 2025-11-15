@@ -10,82 +10,70 @@ int temp=0;
 int zapis=0;
 %}
 
+%x STRING
+%x COMMENT
+%x DOC
+
 %%
+<INITIAL>{
 
-"/\\*"   { temp = 1; printf("Wykryto: %s\n",yytext);}
+[ \t]*"/*" {BEGIN(COMMENT);}
 
-
-"/""*""*"[^ "*""/"]*"*""/" { if(opcja==1){
-                    fprintf(out,yytext);
-                }
-                printf("Wykryto1: %s\n",yytext);
-                }
-
-"/""*""!"[^ "*""/"]*"*""/" { if(opcja==1){
-                    fprintf(out,yytext);
-                }
-                printf("Wykryto: %s\n",yytext);
-                }
-
-.*"*""/"  {
-     temp = 0; 
-     if(zapis==1){
-        fprintf(out,yytext);
-        zapis=0;
-     }
-     printf("Wykryto: %s\n",yytext);
-     }
+\" {
+    fprintf(out,yytext);
+    BEGIN(STRING);
+    }
 
 [ \t]*"///".* { if(opcja==1){
             fprintf(out,yytext);
         }
-        printf("Wykryto: %s\n",yytext);
         }
 
 [ \t]*"//!".* { if(opcja==1){
             fprintf(out,yytext);
         }
-        printf("Wykryto: %s\n",yytext);
         }
 
 [ \t]*"//".* { }
 
-"/**".* {
+[ \t]*"/**" {
         if(opcja==0){
-            temp = 1;
+            BEGIN(COMMENT);
         }else{
-            zapis=1;
-            fprintf(out,yytext);
+            BEGIN(DOC);
         }
-        printf("Wykryto: %s\n",yytext);
         }
 
-"/*!".* {
+[ \t]*"/*!" {
         if(opcja==0){
-            temp = 1;
+            BEGIN(COMMENT);
         }else{
-            zapis=1;
-            fprintf(out,yytext);
+            BEGIN(DOC);
         }
-        printf("Wykryto: %s\n",yytext);
         }
 
+.|\n    fprintf(out,yytext);
+            
+}
 
+<COMMENT>{
+    "*/" {BEGIN(INITIAL);}
+    .|\n ;
+}
 
+<DOC>{
+    "*/" {BEGIN(INITIAL);}
+    .|\n fprintf(out,yytext);
+}
 
-
-
-.*      {if(temp==0){
-            fprintf(out,yytext);
-            }
-            printf("Przerabiam: %s\n",yytext);
-        }
-
-[\n]   {
-    if(temp==0){
-        fprintf(out,"\n");
+<STRING>{
+    \\\" fprintf(out,yytext);
+    \" {
+        fprintf(out,yytext);
+        BEGIN(INITIAL);
     }
-    }
+    .|\n fprintf(out,yytext);
+}
 
 <<EOF>>		{
 		yyterminate();

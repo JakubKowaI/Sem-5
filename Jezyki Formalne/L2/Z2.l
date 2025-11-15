@@ -8,11 +8,19 @@ static FILE *out;
 int temp = 0;
 %}
 
+%x STRING
+%x LONGSTRING
+%x COMMENT
+
 %%
+<INITIAL>{
+[ \t]*#.* ;
 
-[ \t]*#.* 
+\"{1} BEGIN(STRING);
 
-[ \t]*\"\"\" {temp = 1 - temp;}
+\'{1} BEGIN(LONGSTRING);
+
+[ \t]*\"\"\" BEGIN(COMMENT);
 
 .*      {if(temp==0){
             fprintf(out,yytext);
@@ -24,6 +32,25 @@ int temp = 0;
         fprintf(out,"\n");
     }
     }
+
+}
+
+<COMMENT>{
+    \"\"\" BEGIN(INITIAL);
+    .|\n ;
+}
+
+<STRING>{
+    \" BEGIN(INITIAL);
+    \\\" fprintf(out,yytext);
+    .|\n fprintf(out,yytext);
+}
+
+<LONGSTRING>{
+    \'{1} BEGIN(INITIAL);
+    .|\n fprintf(out,yytext);
+}
+
 
 <<EOF>>		{
 		yyterminate();

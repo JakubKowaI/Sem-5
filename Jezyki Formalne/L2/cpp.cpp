@@ -42,5 +42,6 @@ int main()
     int n = 5;
     cout << "Factorial of " << n << " is: " << factorial(n)
          << endl;
+    cout<<"Test komentarza // hahahah /// test a to cudzyslow \""<<endl;
     return 0;
 }
