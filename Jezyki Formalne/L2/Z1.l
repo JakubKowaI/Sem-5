@@ -21,7 +21,8 @@ nonws [^ \t\n]
 {nonws}+	{++wc; pierwszyZnak=1;pustaLinia=0;fprintf(out,yytext);}
 
 {ws}+\n     {
-                +lc;if(pustaLinia==0){
+                ++lc;
+                if(pustaLinia==0){
                     fprintf(out,"\n");
                 }
                 pustaLinia=1;
@@ -33,7 +34,9 @@ nonws [^ \t\n]
                     fprintf(out, " ");
             }
 
-\n		    {++lc;if(pustaLinia==0){
+\n		   {
+          ++lc;
+            if(pustaLinia==0){
                 fprintf(out,"\n");
             }
             pustaLinia=1;
