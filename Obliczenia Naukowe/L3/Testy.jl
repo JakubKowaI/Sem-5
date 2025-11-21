@@ -17,6 +17,7 @@ try
     println(mbisekcji(f,1.0,10.0,0.5-5.0,eps(Float64)))
     println(mstycznych(f,f,1.0,0.5-5.0,eps(Float64),30))
     println(msiecznych(f,1.0,10.0,0.5-5.0,eps(Float64),30))
+    #NaN bo 1.0 - 0.0 * Inf
 catch e
     println("Wystapil blad: ",e)
 end
