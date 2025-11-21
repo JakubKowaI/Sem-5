@@ -90,11 +90,9 @@ int main(int argc,char** argv){
             output.put(static_cast<char>(p));
             output.put(static_cast<char>(maxc));
 
-            // dodaj do słownika maksymalny prefix
             vector<u_int8_t> toAdd(wejscie.begin(), wejscie.begin() + maxc);
             przesun(maxc, slownik, toAdd);
 
-            // usuń z wejscie maxc bajtów i dopełnij z pliku
             wejscie.erase(wejscie.begin(), wejscie.begin() + maxc);
             for (size_t i = 0; i < maxc && wejscie.size() < wsize; ++i) {
                 int v = input.get();

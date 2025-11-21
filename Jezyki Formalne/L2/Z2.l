@@ -16,13 +16,18 @@ int temp = 0;
 <INITIAL>{
 [ \t]*#.* ;
 
-\"{1} BEGIN(STRING);
+\"\"\" BEGIN(COMMENT);
+\'\'\' BEGIN(COMMENT);
 
+\"{1} {
+        fprintf(out,yytext);
+        BEGIN(STRING);
+    }
 \'{1} BEGIN(LONGSTRING);
 
-[ \t]*\"\"\" BEGIN(COMMENT);
 
-.*      {if(temp==0){
+
+.    {if(temp==0){
             fprintf(out,yytext);
             }
         }
@@ -37,11 +42,14 @@ int temp = 0;
 
 <COMMENT>{
     \"\"\" BEGIN(INITIAL);
-    .|\n ;
+    .|\n {}
 }
 
 <STRING>{
-    \" BEGIN(INITIAL);
+    \" {
+        fprintf(out,yytext);
+        BEGIN(INITIAL);
+    }
     \\\" fprintf(out,yytext);
     .|\n fprintf(out,yytext);
 }

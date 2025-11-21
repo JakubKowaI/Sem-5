@@ -16,13 +16,11 @@ nonws [^ \t\n]
 
 %%
 
-
-
 {nonws}+	{++wc; pierwszyZnak=1;pustaLinia=0;fprintf(out,yytext);}
 
 {ws}+\n     {
-                ++lc;
                 if(pustaLinia==0){
+                    lc++;
                     fprintf(out,"\n");
                 }
                 pustaLinia=1;
@@ -35,8 +33,9 @@ nonws [^ \t\n]
             }
 
 \n		   {
-          ++lc;
+          
             if(pustaLinia==0){
+                lc++;
                 fprintf(out,"\n");
             }
             pustaLinia=1;

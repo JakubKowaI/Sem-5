@@ -13,30 +13,31 @@ int zapis=0;
 %x STRING
 %x COMMENT
 %x DOC
+%x LINECOM
 
 %%
 <INITIAL>{
 
-[ \t]*"/*" {BEGIN(COMMENT);}
+\/\* {BEGIN(COMMENT);}
 
 \" {
     fprintf(out,yytext);
     BEGIN(STRING);
     }
 
-[ \t]*"///".* { if(opcja==1){
+"///".* { if(opcja==1){
             fprintf(out,yytext);
         }
         }
 
-[ \t]*"//!".* { if(opcja==1){
+"//!".* { if(opcja==1){
             fprintf(out,yytext);
         }
         }
 
-[ \t]*"//".* { }
+"//" {BEGIN(LINECOM);}
 
-[ \t]*"/**" {
+"/**" {
         if(opcja==0){
             BEGIN(COMMENT);
         }else{
@@ -44,20 +45,22 @@ int zapis=0;
         }
         }
 
-[ \t]*"/*!" {
+"/*!" {
         if(opcja==0){
             BEGIN(COMMENT);
         }else{
             BEGIN(DOC);
         }
         }
+
+\/\*\*\/ {}
 
 .|\n    fprintf(out,yytext);
             
 }
 
 <COMMENT>{
-    "*/" {BEGIN(INITIAL);}
+    \*\/ {BEGIN(INITIAL);}
     .|\n ;
 }
 
@@ -73,6 +76,12 @@ int zapis=0;
         BEGIN(INITIAL);
     }
     .|\n fprintf(out,yytext);
+}
+
+<LINECOM>{
+    \\[ \t]*\n ;
+    \n BEGIN(INITIAL);
+    .   ;
 }
 
 <<EOF>>		{

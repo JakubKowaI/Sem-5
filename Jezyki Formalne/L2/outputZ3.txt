@@ -1,26 +1,37 @@
 
 
+
+
+
+#include <not#include "not//comment"
+
+
+
+
 #include <iostream>
-using namespace std;
 
-int factorial(int n)
-{
 
-    if (n == 0)
-        return 1;
+ int q;
 
 
 
+#define TEST 1
 
-    return n * factorial(n - 1);
+intf(){return 42;}
+
+
+int main(void) {
+        std::cout << TEST << "\n";
+
+    printf("/* foo bar");
+    
+        std::cout << "/* is great */"
+        << " and so is //"\
+    "\n";
+
+        std::cout << ":o"
+        "a\n";
+
+        std::cout << f() << "\n";
 }
 
-int main()
-{
-    int n = 5;
-    cout << "Factorial of " << n << " is: " << factorial(n)
-         << endl;
-    cout<<"Test komentarza // hahahah /// test a to cudzyslow \"
-    "<<endl;
-    return 0;
-}

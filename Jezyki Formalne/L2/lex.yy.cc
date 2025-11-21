@@ -313,8 +313,8 @@ int yyFlexLexer::yywrap() { return 1; }
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 4
-#define YY_END_OF_BUFFER 5
+#define YY_NUM_RULES 6
+#define YY_END_OF_BUFFER 7
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -322,9 +322,10 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[11] =
+static const flex_int16_t yy_accept[15] =
     {   0,
-        0,    0,    5,    4,    3,    2,    2,    1,    1,    0
+        0,    0,    0,    0,    7,    6,    3,    2,    2,    1,
+        4,    5,    1,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -364,28 +365,28 @@ static const YY_CHAR yy_meta[6] =
         1,    1,    1,    1,    2
     } ;
 
-static const flex_int16_t yy_base[12] =
+static const flex_int16_t yy_base[17] =
     {   0,
-        0,    0,    7,    8,    8,    8,    0,    0,    0,    8,
-        4
+        0,    0,    9,    8,    9,   12,   12,   12,    0,    0,
+       12,   12,    0,   12,    5,    6
     } ;
 
-static const flex_int16_t yy_def[12] =
+static const flex_int16_t yy_def[17] =
     {   0,
-       10,    1,   10,   10,   10,   10,   11,   11,   11,    0,
-       10
+       14,    1,   15,   15,   14,   14,   14,   14,   16,   16,
+       14,   14,   16,    0,   14,   14
     } ;
 
-static const flex_int16_t yy_nxt[14] =
+static const flex_int16_t yy_nxt[18] =
     {   0,
-        4,    5,    6,    7,    8,    9,   10,    3,   10,   10,
-       10,   10,   10
+        6,    7,    8,    9,   10,   11,   11,   13,   14,   12,
+       12,    5,   14,   14,   14,   14,   14
     } ;
 
-static const flex_int16_t yy_chk[14] =
+static const flex_int16_t yy_chk[18] =
     {   0,
-        1,    1,    1,    1,    1,   11,    3,   10,   10,   10,
-       10,   10,   10
+        1,    1,    1,    1,    1,   15,   15,   16,    5,    4,
+        3,   14,   14,   14,   14,   14,   14
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -412,6 +413,7 @@ static const flex_int16_t yy_chk[14] =
             case '+':
             if(Stos.size()<2){
                 cout<<"Brak argumentow"<<endl;
+                BEGIN(PANIC);
                 return;
             }else{
                 int a = Stos.top();
@@ -499,10 +501,12 @@ static const flex_int16_t yy_chk[14] =
         wyn = 0;
         return temp;
     }
-#line 502 "lex.yy.cc"
-#line 503 "lex.yy.cc"
+#line 504 "lex.yy.cc"
+
+#line 506 "lex.yy.cc"
 
 #define INITIAL 0
+#define PANIC 1
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -632,10 +636,9 @@ YY_DECL
 		}
 
 	{
-#line 112 "Z4.l"
+#line 115 "Z4.l"
 
-
-#line 638 "lex.yy.cc"
+#line 641 "lex.yy.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -662,13 +665,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 11 )
+				if ( yy_current_state >= 15 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 8 );
+		while ( yy_base[yy_current_state] != 12 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -694,7 +697,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 114 "Z4.l"
+#line 117 "Z4.l"
 {
     Stos.push(stoi((string)YYText()));
     yyout<<YYText();
@@ -702,7 +705,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 119 "Z4.l"
+#line 122 "Z4.l"
 {
     licz(YYText());
     yyout<<YYText();
@@ -711,22 +714,37 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 124 "Z4.l"
+#line 127 "Z4.l"
 {yyout<<endl<<"= "<<wynik()<<endl;}
 	YY_BREAK
+
+
+case 4:
+YY_RULE_SETUP
+#line 131 "Z4.l"
+;
+	YY_BREAK
+case 5:
+/* rule 5 can match eol */
+YY_RULE_SETUP
+#line 132 "Z4.l"
+BEGIN(INITIAL);
+	YY_BREAK
+
 case YY_STATE_EOF(INITIAL):
-#line 126 "Z4.l"
+case YY_STATE_EOF(PANIC):
+#line 136 "Z4.l"
 {
     yyout<<endl<<"= "<<wynik()<<endl;
 		yyterminate();
 		}
 	YY_BREAK
-case 4:
+case 6:
 YY_RULE_SETUP
-#line 132 "Z4.l"
+#line 142 "Z4.l"
 ECHO;
 	YY_BREAK
-#line 729 "lex.yy.cc"
+#line 747 "lex.yy.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1141,7 +1159,7 @@ int yyFlexLexer::yy_get_next_buffer()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 11 )
+			if ( yy_current_state >= 15 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1169,11 +1187,11 @@ int yyFlexLexer::yy_get_next_buffer()
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 11 )
+		if ( yy_current_state >= 15 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 10);
+	yy_is_jam = (yy_current_state == 14);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1687,7 +1705,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 132 "Z4.l"
+#line 142 "Z4.l"
 
 
 int main( int argc , char** argv)

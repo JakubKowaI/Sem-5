@@ -14,6 +14,7 @@
             case '+':
             if(Stos.size()<2){
                 cout<<"Brak argumentow"<<endl;
+                BEGIN(PANIC);
                 return;
             }else{
                 int a = Stos.top();
@@ -109,8 +110,10 @@ liczba [0-9]
 symbol [+|\-|*|/|^|%]
 
 
-%%
+%x PANIC
 
+%%
+<INITIAL>{
 -{0,1}{liczba}+ {
     Stos.push(stoi((string)YYText()));
     yyout<<YYText();
@@ -122,6 +125,13 @@ symbol [+|\-|*|/|^|%]
 }
 
 \n {yyout<<endl<<"= "<<wynik()<<endl;}
+}
+
+<PANIC>{
+    . ;
+    \n BEGIN(INITIAL);
+}
+
 
 <<EOF>>		{
     yyout<<endl<<"= "<<wynik()<<endl;
