@@ -1,3 +1,4 @@
+#Jakub Kowal
 function mbisekcji(f, a::Float64, b::Float64, delta::Float64, epsilon::Float64)
     u=f(a)
     v=f(b)
@@ -32,6 +33,8 @@ function mbisekcji(f, a::Float64, b::Float64, delta::Float64, epsilon::Float64)
     end
     return c, w, k, 1
 end
+# 0 - brak błędu
+# 1 - funkcja nie zmienia znaku w przedziale [a,b]
 
 function mstycznych(f,pf,x0::Float64, delta::Float64, epsilon::Float64, maxit::Int)
     v=f(x0)
@@ -41,7 +44,8 @@ function mstycznych(f,pf,x0::Float64, delta::Float64, epsilon::Float64, maxit::I
     k=1
     local x1
     for k in 1:maxit 
-        if pf(x0)<delta
+        if abs(pf(x0))<delta
+            # println("x0: ",x0," pf: ",pf(x0))
             return x0,v,k,2
         end
         x1=x0-v/pf(x0)
@@ -51,8 +55,11 @@ function mstycznych(f,pf,x0::Float64, delta::Float64, epsilon::Float64, maxit::I
         end
         x0=x1
     end
-    return x01,v,k,1
+    return x0,v,k,1
 end
+# 0 - metoda zbieżna
+# 1 - nie osiągnięto wymaganej dokładności w maxit iteracji,
+# 2 - pochodna bliska zeru
 
 function msiecznych(f, x0::Float64, x1::Float64, delta::Float64, epsilon::Float64, maxit::Int)
     fa=f(x0)
@@ -81,3 +88,5 @@ function msiecznych(f, x0::Float64, x1::Float64, delta::Float64, epsilon::Float6
     end
     return x0,fa,k,1
 end
+#0 - zbiezna
+#1 - nie osiągnięto wymaganej dokładności w maxit iteracji
