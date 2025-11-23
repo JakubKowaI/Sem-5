@@ -15,4 +15,100 @@
 \begin{document}
 \maketitle
 
+\section*{Zadania 1 - 3}
+\subsection*{Opis problemu}
+Zaimplementować metody znajdowania pierwiastków funkcji i sprawdzić je dla $f(x)=0$.\\
+Implementowane metody:\\
+\begin{itemize}
+    \item Metoda bisekcji
+    \item Metoda stycznych (Newtona)
+    \item Metoda siecznych
+\end{itemize}
+\subsection*{Wyniki}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Metoda & Wynik \\&(r,f(r),it,err)\\
+        \hline
+        Bisekcji & 0, 0, 0, 1\\
+        \hline
+        Stycznych & 1.0, 0.0, 0, 0\\
+        \hline
+        Siecznych & NaN, 0.0, 1, 0\\
+        \hline
+    \end{tabular}
+\end{table}
+\subsection*{Wnioski}
+W metodzie bisekcji otrzymujemy sygnalizację błędu oznaczającą brak miejsca zerowego w podanych zakresie, ale wynika to ze sprawdzenia warunku $sgn(u)==sgn(v)$. Warunek ten dla $f(x)=0$ będzie prawdziwy. W przypadku metody stycznych mamy warunek sprawdzający, czy wartość funkcji na początku nie jest już wystarfczająco blisko zera i dzięki temu otrzymujemy pierwiastek bez żadnej iteracji pętli. W metodzie siecznych jako pierwiastek otrzymujemy NaN, ponieważ w obliczaniu s, dzielimy przez zero, co później skutkuje mnożeniem Inf i 0.
+
+\section*{Zadanie 4}
+\subsection*{Opis problemu}
+Wyznaczyć pierwiastek równania $f(x)=\sin x - (\frac{1}{2}x)^{2}$.\\
+\subsection*{Wyniki}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        Metoda & r&f(r)&it&err\\
+        \hline
+        Bisekcji & 1.9337539672851562& -2.7027680138402843e-7& 16&0\\
+        \hline
+        Stycznych & 1.933753779789742& -2.2423316314856834e-8& 4& 0\\
+        \hline
+        Siecznych & 1.933753644474301& 1.564525129449379e-7& 4& 0\\
+        \hline
+    \end{tabular}
+\end{table}
+\subsection*{Wnioski}
+Jak widać wszystkie metody poradziły sobie ze znalezieniem przybliżenia pierwiastka funkcji f. Patrząc na wartości funkcji, to najbliżej zera była metoda stycznych.
+
+\section*{Zadanie 5}
+\subsection*{Opis problemu}
+W tym zadaniu trzeba metodą bisekcji znależć x, dla którego funkcje $f_{1}(x)=3x$ oraz $f_{2}(x)=e^{x}$ się przecinają. Wykonałem to znajdując miejsce zerowe funkcji pomocniczej $f(x) = f_{1}(x)-f_{2}(x)$.
+\subsection*{Wyniki}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        Metoda & $f_{1}(x)$&r&f(r)&it&err\\
+        \hline
+        Bisekcji &1.857421875& 0.619140625& 9.066320343276146e-5& 9&0\\
+        \hline
+    \end{tabular}
+\end{table}
+\subsection*{Wnioski}
+
+\section*{Zadanie 6}
+\subsection*{Opis problemu}
+W zadaniu należy znaleźć miejsca zerowe funkcji $f_{1}(x) = e^{1-x}-1$ oraz $f_{2}(x) = xe^{-x}$ za pomocą poprzednio używanych metod. Należy odpowiednio dobrać przedziały i przybliżenia. Dodatkowo sprawdzić co się stanie gdy w metodzie stycznych dla $f_{1}$ wybierzemy $x_{0}\in (1, \infty ]$, a dla $f_{2}$ $x_{0}>1$ oraz czy można wybrać $x_{0}=1$ dla $f_{2}$.
+\subsection*{Wyniki}
+\begin{table}[H]
+    \label{tab:Z6}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        Funkcja& Metoda&r&f(r)&it&err\\
+        \hline
+        \multirow{3}{*}{$f_{1}$}&Bisekcja&1.0&0.0&1&0\\
+        \cline{2-6}
+        &Stycznych&0.9999999998878352&1.1216494399945987e-10&4&0\\
+        \cline{2-6}
+        &Siecznych&0.9999994102824874&5.897176864610998e-7&4&0\\
+        \hline
+        \multirow{3}{*}{$f_{2}$}&Bisekcja&0.0&0.0&1&0\\
+        \cline{2-6}
+        &Stycznych&-3.0642493416461764e-7&-3.0642502806087233e-7&4&0\\
+        \cline{2-6}
+        &Siecznych&-1.2229958402039555e-7&-1.2229959897758473e-7&6&0\\
+        \hline
+        \multirow{3}{*}{Testy}&$f_{1}$ z $x_{0}\in (1, \infty ]$&0.9999999984736215&1.5263785790864404e-9&4&0\\
+        \cline{2-6}
+        &$f_{2}$ z $x_{0}>1$&14.787436802837927&5.594878975694858e-6&10&0\\
+        \cline{2-6}
+        &$f_{2}$ z $x_{0}=1$&1.0&0.36787944117144233&1&2\\
+        \hline
+    \end{tabular}
+\end{table}
+\subsection*{Wnioski}
+Jak widać na \ref{tab:Z6}, Wszystkie metody znajdują przybliżenie pierwiastków funkcji. W testach natomiast ukazują się ciekawe przypadki.
 \end{document}

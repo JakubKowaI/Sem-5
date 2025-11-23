@@ -79,13 +79,16 @@ try
     println(mbisekcji(f1,0.5,1.5,10^-5,10^-5))
     println(mstycznych(f1,pf1,0.5,10^-5,10^-5,30))
     println(msiecznych(f1,0.5,0.75,10^-5,10^-5,30))
+    println(msiecznych(f1,0.0,2.0,10^-5,10^-5,30))
     println("f2")
     println(mbisekcji(f2,-1.0,1.0,10^-5,10^-5))
-    println(mstycznych(f2,pf2,-1.0,10^-5,10^-5,30))
+    #println(mstycznych(f2,pf2,-1.0,10^-5,10^-5,30))
+    println(mstycznych(f2,pf2,-0.5,10^-5,10^-5,30))
     println(msiecznych(f2,-1.0,-0.5,10^-5,10^-5,30))
+    #println(msiecznych(f2,-0.5,1.0,10^-5,10^-5,30))
     println("Test")
     println(mstycznych(f1,pf1,1.5,10^-5,10^-5,30))
-    println(mstycznych(f2,pf2,0.5,10^-5,10^-5,30))
+    println(mstycznych(f2,pf2,1.5,10^-5,10^-5,30))
     println(mstycznych(f2,pf2,1.0,10^-5,10^-5,30))
     #Nie można wybrać x0=1 bo pochodna = 0
 catch e
