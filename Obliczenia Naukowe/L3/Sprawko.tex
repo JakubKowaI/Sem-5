@@ -38,6 +38,8 @@ Implementowane metody:\\
         Siecznych & NaN, 0.0, 1, 0\\
         \hline
     \end{tabular}
+    \caption{Wyniki dla zadań 1-3}
+    \label{tab:Z1-3}
 \end{table}
 \subsection*{Wnioski}
 W metodzie bisekcji otrzymujemy sygnalizację błędu oznaczającą brak miejsca zerowego w podanych zakresie, ale wynika to ze sprawdzenia warunku $sgn(u)==sgn(v)$. Warunek ten dla $f(x)=0$ będzie prawdziwy. W przypadku metody stycznych mamy warunek sprawdzający, czy wartość funkcji na początku nie jest już wystarfczająco blisko zera i dzięki temu otrzymujemy pierwiastek bez żadnej iteracji pętli. W metodzie siecznych jako pierwiastek otrzymujemy NaN, ponieważ w obliczaniu s, dzielimy przez zero, co później skutkuje mnożeniem Inf i 0.
@@ -59,6 +61,8 @@ Wyznaczyć pierwiastek równania $f(x)=\sin x - (\frac{1}{2}x)^{2}$.\\
         Siecznych & 1.933753644474301& 1.564525129449379e-7& 4& 0\\
         \hline
     \end{tabular}
+    \caption{Wyniki dla zadania 4}
+    \label{tab:Z4}
 \end{table}
 \subsection*{Wnioski}
 Jak widać wszystkie metody poradziły sobie ze znalezieniem przybliżenia pierwiastka funkcji f. Patrząc na wartości funkcji, to najbliżej zera była metoda stycznych.
@@ -76,6 +80,8 @@ W tym zadaniu trzeba metodą bisekcji znależć x, dla którego funkcje $f_{1}(x
         Bisekcji &1.857421875& 0.619140625& 9.066320343276146e-5& 9&0\\
         \hline
     \end{tabular}
+    \caption{Wyniki dla zadania 5}
+    \label{tab:Z5}
 \end{table}
 \subsection*{Wnioski}
 
@@ -84,7 +90,6 @@ W tym zadaniu trzeba metodą bisekcji znależć x, dla którego funkcje $f_{1}(x
 W zadaniu należy znaleźć miejsca zerowe funkcji $f_{1}(x) = e^{1-x}-1$ oraz $f_{2}(x) = xe^{-x}$ za pomocą poprzednio używanych metod. Należy odpowiednio dobrać przedziały i przybliżenia. Dodatkowo sprawdzić co się stanie gdy w metodzie stycznych dla $f_{1}$ wybierzemy $x_{0}\in (1, \infty ]$, a dla $f_{2}$ $x_{0}>1$ oraz czy można wybrać $x_{0}=1$ dla $f_{2}$.
 \subsection*{Wyniki}
 \begin{table}[H]
-    \label{tab:Z6}
     \begin{tabular}{|c|c|c|c|c|c|}
         \hline
         Funkcja& Metoda&r&f(r)&it&err\\
@@ -108,7 +113,13 @@ W zadaniu należy znaleźć miejsca zerowe funkcji $f_{1}(x) = e^{1-x}-1$ oraz $
         &$f_{2}$ z $x_{0}=1$&1.0&0.36787944117144233&1&2\\
         \hline
     \end{tabular}
+    \caption{Wyniki dla zadania 6}    
+    \label{tab:Z6}
+        
 \end{table}
 \subsection*{Wnioski}
-Jak widać na \ref{tab:Z6}, Wszystkie metody znajdują przybliżenie pierwiastków funkcji. W testach natomiast ukazują się ciekawe przypadki.
+Jak widać na \ref{tab:Z6}, Wszystkie metody znajdują przybliżenie pierwiastków funkcji. W testach natomiast ukazują się ciekawe przypadki.\\
+W pierwszym teście w tabeli widnieje wynik dla $x_{0}=1.5$. $x_{0}\in (1,4.5)$ daje nam jeszcze przybliżenie miejsca zerowego. $x_{0}\in [4.5,7.6)$ zwraca nam jeszcze wyniki, chociaż wyznacza niesamowicie niskie r oraz osiąga maksymalną liczbę iteracji. $x_{0}\in [7.6,12.6)$ zwraca nam NaN, ponieważ wartość funkcji zwraca Inf. Dla $x_{0}\ge 12.6$ pochodna jest zbyt  bliska zeru, więc metoda od razu zwraca wynik z sygnałem błędu 2.\\
+W drugim teście możemy zauważyć, że metoda dla $x_{0}=1.5$ nie zwraca nam bliższego miejsca zerowego $r=0$, tylko szuka miejsca zerowego dla większych x, gdzie funkcja zbiega do 0.\\
+W trzecim teście natychmiast dostajemy wynik z sygnalizacją błędu 2, ponieważ dla $x_{0}=1.0$ pochodna funkcji jest równa 0.
 \end{document}
