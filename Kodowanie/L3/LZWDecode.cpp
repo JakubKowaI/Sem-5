@@ -175,7 +175,6 @@ void lzwDecode(vector<string> &slownik, ifstream &input, ofstream &output, char 
     };
     
     string bitbuf;
-    // wczytaj co najmniej jeden bajt i spróbuj wyciągnąć pierwszy kod
     if(!readByteBits(bitbuf)) throw runtime_error("Pusty lub uszkodzony plik wejściowy");
     u_int64_t k1;
     while (true) {
@@ -192,7 +191,6 @@ void lzwDecode(vector<string> &slownik, ifstream &input, ofstream &output, char 
     string w = slownik.at(k1);
     output << w;
     u_int64_t prev = k1;
-    // główna pętla: doładowuj bajty aż dekoder zwróci kod
     while (true) {
         u_int64_t k;
         try {
@@ -202,8 +200,7 @@ void lzwDecode(vector<string> &slownik, ifstream &input, ofstream &output, char 
             //readByteBits(bitbuf);
             //cout<<k<<endl;
         } catch (const runtime_error &) {
-            // brak pełnego kodu w buforze — spróbuj dołożyć kolejny bajt
-            if (!readByteBits(bitbuf)) break; // EOF i niepełny kod -> zakończ
+            if (!readByteBits(bitbuf)) break; 
             else continue;
         }
 
@@ -212,12 +209,11 @@ void lzwDecode(vector<string> &slownik, ifstream &input, ofstream &output, char 
             //cout<<slownik[k]<<endl;;
             slownik.push_back(slownik[prev] + slownik[k][0]);
         } else if (k == slownik.size()) {
-            // przypadek KwKwK: entry = prev + firstChar(prev)
             string entry = slownik[prev] + slownik[prev][0];
             output << entry;
             slownik.push_back(entry);
         } else {
-            throw runtime_error("Błąd dekompresji LZW: niepoprawny indeks");
+            throw runtime_error("niepoprawny indeks");
         }
         prev = k;
     }
