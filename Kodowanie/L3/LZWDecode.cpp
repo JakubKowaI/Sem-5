@@ -20,6 +20,8 @@ u_int64_t eliasYDecode(string &s) {
     for(int i=0;i<s.size()&&s[i]=='0';i++){
         zeros++;
     }
+    if(zeros==s.length())throw runtime_error("Niewystarczająca ilość bitów");
+    if(2*zeros+1>s.length())throw runtime_error("Niewystarczająca ilość bitów");
 
     string bin = s.substr(zeros, zeros + 1);
     s.erase(0,2*zeros+1);
@@ -38,12 +40,20 @@ string eliasO(u_int64_t x) {
 }
 
 u_int64_t eliasODecode(string &s) {
-    u_int64_t n = eliasYDecode(s);
+    string temp=s;
+    if(s.length()<9)throw runtime_error("Za mało bitów dla delty");
+    u_int64_t n = eliasYDecode(temp);
     //k-1,n,x
+    if(temp.length()<n-1) throw runtime_error("Za mało bitów dla delty");
+
+    n = eliasYDecode(s);
 
     string rest=s.substr(0,n-1);
+    //cout<<"N: "<<n<<"\nS: "<<s<<endl;
     string bin = "1" + rest;
-    s.erase(0,n+1);
+    s.erase(0,n-1);
+    //cout<<"S after erase: "<<s<<endl;
+    //cout<<"BIN: "<<bin<<endl;
     return stoull(bin, nullptr, 2);
 }
 
@@ -62,24 +72,24 @@ string eliasW(u_int64_t x){
 u_int64_t eliasWDecode(string &s) {
     u_int64_t n = 1;
     size_t pos = 0;
-
-    while (pos < s.size()) {
-        if (s[pos] == '0'){
-            s.erase(0,pos+1);
+    while (true) {
+        if (pos >= s.size()) {
+            throw runtime_error("Niepełny kod Eliasza-omega");
+        }
+        if (s[pos] == '0') {
+            s.erase(0, pos + 1);
             return n;
         }
         u_int64_t chunkLen = n + 1;
         if (pos + chunkLen > s.size()) {
             throw runtime_error("Niepełny kod Eliasza-omega");
         }
-
         string bin = s.substr(pos, chunkLen);
-        try{
+        try {
             n = stoull(bin, nullptr, 2);
-        }catch(exception e){
-            e.what();
+        } catch (const exception &e) {
+            throw runtime_error(string("Błąd konwersji w eliasWDecode: ") + e.what());
         }
-        
         pos += chunkLen;
     }
 }
@@ -111,8 +121,7 @@ u_int64_t fibonacciDecode(string &str) {
     size_t pos = str.find("11");
     string s;
     if (pos == string::npos) {
-        s = str;
-        str.clear();
+        throw runtime_error("Nie ma 11 w s");
     } else {
         s = str.substr(0, pos + 2);    
         str.erase(0, pos + 2);         
@@ -131,15 +140,19 @@ auto pickCode(char mode){
     switch (mode)
     {
     case 'w':
+        cout<<"Dekoduję metodą Eliasa omega"<<endl;
         return eliasWDecode;
         break;
     case 'y':
+        cout<<"Dekoduję metodą Eliasa gamma"<<endl;
         return eliasYDecode;
         break;
     case 'o':
+        cout<<"Dekoduję metodą Eliasa delta"<<endl;
         return eliasODecode;
         break;
     case 'f':
+        cout<<"Dekoduję metodą Fibonacciego"<<endl;
         return fibonacciDecode;
         break;
     default:
@@ -153,48 +166,59 @@ void lzwDecode(vector<string> &slownik, ifstream &input, ofstream &output, char 
     u_int64_t (*Method)(string&);
     Method=pickCode(mode);
 
-    char c;
-    string bitbuf=bitset<8>(input.get()).to_string()+bitset<8>(input.get()).to_string()+bitset<8>(input.get()).to_string()+bitset<8>(input.get()).to_string();
-
+    auto readByteBits = [&](string &bitbuf)->bool{
+        char ch;
+        if(!input.get(ch)) return false;
+        bitset<8> b((unsigned char)ch);
+        bitbuf += b.to_string();
+        return true;
+    };
     
-    u_int64_t k1 =Method(bitbuf);
-
-    string w = slownik[k1];
-    output << w;
-
-    u_int64_t prev = k1;
-
-    // Główna pętla LZW
-    while (input.get(c)) {
-        bitbuf=bitbuf+c;
-        for(int i=0;i<2;i++){
-            if(!input.get(c)){
-                break;
-            }
-            bitbuf=bitbuf+c;
+    string bitbuf;
+    // wczytaj co najmniej jeden bajt i spróbuj wyciągnąć pierwszy kod
+    if(!readByteBits(bitbuf)) throw runtime_error("Pusty lub uszkodzony plik wejściowy");
+    u_int64_t k1;
+    while (true) {
+        try {  u_int64_t val = Method(bitbuf);
+            if (val == 0) throw runtime_error("Odczytano 0");
+            k1 = val - 1; 
+            //cout<<k1<<endl;
+            break; }
+        catch (const runtime_error &) {
+            if(!readByteBits(bitbuf)) throw runtime_error("Niepełny kod na początku pliku");
         }
+    }
+
+    string w = slownik.at(k1);
+    output << w;
+    u_int64_t prev = k1;
+    // główna pętla: doładowuj bajty aż dekoder zwróci kod
+    while (true) {
         u_int64_t k;
-
-        // próbujemy wyciągnąć kolejny kod
-        k=Method(bitbuf);
-
-        // Jeśli nadal brak pełnego kodu → koniec pliku
-        if (bitbuf.empty()) break;
-
-        string entry;
+        try {
+            u_int64_t val = Method(bitbuf);
+            if (val == 0) throw runtime_error("Odczytano 0"); 
+            k = val - 1;
+            //readByteBits(bitbuf);
+            //cout<<k<<endl;
+        } catch (const runtime_error &) {
+            // brak pełnego kodu w buforze — spróbuj dołożyć kolejny bajt
+            if (!readByteBits(bitbuf)) break; // EOF i niepełny kod -> zakończ
+            else continue;
+        }
 
         if (k < slownik.size()) {
-            output<<slownik[k];
-            slownik.push_back(slownik[prev]+slownik[k][0]);
+            output << slownik[k];
+            //cout<<slownik[k]<<endl;;
+            slownik.push_back(slownik[prev] + slownik[k][0]);
+        } else if (k == slownik.size()) {
+            // przypadek KwKwK: entry = prev + firstChar(prev)
+            string entry = slownik[prev] + slownik[prev][0];
+            output << entry;
+            slownik.push_back(entry);
         } else {
             throw runtime_error("Błąd dekompresji LZW: niepoprawny indeks");
         }
-
-        //output << entry;
-
-        // Dodajemy nowy wpis do słownika (prev + first(entry))
-        //slownik.push_back(slownik[prev] + entry[0]);
-
         prev = k;
     }
 }
@@ -207,8 +231,10 @@ int main(int argc,char** argv){
 
     string filename = argv[1];
     ifstream input(filename, ios::binary);
-    ofstream output("LZWDecoded.bin");
-    char mode = input.get();
+    ofstream output("LZWDecoded.txt");
+    int m = input.get();
+    if (m == EOF) { cerr << "Plik wejściowy pusty lub uszkodzony\n"; return -1; }
+    char mode = static_cast<char>(m);
 
     vector<string> slownik;
 

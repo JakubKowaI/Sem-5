@@ -3,6 +3,8 @@
 #include <vector>
 #include <algorithm>
 #include <bitset>
+#include <unordered_map>
+#include <cmath>
 
 using namespace std;
 
@@ -144,6 +146,28 @@ void wypisz(string &buffer,ofstream &output){
     }
 }
 
+pair<long,long double> fileInfo(string filename){
+    char c;
+    unordered_map<char, int> freq;
+    long count=0;
+    ifstream input(filename,ios::binary);
+
+    while (input.get(c)) {
+        freq[c]++;
+        count++;
+    }
+    input.close();
+
+    long double entropy = 0.0;
+
+    for (auto& it : freq) {
+        long double p = (long double)it.second / count;
+        long double info = -log2(p);
+        entropy += p * info;
+    }
+    return pair<long,long double>(count,entropy);
+}
+
 int main(int argc,char** argv){
     if (argc < 2) {
         cerr << "Using: " << argv[0] << endl;
@@ -161,37 +185,61 @@ int main(int argc,char** argv){
     string filename = argv[1];
     ifstream input(filename, ios::binary);
     ofstream output("LZWCoded.bin");
-    cout<<mode<<endl;
+    //cout<<mode<<endl;
     output<<mode;
-    vector<string> slownik;
+    unordered_map<string, u_int64_t> slownik;
+    u_int64_t nextCode = 0;
 
-    for (int i = 0; i < 256; ++i) slownik.push_back(string(1, static_cast<char>(i)));
+    for (int i = 0; i < 256; ++i) {
+        slownik[string(1, static_cast<char>(i))] = nextCode++;
+    }
     
     char c=input.get();
-    string buf=""+c;
+    string buf=""+string(1,c);
     string outBuf="";
+
     while(input.get(c)){
-        buf=buf+c;
-        auto f = find(slownik.begin(),slownik.end(),buf);
-        if(f!=slownik.end()){
-            continue;
-        }else{
-            u_int16_t index=distance(slownik.begin(),f);
-            //output<<bitset<16>(index).to_string();
-            outBuf=outBuf+Method(index);
-            wypisz(outBuf,output);
-            slownik.push_back(buf);
-            buf=""+c;
+        string pc=buf+string(1,c);
+
+        if(slownik.find(pc) != slownik.end()){
+            buf = pc;
+        } else {
+            u_int64_t index = slownik[buf];
+            
+            outBuf = outBuf + Method(index + 1);
+            wypisz(outBuf, output);
+            
+            slownik[pc] = nextCode++;
+            
+            buf = string(1, c);
         }
     }
-    auto f = find(slownik.begin(),slownik.end(),buf);
-        
-    u_int16_t index=distance(slownik.begin(),f);
-    //output<<bitset<16>(index).to_string();
-    outBuf=outBuf+Method(index);
-    wypisz(outBuf,output);
+    
+    if (slownik.find(buf) != slownik.end()) {
+        u_int64_t index = slownik[buf];
+        outBuf = outBuf + Method(index + 1);
+        wypisz(outBuf, output);
+    }
+
+    if (outBuf.length() > 0) {
+        while (outBuf.length() < 8) {
+            outBuf += '0';
+        }
+        wypisz(outBuf, output);
+    }
             
     output.close();
     input.close();
+
+    long og,coded;
+    pair<long,long double> temp=fileInfo(filename);
+    og=get<0>(temp);
+    cout<<"Rozmiar oryginalnego pliku: "<<og<<" Entropia: "<<get<1>(temp)<<endl;
+    temp=fileInfo("LZWCoded.bin");
+    coded=get<0>(temp);
+    cout<<"Rozmiar zakodowanego pliku: "<<coded<<" Entropia: "<<get<1>(temp)<<endl;
+    double kompresja=og/(double)coded;
+    cout<<"Stopień kompresji: "<<kompresja<<endl;
+
     return 0;
 }

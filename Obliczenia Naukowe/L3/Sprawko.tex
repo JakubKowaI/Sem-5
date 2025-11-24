@@ -84,6 +84,7 @@ W tym zadaniu trzeba metodą bisekcji znależć x, dla którego funkcje $f_{1}(x
     \label{tab:Z5}
 \end{table}
 \subsection*{Wnioski}
+Metoda bisekcji znajduje miejsce zerowe $f(x)$, czyli punkt przecięcia $f_{1}(x)$ oraz $f_{2}(x)$.
 
 \section*{Zadanie 6}
 \subsection*{Opis problemu}
@@ -121,5 +122,5 @@ W zadaniu należy znaleźć miejsca zerowe funkcji $f_{1}(x) = e^{1-x}-1$ oraz $
 Jak widać na \ref{tab:Z6}, Wszystkie metody znajdują przybliżenie pierwiastków funkcji. W testach natomiast ukazują się ciekawe przypadki.\\
 W pierwszym teście w tabeli widnieje wynik dla $x_{0}=1.5$. $x_{0}\in (1,4.5)$ daje nam jeszcze przybliżenie miejsca zerowego. $x_{0}\in [4.5,7.6)$ zwraca nam jeszcze wyniki, chociaż wyznacza niesamowicie niskie r oraz osiąga maksymalną liczbę iteracji. $x_{0}\in [7.6,12.6)$ zwraca nam NaN, ponieważ wartość funkcji zwraca Inf. Dla $x_{0}\ge 12.6$ pochodna jest zbyt  bliska zeru, więc metoda od razu zwraca wynik z sygnałem błędu 2.\\
 W drugim teście możemy zauważyć, że metoda dla $x_{0}=1.5$ nie zwraca nam bliższego miejsca zerowego $r=0$, tylko szuka miejsca zerowego dla większych x, gdzie funkcja zbiega do 0.\\
-W trzecim teście natychmiast dostajemy wynik z sygnalizacją błędu 2, ponieważ dla $x_{0}=1.0$ pochodna funkcji jest równa 0.
+W trzecim teście natychmiast dostajemy wynik z sygnalizacją błędu 2, ponieważ dla $x_{0}=1.0$ pochodna funkcji jest równa 0. Taki przypadek udowadnia, że metoda nie jest zbieżna globalnie.
 \end{document}
