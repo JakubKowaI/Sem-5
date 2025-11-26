@@ -12,3 +12,4 @@
 *.zip
 *.bin
 flex/
+!Makefile
