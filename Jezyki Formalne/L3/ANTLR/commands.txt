@@ -1,0 +1,4 @@
+antlr4 Calculator.g4 -no-listener -visitor
+javac -cp ".:/usr/share/java/antlr-complete.jar" *.java
+javac -cp ".:/usr/share/java/antlr-complete.jar" Main.java
+java -cp ".:/usr/share/java/antlr-complete.jar" Main

@@ -54,7 +54,10 @@ input:
 line:
 EOL
 | exp EOL { std::cout << "\nWynik: " << $1 << std::endl; }
+| error EOL {std::cout<<std::endl;yyerrok;}
 ;
+
+//std::cout<<"\n Pojawił się błąd: "<<yyerrok<<std::endl;
 
 exp:
 NUMBER          { $$ = $1; std::cout<<$1<<" "; }
