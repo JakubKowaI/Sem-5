@@ -11,5 +11,6 @@
 */.svn
 *.zip
 *.bin
+*.out
 flex/
 !Makefile
