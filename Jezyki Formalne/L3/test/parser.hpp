@@ -50,8 +50,8 @@
   #include <iostream>
   #include <string>
   #include <vector>
-  #include <cmath>  // dla pow
-  #include <cstdio> // dla printf
+  #include <cmath>
+  #include <cstdio>
 
 #line 57 "parser.hpp"
 
@@ -386,7 +386,8 @@ namespace yy {
     {
       // NUMBER
       // exp
-      char dummy1[sizeof (int)];
+      // PRIMARY
+      char dummy1[sizeof (long long)];
     };
 
     /// The size of the largest semantic type.
@@ -474,7 +475,8 @@ namespace yy {
         S_YYACCEPT = 13,                         // $accept
         S_input = 14,                            // input
         S_line = 15,                             // line
-        S_exp = 16                               // exp
+        S_exp = 16,                              // exp
+        S_PRIMARY = 17                           // PRIMARY
       };
     };
 
@@ -511,7 +513,8 @@ namespace yy {
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.move< int > (std::move (that.value));
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.move< long long > (std::move (that.value));
         break;
 
       default:
@@ -536,12 +539,12 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, int&& v)
+      basic_symbol (typename Base::kind_type t, long long&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const int& v)
+      basic_symbol (typename Base::kind_type t, const long long& v)
         : Base (t)
         , value (v)
       {}
@@ -573,7 +576,8 @@ switch (yykind)
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.template destroy< int > ();
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.template destroy< long long > ();
         break;
 
       default:
@@ -673,10 +677,10 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, int v)
+      symbol_type (int tok, long long v)
         : super_type (token_kind_type (tok), std::move (v))
 #else
-      symbol_type (int tok, const int& v)
+      symbol_type (int tok, const long long& v)
         : super_type (token_kind_type (tok), v)
 #endif
       {}
@@ -778,14 +782,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_NUMBER (int v)
+      make_NUMBER (long long v)
       {
         return symbol_type (token::NUMBER, std::move (v));
       }
 #else
       static
       symbol_type
-      make_NUMBER (const int& v)
+      make_NUMBER (const long long& v)
       {
         return symbol_type (token::NUMBER, v);
       }
@@ -1229,8 +1233,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 39,     ///< Last index in yytable_.
-      yynnts_ = 4,  ///< Number of nonterminal symbols.
+      yylast_ = 50,     ///< Last index in yytable_.
+      yynnts_ = 5,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1297,7 +1301,8 @@ switch (yykind)
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.copy< int > (YY_MOVE (that.value));
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.copy< long long > (YY_MOVE (that.value));
         break;
 
       default:
@@ -1333,7 +1338,8 @@ switch (yykind)
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.move< int > (YY_MOVE (s.value));
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.move< long long > (YY_MOVE (s.value));
         break;
 
       default:
@@ -1401,7 +1407,7 @@ switch (yykind)
 
 
 } // yy
-#line 1405 "parser.hpp"
+#line 1411 "parser.hpp"
 
 
 

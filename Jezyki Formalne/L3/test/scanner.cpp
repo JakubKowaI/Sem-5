@@ -973,7 +973,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 36 "scanner.l"
-{ return yy::parser::make_NUMBER(std::stoi(yytext)); }
+{ return yy::parser::make_NUMBER(std::stoul(yytext)); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP

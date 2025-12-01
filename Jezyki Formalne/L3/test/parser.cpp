@@ -50,13 +50,38 @@
   }
   int GF=1234577;
 
-  int mod(int x){
+  int mod(long long x){
     if(x<0)return (GF+(x%GF))%GF;
     else return x%GF;
   }
 
+  int mod2(long long x){
+    long long m = GF - 1;
+    x %= m;
+    if (x < 0) x += m;
+    return x;
+  }
+  
+  
 
-#line 60 "parser.cpp"
+
+  int power(long long b,long long e){
+    //std::cout<<std::endl<<e<<" - "<<std::endl;
+    e=mod2(e);
+    int c=1;
+    for(int i=0;i<e;i++){
+      c=(c*b)%GF;
+    }
+    return c;
+  }
+
+  int div(long long a, long long b) {
+    b = mod(b);
+    if (b == 0) { std::cout<<"Dzielienie przez 0!!!"<<std::endl; return 0; }
+    return (a * power(b,GF-2))%GF;
+  }
+
+#line 85 "parser.cpp"
 
 
 #ifndef YY_
@@ -129,7 +154,7 @@
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 133 "parser.cpp"
+#line 158 "parser.cpp"
 
   /// Build a parser object.
   parser::parser ()
@@ -198,7 +223,8 @@ namespace yy {
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.YY_MOVE_OR_COPY< int > (YY_MOVE (that.value));
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.YY_MOVE_OR_COPY< long long > (YY_MOVE (that.value));
         break;
 
       default:
@@ -218,7 +244,8 @@ namespace yy {
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.move< int > (YY_MOVE (that.value));
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.move< long long > (YY_MOVE (that.value));
         break;
 
       default:
@@ -238,7 +265,8 @@ namespace yy {
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.copy< int > (that.value);
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.copy< long long > (that.value);
         break;
 
       default:
@@ -256,7 +284,8 @@ namespace yy {
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        value.move< int > (that.value);
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        value.move< long long > (that.value);
         break;
 
       default:
@@ -515,7 +544,8 @@ namespace yy {
     {
       case symbol_kind::S_NUMBER: // NUMBER
       case symbol_kind::S_exp: // exp
-        yylhs.value.emplace< int > ();
+      case symbol_kind::S_PRIMARY: // PRIMARY
+        yylhs.value.emplace< long long > ();
         break;
 
       default:
@@ -533,67 +563,79 @@ namespace yy {
           switch (yyn)
             {
   case 5: // line: exp "end of line"
-#line 56 "parser.yy"
-          { std::cout << "\nWynik: " << yystack_[1].value.as < int > () << std::endl; }
-#line 539 "parser.cpp"
-    break;
-
-  case 6: // line: error "end of line"
-#line 57 "parser.yy"
-            {std::cout<<std::endl;yyerrok;}
-#line 545 "parser.cpp"
-    break;
-
-  case 7: // exp: NUMBER
-#line 63 "parser.yy"
-                { yylhs.value.as < int > () = yystack_[0].value.as < int > (); std::cout<<yystack_[0].value.as < int > ()<<" "; }
-#line 551 "parser.cpp"
-    break;
-
-  case 8: // exp: "-" NUMBER
-#line 64 "parser.yy"
-                         {yylhs.value.as < int > () = mod(-yystack_[0].value.as < int > ()); std::cout<<mod(-yystack_[0].value.as < int > ())<<" "; }
-#line 557 "parser.cpp"
-    break;
-
-  case 9: // exp: exp "+" exp
-#line 65 "parser.yy"
-               { yylhs.value.as < int > () = mod(yystack_[2].value.as < int > () + yystack_[0].value.as < int > ()); std::cout<<'+'<<" "; }
-#line 563 "parser.cpp"
-    break;
-
-  case 10: // exp: exp "-" exp
-#line 66 "parser.yy"
-                { yylhs.value.as < int > () = mod(yystack_[2].value.as < int > () - yystack_[0].value.as < int > ()); std::cout<<'-'<<" "; }
+#line 82 "parser.yy"
+          { std::cout << "\nWynik: " << mod(yystack_[1].value.as < long long > ()) << std::endl; }
 #line 569 "parser.cpp"
     break;
 
-  case 11: // exp: exp "*" exp
-#line 67 "parser.yy"
-               { yylhs.value.as < int > () = mod(yystack_[2].value.as < int > () * yystack_[0].value.as < int > ()); std::cout<<'*'<<" "; }
+  case 6: // line: error "end of line"
+#line 83 "parser.yy"
+            {std::cout<<std::endl;yyerrok;}
 #line 575 "parser.cpp"
     break;
 
-  case 12: // exp: exp "/" exp
-#line 68 "parser.yy"
-                { yylhs.value.as < int > () = mod(yystack_[2].value.as < int > () / yystack_[0].value.as < int > ()); std::cout<<'/'<<" "; }
+  case 7: // exp: PRIMARY
+#line 92 "parser.yy"
+              {yylhs.value.as < long long > ()=yystack_[0].value.as < long long > ();std::cout<<mod(yystack_[0].value.as < long long > ())<<" ";}
 #line 581 "parser.cpp"
     break;
 
-  case 13: // exp: exp "^" exp
-#line 70 "parser.yy"
-              { yylhs.value.as < int > () = mod(pow(yystack_[2].value.as < int > (), yystack_[0].value.as < int > ())); std::cout<<'^'<<" "; }
+  case 8: // exp: exp "+" exp
+#line 93 "parser.yy"
+               { yylhs.value.as < long long > () = mod(yystack_[2].value.as < long long > () + yystack_[0].value.as < long long > ()); std::cout<<'+'<<" "; }
 #line 587 "parser.cpp"
     break;
 
-  case 14: // exp: "(" exp ")"
-#line 71 "parser.yy"
-                    { yylhs.value.as < int > () = yystack_[1].value.as < int > (); }
+  case 9: // exp: exp "-" exp
+#line 94 "parser.yy"
+                { yylhs.value.as < long long > () = mod(yystack_[2].value.as < long long > () - yystack_[0].value.as < long long > ()); std::cout<<'-'<<" "; }
 #line 593 "parser.cpp"
     break;
 
+  case 10: // exp: exp "*" exp
+#line 95 "parser.yy"
+               { yylhs.value.as < long long > () = mod(yystack_[2].value.as < long long > () * yystack_[0].value.as < long long > ()); std::cout<<'*'<<" "; }
+#line 599 "parser.cpp"
+    break;
 
-#line 597 "parser.cpp"
+  case 11: // exp: exp "/" exp
+#line 96 "parser.yy"
+                { yylhs.value.as < long long > () = div(yystack_[2].value.as < long long > (), yystack_[0].value.as < long long > ()); std::cout<<'/'<<" "; }
+#line 605 "parser.cpp"
+    break;
+
+  case 12: // exp: exp "^" exp
+#line 98 "parser.yy"
+              { yylhs.value.as < long long > () = mod(power(yystack_[2].value.as < long long > (), yystack_[0].value.as < long long > ())); std::cout<<'^'<<" "; }
+#line 611 "parser.cpp"
+    break;
+
+  case 13: // exp: "(" exp ")"
+#line 99 "parser.yy"
+                    { yylhs.value.as < long long > () = yystack_[1].value.as < long long > (); }
+#line 617 "parser.cpp"
+    break;
+
+  case 14: // PRIMARY: NUMBER
+#line 103 "parser.yy"
+         { yylhs.value.as < long long > () = mod(yystack_[0].value.as < long long > ());  }
+#line 623 "parser.cpp"
+    break;
+
+  case 15: // PRIMARY: "-" PRIMARY
+#line 104 "parser.yy"
+                          {yylhs.value.as < long long > () = -yystack_[0].value.as < long long > ();  }
+#line 629 "parser.cpp"
+    break;
+
+  case 16: // PRIMARY: "(" exp ")"
+#line 105 "parser.yy"
+                    { yylhs.value.as < long long > () = yystack_[1].value.as < long long > (); }
+#line 635 "parser.cpp"
+    break;
+
+
+#line 639 "parser.cpp"
 
             default:
               break;
@@ -782,76 +824,80 @@ namespace yy {
 
 
 
-  const signed char parser::yypact_ninf_ = -10;
+  const signed char parser::yypact_ninf_ = -7;
 
   const signed char parser::yytable_ninf_ = -1;
 
   const signed char
   parser::yypact_[] =
   {
-     -10,     0,   -10,    -9,   -10,     9,    31,   -10,   -10,    15,
-     -10,   -10,    23,    31,    31,    31,    31,    31,   -10,   -10,
-       3,     3,    -6,    -6,    -6
+      -7,    14,    -7,     9,    -7,    13,    37,    -7,    -7,    -3,
+      -7,    -7,    37,    -7,    22,    37,    37,    37,    37,    37,
+      -7,    29,    -7,    40,    40,    -5,    -5,    -5,    -7
   };
 
   const signed char
   parser::yydefact_[] =
   {
-       2,     0,     1,     0,     7,     0,     0,     4,     3,     0,
-       6,     8,     0,     0,     0,     0,     0,     0,     5,    14,
-       9,    10,    11,    12,    13
+       2,     0,     1,     0,    14,     0,     0,     4,     3,     0,
+       7,     6,     0,    15,     0,     0,     0,     0,     0,     0,
+       5,     0,    13,     8,     9,    10,    11,    12,    16
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-     -10,   -10,   -10,     1
+      -7,    -7,    -7,    -6,    18
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-       0,     1,     8,     9
+       0,     1,     8,     9,    10
   };
 
   const signed char
   parser::yytable_[] =
   {
-       2,     3,    10,     4,    17,     5,     0,    12,     6,    15,
-      16,     7,    11,    17,    20,    21,    22,    23,    24,    13,
-      14,    15,    16,     0,     0,    17,    18,    13,    14,    15,
-      16,     0,    19,    17,     4,     0,     5,     0,     0,     6
+      14,    15,    16,    17,    18,    19,    21,    19,    20,    23,
+      24,    25,    26,    27,     2,     3,     4,     4,     5,     5,
+      11,    12,     6,    13,     0,     7,    15,    16,    17,    18,
+       0,    22,    19,    15,    16,    17,    18,     0,    28,    19,
+       4,     0,     5,     0,     0,     6,    17,    18,     0,     0,
+      19
   };
 
   const signed char
   parser::yycheck_[] =
   {
-       0,     1,    11,     3,    10,     5,    -1,     6,     8,     6,
-       7,    11,     3,    10,    13,    14,    15,    16,    17,     4,
-       5,     6,     7,    -1,    -1,    10,    11,     4,     5,     6,
-       7,    -1,     9,    10,     3,    -1,     5,    -1,    -1,     8
+       6,     4,     5,     6,     7,    10,    12,    10,    11,    15,
+      16,    17,    18,    19,     0,     1,     3,     3,     5,     5,
+      11,     8,     8,     5,    -1,    11,     4,     5,     6,     7,
+      -1,     9,    10,     4,     5,     6,     7,    -1,     9,    10,
+       3,    -1,     5,    -1,    -1,     8,     6,     7,    -1,    -1,
+      10
   };
 
   const signed char
   parser::yystos_[] =
   {
        0,    14,     0,     1,     3,     5,     8,    11,    15,    16,
-      11,     3,    16,     4,     5,     6,     7,    10,    11,     9,
-      16,    16,    16,    16,    16
+      17,    11,     8,    17,    16,     4,     5,     6,     7,    10,
+      11,    16,     9,    16,    16,    16,    16,    16,     9
   };
 
   const signed char
   parser::yyr1_[] =
   {
        0,    13,    14,    14,    15,    15,    15,    16,    16,    16,
-      16,    16,    16,    16,    16
+      16,    16,    16,    16,    17,    17,    17
   };
 
   const signed char
   parser::yyr2_[] =
   {
-       0,     2,     0,     2,     1,     2,     2,     1,     2,     3,
-       3,     3,     3,     3,     3
+       0,     2,     0,     2,     1,     2,     2,     1,     3,     3,
+       3,     3,     3,     3,     1,     2,     3
   };
 
 
@@ -863,7 +909,7 @@ namespace yy {
   {
   "\"end of file\"", "error", "\"invalid token\"", "NUMBER", "\"+\"",
   "\"-\"", "\"*\"", "\"/\"", "\"(\"", "\")\"", "\"^\"", "\"end of line\"",
-  "NEG", "$accept", "input", "line", "exp", YY_NULLPTR
+  "NEG", "$accept", "input", "line", "exp", "PRIMARY", YY_NULLPTR
   };
 #endif
 
@@ -872,8 +918,8 @@ namespace yy {
   const signed char
   parser::yyrline_[] =
   {
-       0,    50,    50,    51,    55,    56,    57,    63,    64,    65,
-      66,    67,    68,    70,    71
+       0,    76,    76,    77,    81,    82,    83,    92,    93,    94,
+      95,    96,    98,    99,   103,   104,   105
   };
 
   void
@@ -905,9 +951,9 @@ namespace yy {
 
 
 } // yy
-#line 909 "parser.cpp"
+#line 955 "parser.cpp"
 
-#line 73 "parser.yy"
+#line 107 "parser.yy"
 
 
 namespace yy {

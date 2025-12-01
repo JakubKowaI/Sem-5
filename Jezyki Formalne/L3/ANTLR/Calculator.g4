@@ -1,26 +1,42 @@
 grammar Calculator;
 
-// Główny punkt wejścia
 input
     : line* EOF
     ;
 
 line
-    : expr NEWLINE        # printExpr
-    | NEWLINE             # blank
+    : expr NEWLINE            # printExpr
+    | NEWLINE                 # blank
     ;
 
-// Reguły parsowania (priorytety są ustalane przez kolejność - im wyżej, tym silniej wiąże)
+// expr -> add -> mul -> pow -> unary -> primary (priorytet)
 expr
-    : LPAREN expr RPAREN              # parens
-    | MINUS NUMBER                    # negativeNumber
-    | left=expr HAT right=expr        # power
-    | left=expr op=(STAR|SLASH) right=expr  # mulDiv
-    | left=expr op=(PLUS|MINUS) right=expr  # addSub
-    | NUMBER                          # number
+    : addExpr
     ;
 
-// Reguły leksera (Tokeny)
+addExpr
+    : mulExpr (op=(PLUS | MINUS) right=mulExpr)*
+    ;
+
+mulExpr
+    : powExpr (op=(STAR | SLASH) right=powExpr)*
+    ;
+
+powExpr
+    : left=unaryExpr (HAT right=powExpr)?
+    ;
+
+unaryExpr
+    : MINUS unaryExpr         # unaryMinus
+    | primary                 # primaryExpr
+    ;
+
+primary
+    : NUMBER                  # number
+    | LPAREN expr RPAREN      # parens
+    ;
+
+// lexer
 PLUS    : '+';
 MINUS   : '-';
 STAR    : '*';
@@ -29,13 +45,8 @@ HAT     : '^';
 LPAREN  : '(';
 RPAREN  : ')';
 
-NUMBER  : [0-9]+;
+NUMBER  : [0-9]+ ;
 
-// Obsługa komentarzy (Bison: #.*)
-COMMENT : '#' ~[\r\n]* -> skip;
-
-// Białe znaki (Bison: WS)
-WS      : [ \t]+ -> skip;
-
-// Koniec linii (Bison: EOL)
-NEWLINE : '\r'? '\n';
+COMMENT : '#' ~[\r\n]* -> skip ;
+WS      : [ \t\r]+ -> skip ;
+NEWLINE : '\r'? '\n' ;

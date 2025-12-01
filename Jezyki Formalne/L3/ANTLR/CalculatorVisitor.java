@@ -30,45 +30,55 @@ public interface CalculatorVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBlank(CalculatorParser.BlankContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CalculatorParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpr(CalculatorParser.ExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CalculatorParser#addExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAddExpr(CalculatorParser.AddExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CalculatorParser#mulExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMulExpr(CalculatorParser.MulExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CalculatorParser#powExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPowExpr(CalculatorParser.PowExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code unaryMinus}
+	 * labeled alternative in {@link CalculatorParser#unaryExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryMinus(CalculatorParser.UnaryMinusContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code primaryExpr}
+	 * labeled alternative in {@link CalculatorParser#unaryExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimaryExpr(CalculatorParser.PrimaryExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code number}
-	 * labeled alternative in {@link CalculatorParser#expr}.
+	 * labeled alternative in {@link CalculatorParser#primary}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitNumber(CalculatorParser.NumberContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code parens}
-	 * labeled alternative in {@link CalculatorParser#expr}.
+	 * labeled alternative in {@link CalculatorParser#primary}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitParens(CalculatorParser.ParensContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code negativeNumber}
-	 * labeled alternative in {@link CalculatorParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNegativeNumber(CalculatorParser.NegativeNumberContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code addSub}
-	 * labeled alternative in {@link CalculatorParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAddSub(CalculatorParser.AddSubContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code power}
-	 * labeled alternative in {@link CalculatorParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPower(CalculatorParser.PowerContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code mulDiv}
-	 * labeled alternative in {@link CalculatorParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMulDiv(CalculatorParser.MulDivContext ctx);
 }

@@ -1,106 +1,166 @@
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.ParseTree;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import org.antlr.v4.runtime.tree.*;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    private static final int GF = 1234577;
+    private static final long GF = 1234577L;
 
-    private static int mod(int x) {
+    private static long mod(long x) {
         if (x < 0) return (GF + (x % GF)) % GF;
         else return x % GF;
     }
 
-    // Klasa Visitora z logiką
-    public static class LogicVisitor extends CalculatorBaseVisitor<Integer> {
+    private static long mod2(long x) {
+        long m = GF - 1;
+        x %= m;
+        if (x < 0) x += m;
+        return x;
+    }
+
+    private static long power(long b, long e) {
+        e = mod2(e);
+        long base = mod(b);
+        long res = 1L;
+        while (e > 0) {
+            if ((e & 1L) == 1L) res = (res * base) % GF;
+            base = (base * base) % GF;
+            e >>= 1;
+        }
+        return res;
+    }
+
+    private static long divMod(long a, long b) {
+        b = mod(b);
+        if (b == 0) {
+            System.out.println("Dzielenie przez 0!!!");
+            return 0L;
+        }
+        a = mod(a);
+        long inv = power(b, GF - 2);
+        return (a * inv) % GF;
+    }
+
+    // Visitor wykonujący obliczenia i wypisujący ONP
+    public static class LogicVisitor extends CalculatorBaseVisitor<Long> {
 
         @Override
-        public Integer visitPrintExpr(CalculatorParser.PrintExprContext ctx) {
-            Integer value = visit(ctx.expr());
-            System.out.println("\nWynik: " + value);
+        public Long visitPrintExpr(CalculatorParser.PrintExprContext ctx) {
+            long value = visit(ctx.expr());
+            System.out.println("\nWynik: " + mod(value));
             return value;
         }
 
         @Override
-        public Integer visitNumber(CalculatorParser.NumberContext ctx) {
-            int value = Integer.parseInt(ctx.getText());
-            System.out.print(value + " ");
+        public Long visitBlank(CalculatorParser.BlankContext ctx) {
+            return 0L;
+        }
+
+        // addExpr: mulExpr ( (PLUS|MINUS) mulExpr )*
+        @Override
+        public Long visitAddExpr(CalculatorParser.AddExprContext ctx) {
+            // Dzieci: mulExpr (op mulExpr)*
+            int childCount = ctx.getChildCount();
+            // pierwszy child to mulExpr
+            long value = visit(ctx.getChild(0));
+            for (int i = 1; i < childCount; i += 2) {
+                ParseTree opNode = ctx.getChild(i);
+                ParseTree rightNode = ctx.getChild(i + 1);
+                int type = ((TerminalNode) opNode).getSymbol().getType();
+                long right = visit(rightNode);
+                if (type == CalculatorParser.PLUS) {
+                    System.out.print("+ ");
+                    value = mod(value + right);
+                } else { // MINUS
+                    System.out.print("- ");
+                    value = mod(value - right);
+                }
+            }
             return value;
         }
 
+        // mulExpr: powExpr ( (STAR|SLASH) powExpr )*
         @Override
-        public Integer visitNegativeNumber(CalculatorParser.NegativeNumberContext ctx) {
-            int value = Integer.parseInt(ctx.NUMBER().getText());
-            int result = mod(-value);
-            System.out.print(result + " ");
-            return result;
-        }
-
-        @Override
-        public Integer visitAddSub(CalculatorParser.AddSubContext ctx) {
-            int left = visit(ctx.left);
-            int right = visit(ctx.right);
-            int result;
-            if (ctx.op.getType() == CalculatorParser.PLUS) {
-                result = mod(left + right);
-                System.out.print("+ ");
-            } else {
-                result = mod(left - right);
-                System.out.print("- ");
+        public Long visitMulExpr(CalculatorParser.MulExprContext ctx) {
+            int childCount = ctx.getChildCount();
+            long value = visit(ctx.getChild(0));
+            for (int i = 1; i < childCount; i += 2) {
+                ParseTree opNode = ctx.getChild(i);
+                ParseTree rightNode = ctx.getChild(i + 1);
+                int type = ((TerminalNode) opNode).getSymbol().getType();
+                long right = visit(rightNode);
+                if (type == CalculatorParser.STAR) {
+                    System.out.print("* ");
+                    value = mod(value * right);
+                } else { // SLASH
+                    System.out.print("/ ");
+                    value = divMod(value, right);
+                }
             }
-            return result;
+            return value;
         }
 
+        // powExpr: left=unaryExpr (HAT right=powExpr)?
         @Override
-        public Integer visitMulDiv(CalculatorParser.MulDivContext ctx) {
-            int left = visit(ctx.left);
-            int right = visit(ctx.right);
-            int result;
-            if (ctx.op.getType() == CalculatorParser.STAR) {
-                result = mod(left * right);
-                System.out.print("* ");
-            } else {
-                result = mod(left / right);
-                System.out.print("/ ");
+        public Long visitPowExpr(CalculatorParser.PowExprContext ctx) {
+            long left = visit(ctx.left);
+            if (ctx.right != null) {
+                long right = visit(ctx.right);
+                long res = power(left, right);
+                System.out.print("^ ");
+                return res;
             }
-            return result;
+            return left;
         }
 
         @Override
-        public Integer visitPower(CalculatorParser.PowerContext ctx) {
-            int left = visit(ctx.left);
-            int right = visit(ctx.right);
-            int result = mod((int) Math.pow(left, right));
-            System.out.print("^ ");
-            return result;
+        public Long visitUnaryMinus(CalculatorParser.UnaryMinusContext ctx) {
+            long v = visit(ctx.unaryExpr());
+            return -v;
         }
 
         @Override
-        public Integer visitParens(CalculatorParser.ParensContext ctx) {
+        public Long visitPrimaryExpr(CalculatorParser.PrimaryExprContext ctx) {
+            return visit(ctx.primary());
+        }
+
+        @Override
+        public Long visitNumber(CalculatorParser.NumberContext ctx) {
+            long v = Long.parseLong(ctx.NUMBER().getText());
+            long r = mod(v);
+            System.out.print(r + " ");
+            return r;
+        }
+
+        @Override
+        public Long visitParens(CalculatorParser.ParensContext ctx) {
             return visit(ctx.expr());
         }
     }
 
     public static void main(String[] args) throws Exception {
-        // Czytanie wejścia linia po linii (tryb interaktywny)
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String inputLine;
+        String line;
+        LogicVisitor visitor = new LogicVisitor();
 
-        while ((inputLine = reader.readLine()) != null) {
-            // Dodajemy \n, ponieważ readLine() go ucina, a gramatyka wymaga NEWLINE na końcu
-            CharStream input = CharStreams.fromString(inputLine + "\n");
-
-            CalculatorLexer lexer = new CalculatorLexer(input);
+        while ((line = reader.readLine()) != null) {
+            CharStream cs = CharStreams.fromString(line + "\n");
+            CalculatorLexer lexer = new CalculatorLexer(cs);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             CalculatorParser parser = new CalculatorParser(tokens);
 
-            // Ważne: Używamy reguły 'line' zamiast 'input'.
-            // 'input' oczekuje EOF, a 'line' parsuje pojedyncze wyrażenie.
-            ParseTree tree = parser.line();
-
-            LogicVisitor visitor = new LogicVisitor();
-            visitor.visit(tree);
+            try {
+                CalculatorParser.LineContext tree = parser.line();
+                if (parser.getNumberOfSyntaxErrors() == 0) {
+                    visitor.visit(tree);
+                } else {
+                    System.out.println(); // zgodnie z oryginałem: pusty wiersz przy błędzie
+                }
+            } catch (Exception ex) {
+                System.err.println("Błąd parsowania: " + ex.getMessage());
+                System.out.println();
+            }
         }
     }
 }

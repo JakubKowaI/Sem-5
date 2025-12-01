@@ -33,7 +33,7 @@ WS      [ \t\r]+
 "("                       { return yy::parser::make_LPAREN(); }
 ")"                       { return yy::parser::make_RPAREN(); }
 
-{DIGIT}+                  { return yy::parser::make_NUMBER(std::stoi(yytext)); }
+{DIGIT}+                  { return yy::parser::make_NUMBER(std::stoul(yytext)); }
 
 . {
   std::cerr << "Nieznany znak: " << yytext << std::endl;
