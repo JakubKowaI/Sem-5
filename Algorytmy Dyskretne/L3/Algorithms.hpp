@@ -1,9 +1,10 @@
 #pragma once
 #include <iostream>
-#include <bits/stdc++.h>
 #include <utility>
 #include <vector>
 #include <climits>
+#include <chrono>
+
 
 void swap(int *x, int *y);
 
@@ -33,4 +34,6 @@ class MinHeap{
     void deleteKey(int i);
 };
 
-std::pair<int,int> Dijsktra(std::vector<std::vector<int>> graph,int s);
+
+double Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s);
+long DijsktraSearch(std::vector<std::vector<std::pair<int,int>>> graph, int s,int dest);
