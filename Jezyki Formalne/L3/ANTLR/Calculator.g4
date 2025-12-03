@@ -5,11 +5,10 @@ input
     ;
 
 line
-    : expr NEWLINE            # printExpr
-    | NEWLINE                 # blank
+    : expr NEWLINE            
+    | NEWLINE                 
     ;
 
-// expr -> add -> mul -> pow -> unary -> primary (priorytet)
 expr
     : addExpr
     ;
@@ -27,16 +26,15 @@ powExpr
     ;
 
 unaryExpr
-    : MINUS unaryExpr         # unaryMinus
-    | primary                 # primaryExpr
+    : MINUS unaryExpr         
+    | primary                 
     ;
 
 primary
-    : NUMBER                  # number
-    | LPAREN expr RPAREN      # parens
+    : NUMBER                  
+    | LPAREN expr RPAREN      
     ;
 
-// lexer
 PLUS    : '+';
 MINUS   : '-';
 STAR    : '*';

@@ -42,7 +42,6 @@ public class Main {
         return (a * inv) % GF;
     }
 
-    // Visitor wykonujący obliczenia i wypisujący ONP
     public static class LogicVisitor extends CalculatorBaseVisitor<Long> {
 
         @Override
@@ -57,12 +56,9 @@ public class Main {
             return 0L;
         }
 
-        // addExpr: mulExpr ( (PLUS|MINUS) mulExpr )*
         @Override
         public Long visitAddExpr(CalculatorParser.AddExprContext ctx) {
-            // Dzieci: mulExpr (op mulExpr)*
             int childCount = ctx.getChildCount();
-            // pierwszy child to mulExpr
             long value = visit(ctx.getChild(0));
             for (int i = 1; i < childCount; i += 2) {
                 ParseTree opNode = ctx.getChild(i);
@@ -80,7 +76,6 @@ public class Main {
             return value;
         }
 
-        // mulExpr: powExpr ( (STAR|SLASH) powExpr )*
         @Override
         public Long visitMulExpr(CalculatorParser.MulExprContext ctx) {
             int childCount = ctx.getChildCount();
@@ -101,7 +96,6 @@ public class Main {
             return value;
         }
 
-        // powExpr: left=unaryExpr (HAT right=powExpr)?
         @Override
         public Long visitPowExpr(CalculatorParser.PowExprContext ctx) {
             long left = visit(ctx.left);
@@ -155,7 +149,7 @@ public class Main {
                 if (parser.getNumberOfSyntaxErrors() == 0) {
                     visitor.visit(tree);
                 } else {
-                    System.out.println(); // zgodnie z oryginałem: pusty wiersz przy błędzie
+                    System.out.println("Błąd");
                 }
             } catch (Exception ex) {
                 System.err.println("Błąd parsowania: " + ex.getMessage());

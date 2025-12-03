@@ -182,8 +182,8 @@ int main(int argc,char** argv){
             for (int x = 0; x < get<1>(hxw); x++) {
                 for (int c = 0; c < 3; ++c) { // 0=B, 1=G, 2=R
                     int X = getVal(image, x, y, get<1>(hxw), get<0>(hxw), c);
-                    int w = getVal(image, x - 1, y, get<1>(hxw), get<0>(hxw), c); // Left
-                    int n = getVal(image, x, y - 1, get<1>(hxw), get<0>(hxw), c); // Up
+                    int w = getVal(image, x - 1, y, get<1>(hxw), get<0>(hxw), c); // Gora
+                    int n = getVal(image, x, y - 1, get<1>(hxw), get<0>(hxw), c); // Lewo
                     int nw = getVal(image, x - 1, y - 1, get<1>(hxw), get<0>(hxw), c); // Skos
 
                     u_int8_t pred = predictor(w,n,nw);

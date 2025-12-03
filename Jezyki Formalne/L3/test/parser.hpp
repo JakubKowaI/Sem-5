@@ -45,7 +45,7 @@
 #ifndef YY_YY_PARSER_HPP_INCLUDED
 # define YY_YY_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 8 "parser.yy"
+#line 7 "parser.yy"
 
   #include <iostream>
   #include <string>
@@ -385,6 +385,7 @@ namespace yy {
     union union_type
     {
       // NUMBER
+      // EXPEXPR
       // exp
       // PRIMARY
       char dummy1[sizeof (long long)];
@@ -475,8 +476,9 @@ namespace yy {
         S_YYACCEPT = 13,                         // $accept
         S_input = 14,                            // input
         S_line = 15,                             // line
-        S_exp = 16,                              // exp
-        S_PRIMARY = 17                           // PRIMARY
+        S_EXPEXPR = 16,                          // EXPEXPR
+        S_exp = 17,                              // exp
+        S_PRIMARY = 18                           // PRIMARY
       };
     };
 
@@ -512,6 +514,7 @@ namespace yy {
         switch (this->kind ())
     {
       case symbol_kind::S_NUMBER: // NUMBER
+      case symbol_kind::S_EXPEXPR: // EXPEXPR
       case symbol_kind::S_exp: // exp
       case symbol_kind::S_PRIMARY: // PRIMARY
         value.move< long long > (std::move (that.value));
@@ -575,6 +578,7 @@ namespace yy {
 switch (yykind)
     {
       case symbol_kind::S_NUMBER: // NUMBER
+      case symbol_kind::S_EXPEXPR: // EXPEXPR
       case symbol_kind::S_exp: // exp
       case symbol_kind::S_PRIMARY: // PRIMARY
         value.template destroy< long long > ();
@@ -1233,8 +1237,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 50,     ///< Last index in yytable_.
-      yynnts_ = 5,  ///< Number of nonterminal symbols.
+      yylast_ = 65,     ///< Last index in yytable_.
+      yynnts_ = 6,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -1300,6 +1304,7 @@ switch (yykind)
     switch (this->kind ())
     {
       case symbol_kind::S_NUMBER: // NUMBER
+      case symbol_kind::S_EXPEXPR: // EXPEXPR
       case symbol_kind::S_exp: // exp
       case symbol_kind::S_PRIMARY: // PRIMARY
         value.copy< long long > (YY_MOVE (that.value));
@@ -1337,6 +1342,7 @@ switch (yykind)
     switch (this->kind ())
     {
       case symbol_kind::S_NUMBER: // NUMBER
+      case symbol_kind::S_EXPEXPR: // EXPEXPR
       case symbol_kind::S_exp: // exp
       case symbol_kind::S_PRIMARY: // PRIMARY
         value.move< long long > (YY_MOVE (s.value));
@@ -1407,7 +1413,7 @@ switch (yykind)
 
 
 } // yy
-#line 1411 "parser.hpp"
+#line 1417 "parser.hpp"
 
 
 

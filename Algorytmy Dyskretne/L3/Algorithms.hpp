@@ -36,4 +36,8 @@ class MinHeap{
 
 
 double Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s);
-long DijsktraSearch(std::vector<std::vector<std::pair<int,int>>> graph, int s,int dest);
+long DijsktraSearch(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest);
+
+double Diala(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int n);
+long DialaSearch(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int dest,int n);
+long OGDialaSearch(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int dest);
