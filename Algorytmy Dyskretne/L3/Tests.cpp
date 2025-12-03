@@ -6,6 +6,7 @@
 #include <chrono>
 #include <random>
 #include <thread>
+#include <utility>
 
 using namespace std;
 
@@ -14,29 +15,40 @@ void run_command(const string& command) {
 }
 
 int main(){
-    mt19937 mt{
-        static_cast<std::mt19937::result_type>(
-        std::chrono::steady_clock::now().time_since_epoch().count()
-    )    };
+    string families[]={"Long-C","Long-n","Random4-C","Random4-n","Square-C","Square-n"};
+    pair<int,int> limits[]={{0,15},{10,21},{0,15},{10,21},{0,15},{10,21}};
+    for(int i=0;i<families->size();i++){
+        cout<<"Testy dla "+families[i]<<endl;
+        for (int j=limits[i].first;j<=limits[i].second;j++) {
+            string family=families[i];
+            string path="\"ch9-1.1/inputs/" + family + "/" + family + "."+to_string(i)+".0";
 
-    int k=20;
-    for (int i = 10000; i <= 100000; i += 10000) {
-        for (int j = 0; j < k; j++) {
-            string gen = "./RandGen " + to_string(i) + " > temp.txt";
-            system(gen.c_str());
+            string dijkstra_cmd_ss = "./dijkstra -d "+path+".gr\"" + " -ss " + path + ".ss\"" + " -oss " + "\"wyniki/dijkstra/" + family + + "."+to_string(i)+".0.ss.res\"";
+            string diala_cmd_ss = "./diala -d "+path+".gr\"" + " -ss " + path + ".ss\"" + " -oss " + "\"wyniki/diala/" + family + + "."+to_string(i)+".0.ss.res\"";
+            string radixheap_cmd_ss  = "./radixheap -d "+path+".gr\"" + " -ss " + path + ".ss\"" + " -oss " + "\"wyniki/radixheap/" + family + + "."+to_string(i)+".0.ss.res\"";
 
-            string bst_cmd = "./BST " + to_string(i) + " < temp.txt";
-            string rbt_cmd = "./RBT " + to_string(i) + " < temp.txt";
-            string st_cmd  = "./ST "  + to_string(i) + " < temp.txt";
+            string dijkstra_cmd_p2p = "./dijkstra -d "+path+".gr\"" + " -p2p " + path + ".p2p\"" + " -op2p " + "\"wyniki/dijkstra/" + family + + "."+to_string(i)+".0.p2p.res\"";
+            string diala_cmd_p2p = "./diala -d "+path+".gr\"" + " -p2p " + path + ".p2p\"" + " -op2p " + "\"wyniki/diala/" + family + + "."+to_string(i)+".0.p2p.res\"";
+            string radixheap_cmd_p2p  = "./radixheap -d "+path+".gr\"" + " -p2p " + path + ".p2p\"" + " -op2p " + "\"wyniki/radixheap/" + family + + "."+to_string(i)+".0.p2p.res\"";
 
-            thread t1(run_command, bst_cmd);
-            thread t2(run_command, rbt_cmd);
-            thread t3(run_command, st_cmd);
+
+            thread t1(run_command, dijkstra_cmd_ss);
+            thread t2(run_command, diala_cmd_ss);
+            thread t3(run_command, radixheap_cmd_ss);
+            thread t4(run_command, dijkstra_cmd_p2p);
+            thread t5(run_command, diala_cmd_p2p);
+            thread t6(run_command, radixheap_cmd_p2p);
 
             t1.join();
             t2.join();
             t3.join();
+            t4.join();
+            t5.join();
+            t6.join();
         }
     }
+
+    //Testy dla USA Road
+
     return 0;
 }

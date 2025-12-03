@@ -18,20 +18,20 @@ double Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s){
         if (i == -1) break;
 
         for (auto it:graph[i]) {
-                long value = d[i] + std::get<1>(it);
-                int j=std::get<0>(it);
+            long value = d[i] + std::get<1>(it);
+            int j=std::get<0>(it);
 
-                if(d[j]>value){
-                    if(d[j]==LONG_MAX){
-                        d[j]=value;
-                        pred[j]=i;
-                        H.insert(j,value);
-                    }else{
-                        d[j]=value;
-                        pred[j]=i;
-                        H.decreaseKey(j,value);
-                    }
+            if(d[j]>value){
+                if(d[j]==LONG_MAX){
+                    d[j]=value;
+                    pred[j]=i;
+                    H.insert(j,value);
+                }else{
+                    d[j]=value;
+                    pred[j]=i;
+                    H.decreaseKey(j,value);
                 }
+            }
         }
     }
 
@@ -61,25 +61,25 @@ long DijsktraSearch(std::vector<std::vector<std::pair<int,int>>> &graph, int s,i
     while(!H.isEmpty()){
         int i = H.extractMin().vertex;
         //std::cout<<"Zdejmuje: "<<u<<std::endl;
-        //if (i==dest)return d[dest];
+        if (i==dest)return d[dest];
         if (i == -1) break;
 
         for (auto it:graph[i]) {
-                long value = d[i] + std::get<1>(it);
-                int j=std::get<0>(it);
+            long value = d[i] + std::get<1>(it);
+            int j=std::get<0>(it);
 
-                if(d[j]>value){
-                    if(d[j]==LONG_MAX){
-                        d[j]=value;
-                        pred[j]=i;
-                        H.insert(j,value);
-                    }else{
-                        d[j]=value;
-                        pred[j]=i;
-                        H.decreaseKey(j,value);
-                    }
+            if(d[j]>value){
+                if(d[j]==LONG_MAX){
+                    d[j]=value;
+                    pred[j]=i;
+                    H.insert(j,value);
+                }else{
+                    d[j]=value;
+                    pred[j]=i;
+                    H.decreaseKey(j,value);
                 }
+            }
         }
     }
-    return d[dest];
+    return -1;
 }
