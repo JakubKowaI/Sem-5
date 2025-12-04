@@ -15,7 +15,7 @@ end
 
 function ilorazyRoznicowe(x::Vector{Float64}, f::Vector{Float64})
     n = length(x) - 1
-    fx = zeros(Float64,n+1);1
+    fx = zeros(Float64,n+1)
     
     for i in 1:n+1
         fx[i]=ilorazyRekurencja(1,i,f,x)
