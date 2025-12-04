@@ -351,8 +351,6 @@ int main(int argc,char** argv){
     } else {
         cerr<<"I don't even know what happened"<<endl;
     }
-
-    //Dijsktra(graph,1);
-    //DijsktraSearch(graph,1,5);
+    
     return 0;
 }
