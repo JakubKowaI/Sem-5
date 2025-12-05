@@ -2,22 +2,35 @@
 
 using Plots
 
-function ilorazyRekurencja(a::Int,b::Int,f::Vector{Float64},x::Vector{Float64})
-    if a==b
-        return f[a]
-    end
-    return ilorazyRekurencja(a+1,b,f,x)-ilorazyRekurencja(a,b-1,f,x)/(x[b]-x[a])
-end
+# function ilorazyRekurencja(a::Int,b::Int,f::Vector{Float64},x::Vector{Float64})
+#     if a==b
+#         return f[a]
+#     end
+#     return ilorazyRekurencja(a+1,b,f,x)-ilorazyRekurencja(a,b-1,f,x)/(x[b]-x[a])
+# end
+
+# function ilorazyRoznicowe(x::Vector{Float64}, f::Vector{Float64})
+#     n = length(x) - 1
+#     fx = zeros(Float64,n+1)
+    
+#     for i in 1:n+1
+#         fx[i]=ilorazyRekurencja(1,i,f,x)
+#     end
+
+#     return fx
+# end
 
 function ilorazyRoznicowe(x::Vector{Float64}, f::Vector{Float64})
-    n = length(x) - 1
-    fx = zeros(Float64,n+1)
-    
-    for i in 1:n+1
-        fx[i]=ilorazyRekurencja(1,i,f,x)
+    len = length(f)
+
+    res = [value for value in f]
+    for i in 1:len
+        for j in len:-1:i+1
+            res[j] = (res[j] - res[j-1]) / (x[j] - x[j - i])
+        end
     end
 
-    return fx
+    return res
 end
 
 function warNewton(x::Vector{Float64}, fx::Vector{Float64}, t::Float64)

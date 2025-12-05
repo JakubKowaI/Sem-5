@@ -16,7 +16,7 @@
 \begin{document}
 \maketitle
 
-\section*{1--3 Zadania 1--3}
+\section*{Zadania 1--3}
 \label{sec:tasks1-3}
 \subsection*{Opis zadania}
 W zadaniach od 1 do 3 trzeba zaimplementować funkcje:\\
@@ -27,18 +27,35 @@ W zadaniach od 1 do 3 trzeba zaimplementować funkcje:\\
 \end{enumerate}
 \subsection*{Implementacje}
 \begin{enumerate}
-    \item W tym zadaniu wykorzystałem rekurencyjne obliczanie ilorazów różnicowych w taki sam sposób jak występowało to na \href{https://cs.pwr.edu.pl/zielinski/lectures/scna/scnaw6.pdf#page=16}{slajdach z wykładu}. 
+    \item W tym zadaniu wykorzystałem rekurencyjne obliczanie ilorazów różnicowych w taki sam sposób jak występowało to na \href{https://cs.pwr.edu.pl/zielinski/lectures/scna/scnaw6.pdf#page=15}{slajdach z wykładu}. 
     \item Zadanie 2 wykorzystuje wzór na algorytm Hornera podany w \href{https://cs.pwr.edu.pl/zielinski/lectures/scna/scnal4cw.pdf#page=2}{zadaniu 8 na liście 4}.
+    \item To zadanie sprawiło najwięcej kłopotów. Oznaczając ilorazy różnicowe $c_{n}=f_{[x_{0},x_{1},\dots,x_{n}]}$ korzystamy z tego, że $c_{n}\text{=}a_{n}$, gdzie $a_{n}$ jest współczynnikiem przy największej potędze w naturalnej postaci wielomianu. Następnie liczymy w tablicy $a$ wartości "aktualnego wielomianu" (Korzystamy z algorytmu Hornera w celu rozwinięcia aktualnego wielomianu) i na początku tablicy ustawiamy aktualny wyraz wolny.
 \end{enumerate}
 \setcounter{section}{3}
 
-\section{Zadanie 4}
+\section*{Zadanie 4}
 \label{sec:task4}
-Some content for task 4.
+\subsection*{Opis zadania}
+Zadanie polega na napisaniu funkcji interpolującej podaną funkcję $f(x)$, za pomocą wielomianu interpolacyjnego stopnia $n$ w postaci Newtona w przedziale $[a,b]$. W tym celu mamy użyć wcześniej zaimplementowanych funkcji. W dodatku funkcja ta ma rysować wielomian interpolacyjny oraz interpolowaną funkcję w podanym przedziale. Funkcja w tym zadaniu ma na celu stworzenie i zwrócenie wykresu (w celu podstawienia opisów do wykresów przy wywołaniu testu) i wyznaczenie węzłów wielomianu interpolacyjnego dwoma różnymi metodami.
+\subsection*{Implementacja}
+Najpierw wyznaczamy węzły interpolacji metodą doprecyzowaną w wywołaniu funkcji. Mamy dwie możliwe do wywołania metody: 
+\begin{itemize}
+    \item :rownoodlegle
+    \item :czebyszew
+\end{itemize}
+Równoodległe wyznaczane są prostym wzorem: $x_{k} = a + k\frac{b-a}{n} \text{ dla } k\in [0,n]$.\\
+Wyznaczanie węzłów metodą wielomianu Czebyszewa jest trochę bardziej problematyczne. Wzór na miejsca zerowe wielomianu Czebyszewa stopnia $n$ podany na \href{https://cs.pwr.edu.pl/zielinski/lectures/scna/scnaw7.pdf#page=8}{wykładzie}: $r_{j}=\cos\frac{(2j+1)\pi}{2n} \text{ dla } j\in [0,n-1]$ zwraca pierwiastki jedynie z przedziału [-1,1], więc trzeba te pierwiastki zmapować na podany przedział [a,b].\
 
-\section{Zadanie 5}
+\section*{Zadanie 5}
 \label{sec:task5}
-Some content for task 5.
+\subsection*{Opis zadania}
+Należy użyć wcześniej zadeklarowanej funkcji \textit{rysujNnfx} z \hyperref[sec:task4]{zadania 4} dla funkcji:\\
+\begin{enumerate}[label=\alph*)]
+    \item $f(x)=e^{x}$
+    \item $x^{2}\sin x$
+\end{enumerate}
+Dla stopni wielomianu $n \in {5,10,15}$
+\subsection*{Wyniki}
 
 \section{Zadanie 6}
 \label{sec:task6}
