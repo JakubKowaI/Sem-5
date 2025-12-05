@@ -31,7 +31,6 @@ W zadaniach od 1 do 3 trzeba zaimplementować funkcje:\\
     \item Zadanie 2 wykorzystuje wzór na algorytm Hornera podany w \href{https://cs.pwr.edu.pl/zielinski/lectures/scna/scnal4cw.pdf#page=2}{zadaniu 8 na liście 4}.
     \item To zadanie sprawiło najwięcej kłopotów. Oznaczając ilorazy różnicowe $c_{n}=f_{[x_{0},x_{1},\dots,x_{n}]}$ korzystamy z tego, że $c_{n}\text{=}a_{n}$, gdzie $a_{n}$ jest współczynnikiem przy największej potędze w naturalnej postaci wielomianu. Następnie liczymy w tablicy $a$ wartości "aktualnego wielomianu" (Korzystamy z algorytmu Hornera w celu rozwinięcia aktualnego wielomianu) i na początku tablicy ustawiamy aktualny wyraz wolny.
 \end{enumerate}
-\setcounter{section}{3}
 
 \section*{Zadanie 4}
 \label{sec:task4}
@@ -56,10 +55,105 @@ Należy użyć wcześniej zadeklarowanej funkcji \textit{rysujNnfx} z \hyperref[
 \end{enumerate}
 Dla stopni wielomianu $n \in {5,10,15}$
 \subsection*{Wyniki}
+Wyniki dla funkcji $e^{x}$
+\begin{figure}[H]
+    \label{fig:Z5_a_5}
+    \includegraphics[width=35em]{Plots/Z5_a_5.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z5_a_10}
+    \includegraphics[width=35em]{Plots/Z5_a_10.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z5_a_15}
+    \includegraphics[width=35em]{Plots/Z5_a_15.pdf}
+\end{figure}
+Wyniki dla funkcji $x^{x}\sin x$
+\begin{figure}[H]
+    \label{fig:Z5_b_5}
+    \includegraphics[width=35em]{Plots/Z5_b_5.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z5_b_10}
+    \includegraphics[width=35em]{Plots/Z5_b_10.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z5_b_15}
+    \includegraphics[width=35em]{Plots/Z5_b_15.pdf}
+\end{figure}
 
-\section{Zadanie 6}
+\subsection*{Wnioski}
+Jak widać na powyższych wykresach wartość interpolacji pokrywa się wręcz z wykresami funkcji, więc spokojnie można określić interpolację, jako bardzo precyzyjne przybliżenie funkcji.
+
+\section*{Zadanie 6}
 \label{sec:task6}
-Some content for task 5.
+\subsection*{Opis zadania}
+W tym zadaniu trzeba przetestować funkcje $f(x)=|x| \text{ oraz } \frac{1}{1+x^{2}}$ dla różnych stopni wielomianu interpolującego, jak i dla dwóch sposobów wyznaczania węzłów. Dla przykładu a przedziałem będzie [-1,1], a dla b [-5,5].
+
+\subsection*{Wyniki}
+
+Wyniki dla $f(x)=|x|$ w przedziale [-1,1], wyznaczając węzły równoodległe:
+
+\begin{figure}[H]
+    \label{fig:Z6_a_r_5}
+    \includegraphics[width=35em]{Plots/Z6_a_r_5.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_a_r_10}
+    \includegraphics[width=35em]{Plots/Z6_a_r_10.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_a_r_15}
+    \includegraphics[width=35em]{Plots/Z6_a_r_15.pdf}
+\end{figure}
+
+Wyniki dla $f(x)=|x|$ w przedziale [-1,1] biorąc za węzły zera wielomianu Czebyszewa:
+
+\begin{figure}[H]
+    \label{fig:Z6_a_c_5}
+    \includegraphics[width=35em]{Plots/Z6_a_c_5.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_a_c_10}
+    \includegraphics[width=35em]{Plots/Z6_a_c_10.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_a_c_15}
+    \includegraphics[width=35em]{Plots/Z6_a_c_15.pdf}
+\end{figure}
+
+Wyniki dla $f(x)=\frac{1}{1+x^{2}}$ w przedziale [-5,5], wyznaczając węzły równoodległe:
+
+\begin{figure}[H]
+    \label{fig:Z6_b_r_5}
+    \includegraphics[width=35em]{Plots/Z6_b_r_5.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_b_r_10}
+    \includegraphics[width=35em]{Plots/Z6_b_r_10.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_b_r_15}
+    \includegraphics[width=35em]{Plots/Z6_b_r_15.pdf}
+\end{figure}
+
+Wyniki dla $f(x)=\frac{1}{1+x^{2}}$ w przedziale [-5,5] biorąc za węzły zera wielomianu Czebyszewa:
+
+\begin{figure}[H]
+    \label{fig:Z6_b_c_5}
+    \includegraphics[width=35em]{Plots/Z6_b_c_5.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_b_c_10}
+    \includegraphics[width=35em]{Plots/Z6_b_c_10.pdf}
+\end{figure}
+\begin{figure}[H]
+    \label{fig:Z6_b_c_15}
+    \includegraphics[width=35em]{Plots/Z6_b_c_15.pdf}
+\end{figure}
+
+\subsection*{Wnioski}
+Jak widać na załączonych wykresach wybieranie węzłów co równą odległość ma swoje wady. Na wykresach z węzłami równoodległymi w tym zadaniu ukazuje nam się zjawisko Runge'go. Powoduje ono coraz większe błędy przy coraz większych stopniach wielomianu interpolacyjnego, zwłaszcza na brzegach rozważanego przedziału. \colorbox{yellow}{Placeholder ( dopisać coś do zjawiska Runge'go)}. Można zapobiedz takim wahaniom wybierając węzły za pomocą miejsc zerowych wielomianu Czebyszewa. Powoduje to badziej "gęste" dobieranie punktów na brzegach przedziału i niweluje wahania widoczne w zjawisku Runge'go.
 
 
 \end{document}

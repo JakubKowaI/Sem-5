@@ -75,9 +75,10 @@ function rysujNnfx(f, a::Float64, b::Float64, n::Int; wezly::Symbol = :rownoodle
         #     x_nodes[i]=temp[1]
         # end
 
+
         for j in 0:n
             ri=cos((2.0*j+1.0)*pi/(2.0*(n+1.0)))
-            x_nodes[j+1]=(a+b)/2.0+(b-a)/2.0*ri#mapowanie
+            x_nodes[j+1]=(a+b)/2.0+(b-a)/2.0*ri#przeskalowanie
         end
 
         #wersja z wikipedii
