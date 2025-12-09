@@ -1,6 +1,10 @@
 #Jakub Kowal
 
+module Funkcje
+
 using Plots
+
+export ilorazyRoznicowe, warNewton, naturalna, rysujNnfx
 
 function ilorazyRekurencja(a::Int,b::Int,f::Vector{Float64},x::Vector{Float64})
     if a==b
@@ -106,4 +110,6 @@ function rysujNnfx(f, a::Float64, b::Float64, n::Int; wezly::Symbol = :rownoodle
     
     # display(p)
     return p
+end
+
 end

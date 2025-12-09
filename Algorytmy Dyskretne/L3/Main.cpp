@@ -8,20 +8,11 @@
 using namespace std;
 
 void dijkstraMode(vector<vector<pair<int,int>>> &graph,string sources,string outputFile,string dataFile,int n,int a,int minc, int maxc){
-    bool skip=0; 
     vector<double> times;
 
     cout << unitbuf;
 
-    if(sources.empty()){
-        skip=1;
-        for(int i=1;i<graph.size();i++){
-            if(!graph[i].empty()){
-                times.push_back(Dijsktra(graph,i));
-                break;
-            }
-        }
-    }
+    
     ifstream data(sources);
     
     ofstream output(outputFile);
@@ -33,26 +24,31 @@ void dijkstraMode(vector<vector<pair<int,int>>> &graph,string sources,string out
     int z;
     int count=0;
     
-    if(!skip){
-        while(data.get(c)){
-            if(c=='c'){
-                string temp;
-                getline(data,temp);
-                //cout<<temp<<endl;
-            }else if(c=='p'){
-                string aux,sp,ss;
-                data>>aux>>sp>>ss>>z;
-                string temp;
-                getline(data,temp);
-            }else if(c=='s'){
-                int s;
-                data>>s;
-                string temp;
-                getline(data,temp);
-                times.push_back(Dijsktra(graph,s));
-                count++;
-                cerr<<"\r                                                               \rPrzetworzono: "<<count;
-            }
+    while(data.get(c)){
+        if(c=='c'){
+            string temp;
+            getline(data,temp);
+            //cout<<temp<<endl;
+        }else if(c=='p'){
+            string aux,sp,ss;
+            data>>aux>>sp>>ss>>z;
+            string temp;
+            getline(data,temp);
+        }else if(c=='s'){
+            if(count>4)break;
+            int s;
+            data>>s;
+            string temp;
+            getline(data,temp);
+
+            auto t0 = std::chrono::high_resolution_clock::now();
+            Dijsktra(graph,s);
+            auto t1 = std::chrono::high_resolution_clock::now();
+            double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
+            times.push_back(elapsed_seconds);
+
+            count++;
+            cerr<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
     cout<<endl;
@@ -93,10 +89,11 @@ void dijkstraSearchMode(vector<vector<pair<int,int>>> graph,string sources,strin
             string aux,sp,ss;
             data>>aux>>sp>>ss>>z;
         }else if(c=='q'){
+            if(count>4)break;
             count++;
             int s,d;
             data>>s>>d;
-            output<<"d "<<s<<" "<<d<<" "<<DijsktraSearch(graph,s,d)<<endl;
+            output<<"d "<<s<<" "<<d<<" "<<Dijsktra(graph,s,d)[d]<<endl;
             //cout<<s<<" : "<<d<<" : "<<c<<endl;
             cerr<<"\r                                                               \rPrzetworzono: "<<count;
         }
@@ -108,21 +105,11 @@ void dijkstraSearchMode(vector<vector<pair<int,int>>> graph,string sources,strin
 }
 
 void dialaMode(vector<vector<pair<int,int>>> &graph,string sources,string outputFile,string dataFile,int n,int a,int minc, int maxc){
-    bool skip=0; 
     vector<double> times;
     //cout<<sources<<endl;
 
     cout << unitbuf;
 
-    if(sources.empty()){
-        skip=1;
-        for(int i=1;i<graph.size();i++){
-            if(!graph[i].empty()){
-                times.push_back(Diala(graph,i,maxc,n));
-                break;
-            }
-        }
-    }
     ifstream data(sources);
     
     ofstream output(outputFile);
@@ -134,31 +121,37 @@ void dialaMode(vector<vector<pair<int,int>>> &graph,string sources,string output
     int z;
     int count=0;
     
-    if(!skip){
-        while(data.get(c)){
-            if(c=='c'){
-                string temp;
-                getline(data,temp);
-                //cout<<temp<<endl;
-            }else if(c=='p'){
-                string aux,sp,ss;
-                data>>aux>>sp>>ss>>z;
-                //n=stoi(ss);
-                //cout<<"SS: "<<ss<<endl;
-                string temp;
-                getline(data,temp);
-            }else if(c=='s'){
-                int s;
-                data>>s;
-                string temp;
-                getline(data,temp);
-                //cerr<<"proba"<<endl;
-                times.push_back(Diala(graph,s,maxc,n));
-                count++;
-                cerr<<"\r                                                               \rPrzetworzono: "<<count;
-            }
+    
+    while(data.get(c)){
+        if(c=='c'){
+            string temp;
+            getline(data,temp);
+            //cout<<temp<<endl;
+        }else if(c=='p'){
+            string aux,sp,ss;
+            data>>aux>>sp>>ss>>z;
+            //n=stoi(ss);
+            //cout<<"SS: "<<ss<<endl;
+            string temp;
+            getline(data,temp);
+        }else if(c=='s'){
+            if(count>4)break;
+            int s;
+            data>>s;
+            string temp;
+            getline(data,temp);
+            
+            auto t0 = std::chrono::high_resolution_clock::now();
+            Diala(graph,s,maxc,n);
+            auto t1 = std::chrono::high_resolution_clock::now();
+            double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
+            times.push_back(elapsed_seconds);
+
+            count++;
+            cerr<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
+
     cout<<endl;
     double avg=0.0;
     for(auto it:times){
@@ -181,13 +174,15 @@ void dialaSearchMode(vector<vector<pair<int,int>>> graph,string sources,string o
     ifstream data(sources);
     ofstream output(outputFile);
     char c;
-    output<<"p res sp ss diala"<<endl;
+    output<<"p res sp p2p diala"<<endl;
     output<<"f "<<dataFile<<" "<<sources<<endl;
     output<<"g "<<n<<" "<<a<<" "<<minc<<" "<<maxc<<endl;
 
     int z;
     int count=0;
     vector<double> times;
+    vector<int> targets;
+
     while(data.get(c)){
         if(c=='c'){
             string temp;
@@ -198,10 +193,115 @@ void dialaSearchMode(vector<vector<pair<int,int>>> graph,string sources,string o
             data>>aux>>sp>>ss>>z;
             getline(data,aux);
         }else if(c=='q'){
+            if(count>4)break;
             count++;
             int s,d;
             data>>s>>d;
-            output<<"d "<<s<<" "<<d<<" "<<DialaSearch(graph,s,maxc,d,n)<<endl;
+            output<<"d "<<s<<" "<<d<<" "<<Diala(graph,s,maxc,n,d)[d]<<endl;
+            //cout<<s<<" : "<<d<<" : "<<c<<endl;
+            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+        }
+    }
+    output<<'c'<< " przeszukano "<<count<< " par"<<endl;
+
+    data.close();
+    output.close();
+}
+
+void radixMode(vector<vector<pair<int,int>>> &graph,string sources,string outputFile,string dataFile,int n,int a,int minc, int maxc){
+    vector<double> times;
+    //cout<<sources<<endl;
+
+    cout << unitbuf;
+
+    ifstream data(sources);
+    
+    ofstream output(outputFile);
+    char c;
+    output<<"p res sp ss radixHeap"<<endl;
+    output<<"f "<<dataFile<<" "<<sources<<endl;
+    output<<"g "<<n<<" "<<a<<" "<<minc<<" "<<maxc<<endl;
+
+    int z;
+    int count=0;
+    
+    
+    while(data.get(c)){
+        if(c=='c'){
+            string temp;
+            getline(data,temp);
+            //cout<<temp<<endl;
+        }else if(c=='p'){
+            string aux,sp,ss;
+            data>>aux>>sp>>ss>>z;
+            //n=stoi(ss);
+            //cout<<"SS: "<<ss<<endl;
+            string temp;
+            getline(data,temp);
+        }else if(c=='s'){
+            if(count>4)break;
+            int s;
+            data>>s;
+            string temp;
+            getline(data,temp);
+            
+            auto t0 = std::chrono::high_resolution_clock::now();
+            RadixHeap(graph,s,maxc,n);
+            auto t1 = std::chrono::high_resolution_clock::now();
+            double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
+            times.push_back(elapsed_seconds);
+
+            count++;
+            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+        }
+    }
+
+    cout<<endl;
+    double avg=0.0;
+    for(auto it:times){
+        avg+=it;
+    }
+    if(times.size()==0){
+        cout<<"Size == 0 BLAD!!!!"<<endl;
+    }else{
+        avg=avg/times.size();
+    }
+    
+    output<<"t "<<avg<<endl;
+    output<<"c przetworzono "<<times.size()<<" zrodel"<<endl;
+
+    data.close();
+    output.close();
+}
+
+void radixSearchMode(vector<vector<pair<int,int>>> graph,string sources,string outputFile,string dataFile,int n,int a,int minc, int maxc){
+    ifstream data(sources);
+    ofstream output(outputFile);
+    char c;
+    output<<"p res sp p2p radixHeap"<<endl;
+    output<<"f "<<dataFile<<" "<<sources<<endl;
+    output<<"g "<<n<<" "<<a<<" "<<minc<<" "<<maxc<<endl;
+
+    int z;
+    int count=0;
+    vector<double> times;
+    vector<int> targets;
+
+    while(data.get(c)){
+        if(c=='c'){
+            string temp;
+            getline(data,temp);
+            //cout<<temp<<endl;
+        }else if(c=='p'){
+            string aux,sp,ss;
+            data>>aux>>sp>>ss>>z;
+            getline(data,aux);
+        }else if(c=='q'){
+            if(count>4)break;
+            count++;
+            int s,d;
+            data>>s>>d;
+            output<<"d "<<s<<" "<<d<<" "<<RadixHeap(graph,s,maxc,n,d)[d]<<endl;
             //cout<<s<<" : "<<d<<" : "<<c<<endl;
             cerr<<"\r                                                               \rPrzetworzono: "<<count;
         }
@@ -347,7 +447,15 @@ int main(int argc,char** argv){
             cerr<<"Wrong use"<<endl;
         }
     } else if (prog == "radixheap") {
-        // kod dla radixheap
+        if(!sources.empty()){
+            cout<<"Checking whole graph for shortest paths with radixHeap"<<endl;
+            radixMode(graph,sources,outputPath,dataFile,n,a,minCost,maxCost);
+        }else if(!p2pSources.empty()){
+            cout<<"Checking graph for shortest path between nodes with radxHeap"<<endl;
+            radixSearchMode(graph,p2pSources,p2pOutputPath,dataFile,n,a,minCost,maxCost);
+        }else{
+            cerr<<"Wrong use"<<endl;
+        }
     } else {
         cerr<<"I don't even know what happened"<<endl;
     }

@@ -35,9 +35,10 @@ class MinHeap{
 };
 
 
-double Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s);
-long DijsktraSearch(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest);
+std::vector<long> Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest=-1);
+//long DijsktraSearch(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest);
 
-double Diala(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int n);
-long DialaSearch(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int dest,int n);
-long OGDialaSearch(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int dest);
+std::vector<long> Diala(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int n,int dest=-1);
+// long DialaSearch(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int dest,int n);
+
+std::vector<long> RadixHeap(std::vector<std::vector<std::pair<int,int>>> & graph,int s,int maxcost,int n,int dest=-1);
