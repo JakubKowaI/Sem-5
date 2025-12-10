@@ -15,7 +15,7 @@ struct HeapNode {
 
 class MinHeap{
     std::vector<HeapNode> heap;  // przechowuje kopiec
-    std::vector<int> pos;        // pos[v] = index w kopcu dla wierzchołka v
+    std::vector<int> pos;        
     int size;
 
     public:

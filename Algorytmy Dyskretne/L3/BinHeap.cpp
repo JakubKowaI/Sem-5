@@ -2,7 +2,6 @@
 
 using namespace std;
 
-// Prototype of a utility function to swap two integers
 void swap(int *x, int *y)
 {
     int temp = *x;
@@ -16,7 +15,6 @@ void swap(int *x, int *y)
         size = 0;
     }
 
-    // Zamienia dwa elementy + aktualizuje pos[]
     void MinHeap::swapNodes(int i, int j) {
         HeapNode temp = heap[i];
         heap[i] = heap[j];
@@ -32,7 +30,6 @@ void swap(int *x, int *y)
 
     bool MinHeap::isEmpty() { return size == 0; }
 
-    // Naprawia kopiec w dół
     void MinHeap::heapifyDown(int i) {
         int l = left(i);
         int r = right(i);
@@ -50,7 +47,6 @@ void swap(int *x, int *y)
         }
     }
 
-    // Naprawia kopiec w górę
     void MinHeap::heapifyUp(int i) {
         while (i > 0 && heap[i].dist < heap[parent(i)].dist) {
             swapNodes(i, parent(i));
@@ -58,7 +54,6 @@ void swap(int *x, int *y)
         }
     }
 
-    // Wstawia nowy wierzchołek (vertex, dist)
     void MinHeap::insert(int vertex, int dist) {
         heap[size].vertex = vertex;
         heap[size].dist   = dist;
@@ -67,7 +62,6 @@ void swap(int *x, int *y)
         heapifyUp(size - 1);
     }
 
-    // Zwraca i usuwa korzeń (najmniejszy dystans)
     HeapNode MinHeap::extractMin() {
         if (size == 0) return { -1, -1 };
 
@@ -82,7 +76,6 @@ void swap(int *x, int *y)
         return root;
     }
 
-    // decrease-key: zmniejsza dystans dla konkretnego wierzchołka
     void MinHeap::decreaseKey(int vertex, int newDist) {
         int i = pos[vertex];
         heap[i].dist = newDist;

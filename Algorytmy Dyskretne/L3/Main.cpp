@@ -47,7 +47,7 @@ void dijkstraMode(vector<vector<pair<int,int>>> &graph,string sources,string out
             double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
             times.push_back(elapsed_seconds);
 
-            //count++;
+            count++;
             cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
@@ -91,7 +91,7 @@ void dijkstraSearchMode(vector<vector<pair<int,int>>> graph,string sources,strin
             data>>aux>>sp>>ss>>z;
         }else if(c=='q'){
             //if(count>4)break;
-            //count++;
+            count++;
             int s,d;
             data>>s>>d;
             output<<"d "<<s<<" "<<d<<" "<<Dijsktra(graph,s,d)[d]<<endl;
@@ -148,7 +148,7 @@ void dialaMode(vector<vector<pair<int,int>>> &graph,string sources,string output
             double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
             times.push_back(elapsed_seconds);
 
-            //count++;
+            count++;
             cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
@@ -195,7 +195,7 @@ void dialaSearchMode(vector<vector<pair<int,int>>> graph,string sources,string o
             getline(data,aux);
         }else if(c=='q'){
             //if(count>4)break;
-            //count++;
+            count++;
             int s,d;
             data>>s>>d;
             output<<"d "<<s<<" "<<d<<" "<<Diala(graph,s,maxc,n,d)[d]<<endl;
@@ -252,7 +252,7 @@ void radixMode(vector<vector<pair<int,int>>> &graph,string sources,string output
             double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
             times.push_back(elapsed_seconds);
 
-            //count++;
+            count++;
             cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
@@ -299,7 +299,7 @@ void radixSearchMode(vector<vector<pair<int,int>>> graph,string sources,string o
             getline(data,aux);
         }else if(c=='q'){
             // if(count>4)break;
-            //count++;
+            count++;
             int s,d;
             data>>s>>d;
             output<<"d "<<s<<" "<<d<<" "<<RadixHeap(graph,s,maxc,n,d)[d]<<endl;

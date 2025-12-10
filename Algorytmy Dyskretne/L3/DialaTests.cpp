@@ -272,115 +272,115 @@ int main() {
 
     ThreadPool pool(MAX_CONCURRENT, MIN_FREE_MB, PER_PROCESS_LIMIT_MB, PER_PROCESS_TIMEOUT_SEC);
 
-    for (size_t i = 0; i < families.size(); ++i) {
-        const string &family = families[i];
-        cout << "Tworzenie testow dla " << family << "\n";
-        for (int j = limits[i].first; j <= limits[i].second; ++j) {
-            string base = "ch9-1.1/inputs/" + family + "/" + family + "." + to_string(j) + ".0";
-            string ssource= base+".ss";
+    // for (size_t i = 0; i < families.size(); ++i) {
+    //     const string &family = families[i];
+    //     cout << "Tworzenie testow dla " << family << "\n";
+    //     for (int j = limits[i].first; j <= limits[i].second; ++j) {
+    //         string base = "ch9-1.1/inputs/" + family + "/" + family + "." + to_string(j) + ".0";
+    //         string ssource= base+".ss";
 
-            ifstream data(ssource);
+    //         ifstream data(ssource);
 
-            if (!data.is_open()) {
-                cerr << "Nie moge otworzyc pliku: " << ssource << "\n";
-                continue;
-            }
+    //         if (!data.is_open()) {
+    //             cerr << "Nie moge otworzyc pliku: " << ssource << "\n";
+    //             continue;
+    //         }
 
-            ofstream single("processed/"+family + "." + to_string(j) + ".0.single.ss");
-            ofstream random("processed/"+family + "." + to_string(j) + ".0.random.ss");
-            ofstream p2pout("processed/"+family + "." + to_string(j) + ".0.p2p");
+    //         ofstream single("processed/"+family + "." + to_string(j) + ".0.single.ss");
+    //         ofstream random("processed/"+family + "." + to_string(j) + ".0.random.ss");
+    //         ofstream p2pout("processed/"+family + "." + to_string(j) + ".0.p2p");
 
-            char c;
-            int minNode=INT_MAX;
-            vector<int> random5;
-            vector<int> snodes;
+    //         char c;
+    //         int minNode=INT_MAX;
+    //         vector<int> random5;
+    //         vector<int> snodes;
 
-            mt19937 mt{
-                static_cast<std::mt19937::result_type>(
-                std::chrono::steady_clock::now().time_since_epoch().count()
-            )    };
+    //         mt19937 mt{
+    //             static_cast<std::mt19937::result_type>(
+    //             std::chrono::steady_clock::now().time_since_epoch().count()
+    //         )    };
 
-            while(data.get(c)){
-                if(c=='c'){
-                    string temp;
-                    getline(data,temp);
-                }else if(c=='p'){
-                    string aux,sp,ss,z;
-                    data>>aux>>sp>>ss>>z;
-                    string temp;
-                    getline(data,temp);
-                }else if(c=='s'){
-                    int s;
-                    data>>s;
-                    snodes.push_back(s);
-                    string temp;
-                    getline(data,temp);
-                }
-            }
+    //         while(data.get(c)){
+    //             if(c=='c'){
+    //                 string temp;
+    //                 getline(data,temp);
+    //             }else if(c=='p'){
+    //                 string aux,sp,ss,z;
+    //                 data>>aux>>sp>>ss>>z;
+    //                 string temp;
+    //                 getline(data,temp);
+    //             }else if(c=='s'){
+    //                 int s;
+    //                 data>>s;
+    //                 snodes.push_back(s);
+    //                 string temp;
+    //                 getline(data,temp);
+    //             }
+    //         }
 
-            int p2pMax=INT_MIN;
-            int p2pMin=INT_MAX;
-            vector<int> sour;
-            vector<int> dest;
+    //         int p2pMax=INT_MIN;
+    //         int p2pMin=INT_MAX;
+    //         vector<int> sour;
+    //         vector<int> dest;
 
-            if(j==limits[i].second){
-                ifstream p2p(base+".p2p");
+    //         if(j==limits[i].second){
+    //             ifstream p2p(base+".p2p");
 
-                if (!p2p.is_open()) {
-                    cerr << "Ostrzezenie: nie moge otworzyc pliku p2p: " << base << ".p2p\n";
-                }
+    //             if (!p2p.is_open()) {
+    //                 cerr << "Ostrzezenie: nie moge otworzyc pliku p2p: " << base << ".p2p\n";
+    //             }
 
-                while(p2p.get(c)){
-                    if(c=='c'){
-                        string temp;
-                        getline(p2p,temp);
-                    }else if(c=='p'){
-                        string aux,sp,ss,z;
-                        p2p>>aux>>sp>>ss>>z;
-                    }else if(c=='q'){
-                        int s,d;
-                        p2p>>s>>d;
+    //             while(p2p.get(c)){
+    //                 if(c=='c'){
+    //                     string temp;
+    //                     getline(p2p,temp);
+    //                 }else if(c=='p'){
+    //                     string aux,sp,ss,z;
+    //                     p2p>>aux>>sp>>ss>>z;
+    //                 }else if(c=='q'){
+    //                     int s,d;
+    //                     p2p>>s>>d;
 
-                        if(s>p2pMax)p2pMax=s;
-                        if(d>p2pMax)p2pMax=d;
-                        if(s<p2pMin)p2pMin=s;
-                        if(d<p2pMin)p2pMin=d;
+    //                     if(s>p2pMax)p2pMax=s;
+    //                     if(d>p2pMax)p2pMax=d;
+    //                     if(s<p2pMin)p2pMin=s;
+    //                     if(d<p2pMin)p2pMin=d;
 
-                        sour.push_back(s);
-                        dest.push_back(d);
-                    }
-                }
-                p2pout<<"q "<<p2pMin<<" "<<p2pMax<<endl;
+    //                     sour.push_back(s);
+    //                     dest.push_back(d);
+    //                 }
+    //             }
+    //             p2pout<<"q "<<p2pMin<<" "<<p2pMax<<endl;
 
-                for(int k=0;k<4;k++){
-                    if (!snodes.empty())
-                        random5.push_back(snodes[mt()%snodes.size()]);
-                    if (!sour.empty() && !dest.empty()) {
-                        p2pout<<"q "<<sour[mt()%sour.size()]<<" "<<dest[mt()%dest.size()]<<endl;
-                    }
-                }
-                p2p.close();
-                p2pout.close();
-            }
+    //             for(int k=0;k<4;k++){
+    //                 if (!snodes.empty())
+    //                     random5.push_back(snodes[mt()%snodes.size()]);
+    //                 if (!sour.empty() && !dest.empty()) {
+    //                     p2pout<<"q "<<sour[mt()%sour.size()]<<" "<<dest[mt()%dest.size()]<<endl;
+    //                 }
+    //             }
+    //             p2p.close();
+    //             p2pout.close();
+    //         }
 
-            for(int k=0;k<5;k++){
-                if (!snodes.empty())
-                    random5.push_back(snodes[mt()%snodes.size()]);
-            }
+    //         for(int k=0;k<5;k++){
+    //             if (!snodes.empty())
+    //                 random5.push_back(snodes[mt()%snodes.size()]);
+    //         }
 
-            for(int v:snodes){
-                if(v<minNode)minNode=v;
-            }
-            if(minNode==INT_MAX) minNode = 0;
-            single<<"s "<<minNode;
-            for(int t : random5){
-                random<<"s "<<t<<endl;
-            }
-            single.close();
-            random.close();
-            data.close();
-        }
-    }
+    //         for(int v:snodes){
+    //             if(v<minNode)minNode=v;
+    //         }
+    //         if(minNode==INT_MAX) minNode = 0;
+    //         single<<"s "<<minNode;
+    //         for(int t : random5){
+    //             random<<"s "<<t<<endl;
+    //         }
+    //         single.close();
+    //         random.close();
+    //         data.close();
+    //     }
+    // }
 
     for (size_t i = 0; i < families.size(); ++i) {
         const string &family = families[i];
