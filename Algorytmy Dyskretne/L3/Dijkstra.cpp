@@ -1,14 +1,12 @@
 #include "Algorithms.hpp"
 
-std::vector<long> Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest){
+std::vector<long long> Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest){
     // auto t0 = std::chrono::high_resolution_clock::now();
 
     int n = (int)graph.size();
-    std::vector<long> d(n, LONG_MAX);
-    std::vector<int> pred(n, -1);
+    std::vector<long long> d(n, LONG_LONG_MAX);
 
     d[s] = 0;
-    pred[s]=0;
     MinHeap H(n);
     H.insert(s,0);
 
@@ -19,17 +17,15 @@ std::vector<long> Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, 
         if (i == -1) break;
 
         for (auto it:graph[i]) {
-            long value = d[i] + std::get<1>(it);
+            long long value = d[i] + std::get<1>(it);
             int j=std::get<0>(it);
 
             if(d[j]>value){
-                if(d[j]==LONG_MAX){
+                if(d[j]==LONG_LONG_MAX){
                     d[j]=value;
-                    pred[j]=i;
                     H.insert(j,value);
                 }else{
                     d[j]=value;
-                    pred[j]=i;
                     H.decreaseKey(j,value);
                 }
             }

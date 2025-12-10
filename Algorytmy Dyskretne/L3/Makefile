@@ -5,8 +5,8 @@ OBJS = $(SRCS:.cpp=.o)
 TARGET = L3
 
 make: $(SRCS)
-# 	$(CXX) -o dijkstra $(SRCS)
-# 	$(CXX) -o diala $(SRCS)
+	$(CXX) -o dijkstra $(SRCS)
+	$(CXX) -o diala $(SRCS)
 	$(CXX) -o radixheap $(SRCS)
 
 clean:

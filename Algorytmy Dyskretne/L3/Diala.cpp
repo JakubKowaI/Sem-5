@@ -1,5 +1,9 @@
 #include "Algorithms.hpp"
 #include <unordered_set>
+#include <vector>
+#include <list>
+#include <climits>
+#include <tuple>
 
 struct node{
     int vertex;
@@ -86,9 +90,6 @@ std::vector<long> Diala(std::vector<std::vector<std::pair<int,int>>> & graph,int
         }
     }
     
-    // auto t1 = std::chrono::high_resolution_clock::now();
-    // double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
-    //std::cout << "Diala elapsed: " << elapsed_seconds << " s" << std::endl;
     return d;
 }
 

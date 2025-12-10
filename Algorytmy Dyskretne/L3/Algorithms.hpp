@@ -10,7 +10,7 @@ void swap(int *x, int *y);
 
 struct HeapNode { 
     int vertex; 
-    long dist = LONG_MAX; 
+    long long dist = LONG_LONG_MAX; 
 };
 
 class MinHeap{
@@ -35,10 +35,10 @@ class MinHeap{
 };
 
 
-std::vector<long> Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest=-1);
+std::vector<long long> Dijsktra(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest=-1);
 //long DijsktraSearch(std::vector<std::vector<std::pair<int,int>>> &graph, int s,int dest);
 
 std::vector<long> Diala(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int n,int dest=-1);
 // long DialaSearch(std::vector<std::vector<std::pair<int,int>>> & graph,int source,int maxcost,int dest,int n);
 
-std::vector<long> RadixHeap(std::vector<std::vector<std::pair<int,int>>> & graph,int s,int maxcost,int n,int dest=-1);
+std::vector<long long> RadixHeap(std::vector<std::vector<std::pair<int,int>>> & graph,int s,int maxcost,int n,int dest=-1);

@@ -10,14 +10,6 @@ void swap(int *x, int *y)
     *y = temp;
 }
 
-// struct HeapNode { 
-//     int vertex; 
-//     int dist; 
-// };
-
-
-
-
     MinHeap::MinHeap(int n) {
         heap.resize(n);
         pos.resize(n);

@@ -35,7 +35,7 @@ void dijkstraMode(vector<vector<pair<int,int>>> &graph,string sources,string out
             string temp;
             getline(data,temp);
         }else if(c=='s'){
-            if(count>4)break;
+            //if(count>4)break;
             int s;
             data>>s;
             string temp;
@@ -47,8 +47,8 @@ void dijkstraMode(vector<vector<pair<int,int>>> &graph,string sources,string out
             double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
             times.push_back(elapsed_seconds);
 
-            count++;
-            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+            //count++;
+            cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
     cout<<endl;
@@ -57,7 +57,8 @@ void dijkstraMode(vector<vector<pair<int,int>>> &graph,string sources,string out
         avg+=it;
     }
     if(times.size()==0){
-        cout<<"Size == 0 BLAD!!!!"<<endl;
+
+        cout<<"Dijkstra Size == 0 BLAD!!!!"<<sources<<endl;
     }else{
         avg=avg/times.size();
     }
@@ -89,13 +90,13 @@ void dijkstraSearchMode(vector<vector<pair<int,int>>> graph,string sources,strin
             string aux,sp,ss;
             data>>aux>>sp>>ss>>z;
         }else if(c=='q'){
-            if(count>4)break;
-            count++;
+            //if(count>4)break;
+            //count++;
             int s,d;
             data>>s>>d;
             output<<"d "<<s<<" "<<d<<" "<<Dijsktra(graph,s,d)[d]<<endl;
             //cout<<s<<" : "<<d<<" : "<<c<<endl;
-            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+            cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
     output<<'c'<< " przeszukano "<<count<< " par"<<endl;
@@ -135,7 +136,7 @@ void dialaMode(vector<vector<pair<int,int>>> &graph,string sources,string output
             string temp;
             getline(data,temp);
         }else if(c=='s'){
-            if(count>4)break;
+            //if(count>4)break;
             int s;
             data>>s;
             string temp;
@@ -147,8 +148,8 @@ void dialaMode(vector<vector<pair<int,int>>> &graph,string sources,string output
             double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
             times.push_back(elapsed_seconds);
 
-            count++;
-            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+            //count++;
+            cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
 
@@ -158,7 +159,7 @@ void dialaMode(vector<vector<pair<int,int>>> &graph,string sources,string output
         avg+=it;
     }
     if(times.size()==0){
-        cout<<"Size == 0 BLAD!!!!"<<endl;
+        cout<<"Diala Size == 0 BLAD!!!!"<<sources<<endl;
     }else{
         avg=avg/times.size();
     }
@@ -193,13 +194,13 @@ void dialaSearchMode(vector<vector<pair<int,int>>> graph,string sources,string o
             data>>aux>>sp>>ss>>z;
             getline(data,aux);
         }else if(c=='q'){
-            if(count>4)break;
-            count++;
+            //if(count>4)break;
+            //count++;
             int s,d;
             data>>s>>d;
             output<<"d "<<s<<" "<<d<<" "<<Diala(graph,s,maxc,n,d)[d]<<endl;
             //cout<<s<<" : "<<d<<" : "<<c<<endl;
-            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+            cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
     output<<'c'<< " przeszukano "<<count<< " par"<<endl;
@@ -239,7 +240,7 @@ void radixMode(vector<vector<pair<int,int>>> &graph,string sources,string output
             string temp;
             getline(data,temp);
         }else if(c=='s'){
-            if(count>4)break;
+            //if(count>4)break;
             int s;
             data>>s;
             string temp;
@@ -251,8 +252,8 @@ void radixMode(vector<vector<pair<int,int>>> &graph,string sources,string output
             double elapsed_seconds = std::chrono::duration<double>(t1 - t0).count();
             times.push_back(elapsed_seconds);
 
-            count++;
-            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+            //count++;
+            cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
 
@@ -262,7 +263,7 @@ void radixMode(vector<vector<pair<int,int>>> &graph,string sources,string output
         avg+=it;
     }
     if(times.size()==0){
-        cout<<"Size == 0 BLAD!!!!"<<endl;
+        cout<<"Radix Size == 0 BLAD!!!!"<<sources<<endl;
     }else{
         avg=avg/times.size();
     }
@@ -297,13 +298,13 @@ void radixSearchMode(vector<vector<pair<int,int>>> graph,string sources,string o
             data>>aux>>sp>>ss>>z;
             getline(data,aux);
         }else if(c=='q'){
-            if(count>4)break;
-            count++;
+            // if(count>4)break;
+            //count++;
             int s,d;
             data>>s>>d;
             output<<"d "<<s<<" "<<d<<" "<<RadixHeap(graph,s,maxc,n,d)[d]<<endl;
             //cout<<s<<" : "<<d<<" : "<<c<<endl;
-            cerr<<"\r                                                               \rPrzetworzono: "<<count;
+            cout<<"\r                                                               \rPrzetworzono: "<<count;
         }
     }
     output<<'c'<< " przeszukano "<<count<< " par"<<endl;
@@ -314,7 +315,7 @@ void radixSearchMode(vector<vector<pair<int,int>>> graph,string sources,string o
 
 int main(int argc,char** argv){
     if (argc < 2) {
-        cerr << "Using: " << argv[0] << endl;
+        cout << "Using: " << argv[0] << endl;
         return -1;
     }
 
