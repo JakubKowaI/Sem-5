@@ -1,7 +1,10 @@
+#Jakub Kowal
 module blocksys
 using LinearAlgebra
 
 export BlockMatrix, load_matrix, load_vector, save_solution, printMatrix, Gauss, Gauss_pivot, solve_gauss, LU, LU_pivot, solve_LU, get_b_from_ones, test_solve_Gauss, test_solve_LU, test_solve_Gauss_pivot, test_solve_LU_pivot
+
+function LU end
 
 struct MatrixB
     first_row::Vector{Float64} # Pierwszy wiersz bloku (1, :)
@@ -126,18 +129,12 @@ function load_vector(filename::String)::Vector{Float64}
     end
 end
 
-"""
-Funkcja zapisująca wynikowy wektor x do pliku.
-Obsługuje dwa warianty: z podanym błędem względnym lub bez.
-"""
 function save_solution(filename::String, x::Vector{Float64}, error::Union{Float64, Nothing}=nothing)
     open(filename, "w") do file
-        # Jeśli podano błąd, zapisz go w pierwszej linii
         if error !== nothing
             println(file, error)
         end
         
-        # Zapis składowych wektora
         for val in x
             println(file, val)
         end
@@ -205,6 +202,14 @@ end
 
 function matrix_swap(matrix::BlockMatrix,k::Int,index::Int)
     for j in k:min(matrix.n, k + 2*matrix.l)
+        temp=matrix_get(matrix,k,j)
+        matrix_put(matrix,k,j,matrix_get(matrix,index,j))
+        matrix_put(matrix,index,j,temp)
+    end
+end
+
+function matrix_LU_swap(matrix::BlockMatrix,k::Int,index::Int)
+    for j in max(1,k-2*matrix.l):min(matrix.n, k + 2*matrix.l)
         temp=matrix_get(matrix,k,j)
         matrix_put(matrix,k,j,matrix_get(matrix,index,j))
         matrix_put(matrix,index,j,temp)
@@ -282,7 +287,7 @@ function LU(matrix::BlockMatrix)
     return matrix
 end
 
-function LU_pivot(matrix::BlockMatrix)
+function LU_pivot(matrix::BlockMatrix,b::Vector{Float64})
     for k in 1:matrix.n-1
         pivot=abs(matrix_get(matrix,k,k))
         index=k
@@ -293,10 +298,10 @@ function LU_pivot(matrix::BlockMatrix)
             end
         end
         if index!=k
-            matrix_swap(matrix,k,index)
-            # temp=b[k]
-            # b[k]=b[index]
-            # b[index]=temp
+            matrix_LU_swap(matrix,k,index)
+            temp=b[k]
+            b[k]=b[index]
+            b[index]=temp
         end
         for i in k+1:min(matrix.n, k + 2*matrix.l)
             I=matrix_get(matrix,i,k)/matrix_get(matrix,k,k)

@@ -22,7 +22,7 @@ end
     f = x .^ 2
     fx = Funkcje.ilorazyRoznicowe(x, f)
 
-    @test Funkcje.warNewton(x, fx, 0.0) ≈ 0.0
+    @test Funkcje.warNewton(x, fx, 0.0) ≈ 0.0 
     @test Funkcje.warNewton(x, fx, 1.0) ≈ 1.0
     @test Funkcje.warNewton(x, fx, 2.0) ≈ 4.0
     @test Funkcje.warNewton(x, fx, 3.0) ≈ 9.0
