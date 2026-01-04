@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[polish,shorthands=off]{babel}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{enumitem}
+
+\usepackage{animate}
+\usepackage{tikz}
+\usetikzlibrary{lindenmayersystems}
+\pgfdeclarelindenmayersystem{A}{%
+  \symbol{F}{\pgflsystemstep=0.6\pgflsystemstep\pgflsystemdrawforward}
+  \rule{A->F[+A][-A]}
+}
+
+\title{Sprawozdanie obliczenia naukowe\\Lista 5}
+\author{Jakub Kowal}
+\date{}
+\begin{document}
+\maketitle
+
+\section*{Zapis macierzy}
+\subsection*{Reprezentacja macierzy}
+Macierze są przechowywane w strukturze \textbf{BlockMatrix} jako wektor bloków diagonalnych \textbf{As} oraz wektory bloków nad i poddiagonalnych \textbf{Cs} i \textbf{Bs}. Każdy blok ma rozmiar $l\times l$, a liczba bloków na diagonali to $v=\frac{n}{l}$. Dzięki temu możemy zmniejszyć użycie pamięci z O($n^{2}$) do O($3\times v\times l^{2}$), gdzie $v\times l$ daje nam n, więc otrzymujemy O($n\times l$). Biorąc pod uwagę, że l jest stałe możemy przyjąć O($n$) jako złożoność pamięciową.
+
+Operacje odczytu i zapisu używają pomocniczych funkcji \textbf{matrix\_get} i \textbf{matrix\_put}, które zwracają lub ustawiają wartości w konkretnych blokach znając współrzędne w oryginalnej macierzy. Mają złożoność obliczeniową O($1$).
+
+\section*{Eliminacja Gaussa}
+\subsection*{Implementacja}
+Implementacja funkcji \textbf{Gauss} przeprowadza eliminację tylko w obrębie zapisywanych bloków. Taka implementacja jest możliwa dzięki specyficznej naturze naszej macierzy, która oznacza, że nie mamy potrzeby ingerowania w puste pola poza blokami \textbf{A}, \textbf{B} i \textbf{C}. Dla każdego wiersza obliczany jest mnożnik $I$ (Nie ma potrzeby zapisywać w pamięci tych mnożników, więc korzystamy z pojedynczej zmiennej) i wykonywana jest aktualizacja elementów w blokach oraz wektora prawej strony $b$.
+
+Dzięki specyficznej postaci macierzy algorytm ten może wykonywać się tylko na wartościach przechowywanych w blokach, ponieważ reszta i tak byłaby zerowana przez zera spoza bloków. Pozwala nam to niesamowicie obniżyć złożoność z O($n^{3}$) do O($n$), ale to zostanie wytłumaczone w późniejszych punktach.
+
+\subsubsection*{Eliminacja Gaussa z pivotingiem}
+Funkcja \textbf{Gauss\_pivot} działa tak jak funkcja \textbf{Gauss}, ale dodatkowo wyszukuje największy element w kolumnie w zakresie pivotowania (ograniczonym przez nasze bloki) i wykonuje zamianę wierszy za pomocą \textbf{matrix\_swap}. Wykonuje też zamianę danych w wektorze b.
+
+\section*{Rozkład LU}
+\subsection*{Implementacja}
+Funkcja \textbf{LU} zamienia macierz w postać, w której dolna część (poniżej diagonalnej) zawiera współczynniki L (mnożniki w postaci zmiennej $I$), a górna część macierz U. W implementacji mnożniki zapisywane są w macierzy w miejscu pól, które były zerowane przez eliminację Gaussa. Jest to praktycznie jedyna różnica względem eliminacji Gaussa.
+
+\subsection*{Rozkład LU z pivotingiem}
+	Funkcja \textbf{LU\_pivot} wykonuje wyszukiwanie pivotu analogicznie do pivotingu w eliminacji Gaussa i zamiany wierszy (funkcja \textbf{matrix\_LU\_swap}, która operuje na szerszym zakresie indeksów niż zwykły \textbf{matrix\_swap}). Następnie zapisuje mnożniki i aktualizuje elementy macierzy oraz wektorze b.
+
+\section*{Obliczanie}
+\subsection*{Implementacja}
+Funkcja \textbf{solve\_gauss} wykonuje obliczanie $x$ od $x_{n}$ do $x_{1}$ na macierzy w postaci po eliminacji Gaussa (przyjmuje macierz i wektor prawej strony). Na wykładzie zostało opisane to wzorem:
+\begin{center}
+  $x_{k}=\frac{b_{k}-\sum_{j=k+1}^{n}a_{kj}x_{j}}{a_{kk}}$
+\end{center}
+ Z kolei \textbf{solve\_LU} najpierw modyfikuje wektor b, żeby wziąć pod uwagę mnożniki, które w eliminacji Gaussa na bieżąco zmieniały b, a w rozkładzie LU dopiero teraz trzeba wziąć pod uwagę. Następnie wykonuje po prostu \textbf{solve\_gauss} dla części U.
+ 
+\section*{Złożoność}
+\subsection*{Złożoność czasowa}
+Dla operacji ograniczonych do pasma szerokości z grubsza proporcjonalnej do $l$ (blok szerokości $l$) analizujemy koszt pojedynczego kroku $k$: pętle po $i$ i $j$ mają długość rzędu $O(l)$, zatem koszt dla danego $k$ to $O(l^2)$. Sumując po wszystkich $k=1\ldots n$ otrzymujemy złożoność
+$$T(n)=O(n\,l^{2}).$$
+Jeżeli $l$ jest stałe i małą wartością w stosunku do $n$, złożoność redukuje się praktycznie do $O(n)$ (linowa względem $n$).
+
+W przeciwieństwie do pełnej eliminacji Gaussa na macierzach gęstych, która ma $O(n^{3})$, wykorzystanie struktury blokowej i ograniczonego pasma daje dużą oszczędność czasu.
+
+\subsection*{Złożoność pamięciowa}
+Macierz jest przechowywana jako $v= n/l$ bloków rozmiaru $l\times l$, stąd pamięć zajęta przez bloki diagonalne to $v\cdot l^{2}=n\,l$. Podobnie bloki nad- i poddiagonalne też razem dają rząd $O(n\,l)$. Wektory prawej strony i rozwiązania są długości $n$. Zatem całkowite wymagania pamięciowe to
+$$M(n)=O(n\,l).$$
+Dla stałego i małego $l$ jest to liniowe w $n$, znacząco mniej niż $O(n^{2})$ dla pełnej macierzy gęstej.
+
+\section*{Wyniki i wnioski}
+W pliku z eksperymentami (\textbf{Usage.jl}) wykonane zostały pomiary czasu i alokacji pamięci dla czterech wariantów: \textbf{Gauss}, \textbf{Gauss Pivot}, \textbf{LU} i \textbf{LU Pivot}. Wykresy wyników zostały dołączone jako \textbf{time\_graph.png} i \textbf{mem\_graph.png}.
+
+Obserwacje istotne dla wniosków:
+- Implementacje operują wewnątrz bloku/pasma, stąd złożoność rośnie liniowo z $n$ mnożoną przez $l^{2}$, a nie jak $n^{3}$.
+- \textbf{LU} zapisuje mnożniki L w macierzy (dolna trójkątna część jest wypełniana wartościami różnymi od zera), co zmienia strukturę danych po obliczeniach w porównaniu do \textbf{Gauss}, który ustawia część eliminowaną na zera. W praktyce jednak pamięć bloków jest wcześniej zaalokowana, więc różnica pamięci bezpośrednio po operacji zależy od dodatkowych alokacji pomocniczych.
+- Wpływ pivotingu: pivoting wymusza dodatkowe zamiany wierszy ( funkcje \textbf{matrix\_swap} i \textbf{matrix\_LU\_swap} ), co zwiększa liczbę odczytów/zapisów i nieznacznie narzut czasowy; \textbf{matrix\_LU\_swap} operuje na nieco szerszym zakresie indeksów, co zwiększa koszty przy pivotingu w LU.
+
+Propozycje optymalizacji i uwagi metodyczne:
+- Jeżeli chcemy minimalizować alokacje, należy unikać kopiowania wektora w funkcjach rozwiązujących — w aktualnej wersji \textbf{solve\_LU} modyfikacja wektora jest wykonywana in-place (komentarz z \textbf{y = copy(b)} został zakomentowany), co redukuje jedną dużą alokację.
+- Dla stabilniejszych i powtarzalnych pomiarów rekomenduję użycie pakietu \textbf{BenchmarkTools.@btime} zamiast \textbf{@timed} — daje lepsze statystyki alokacji i czasu.
+- Można też ograniczyć zwroty z \textbf{matrix\_put} (nie musi zwracać macierzy), aby zmniejszyć narzut wywołań funkcyjnych.
+
+
+\section*{Wyniki}
+\subsection*{Wyniki czasowe}
+\begin{figure}[H]
+    \label{fig:times}
+    \includegraphics[width=35em]{time_graph.png}
+\end{figure}
+\subsection*{Wyniki pamięciowe}
+\begin{figure}[H]
+    \label{fig:memory}
+    \includegraphics[width=35em]{mem_graph.png}
+\end{figure}
+
+\section*{Wnioski}
+Algorytmy korzystają z reprezentacji blokowej, co pozwala na istotne przyspieszenie i ograniczenie pamięci w porównaniu do pełnej macierzy. Dzięki stałemu l koszty są asymptotycznie rzędu O($n$) w czasie i O($n$) w pamięci, co czyni podejście niesamowicie efektywnym dla dużych $n$.
+
+\section*{Ciekawostka}
+Tą animację wygenerował ChatGPT wykorzystując pakiet animate oraz tikz. Do generowania kolejnych klatek użył osobnego skryptu pythonowego.\\
+
+\input{animation.tex}
+
+\end{document}

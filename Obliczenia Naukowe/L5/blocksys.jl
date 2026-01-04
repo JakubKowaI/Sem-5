@@ -316,13 +316,13 @@ function LU_pivot(matrix::BlockMatrix,b::Vector{Float64})
 end
 
 function solve_LU(matrix::BlockMatrix, b::Vector{Float64})
-    y = copy(b)
+    #y = copy(b)
     for k in 1:matrix.n-1
         for i in k+1:min(matrix.n, k + 2*matrix.l)
-            y[i] = y[i] - matrix_get(matrix, i, k) * y[k]
+            b[i] = b[i] - matrix_get(matrix, i, k) * b[k]
         end
     end
-    return solve_gauss(matrix, y)
+    return solve_gauss(matrix, b)
 end
 
 function get_b_from_ones(filename::String)
