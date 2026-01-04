@@ -1,6 +1,7 @@
 module blocksys
+using LinearAlgebra
 
-export BlockMatrix, load_matrix, load_vector, save_solution, printMatrix, Gauss, Gauss_pivot, solve_gauss, LU, LU_pivot, solve_LU
+export BlockMatrix, load_matrix, load_vector, save_solution, printMatrix, Gauss, Gauss_pivot, solve_gauss, LU, LU_pivot, solve_LU, get_b_from_ones, test_solve_Gauss, test_solve_LU, test_solve_Gauss_pivot, test_solve_LU_pivot
 
 struct MatrixB
     first_row::Vector{Float64} # Pierwszy wiersz bloku (1, :)
@@ -293,9 +294,9 @@ function LU_pivot(matrix::BlockMatrix)
         end
         if index!=k
             matrix_swap(matrix,k,index)
-            temp=b[k]
-            b[k]=b[index]
-            b[index]=temp
+            # temp=b[k]
+            # b[k]=b[index]
+            # b[index]=temp
         end
         for i in k+1:min(matrix.n, k + 2*matrix.l)
             I=matrix_get(matrix,i,k)/matrix_get(matrix,k,k)
@@ -306,7 +307,7 @@ function LU_pivot(matrix::BlockMatrix)
             end
         end
     end
-    return matrix
+    return matrix,b
 end
 
 function solve_LU(matrix::BlockMatrix, b::Vector{Float64})
@@ -317,6 +318,63 @@ function solve_LU(matrix::BlockMatrix, b::Vector{Float64})
         end
     end
     return solve_gauss(matrix, y)
+end
+
+function get_b_from_ones(filename::String)
+    matrix=load_matrix(filename)
+    b=zeros(Float64,matrix.n)
+
+    for i in 1:matrix.n
+        k = Int(ceil(i / matrix.l))
+        start_col = max(1, (k-2)*matrix.l + 1)
+        end_col = min(matrix.n, (k+1)*matrix.l)
+        
+        for j in start_col:end_col
+            b[i] += matrix_get(matrix, i, j)
+        end
+    end
+
+    return b
+end
+
+function test_solve_Gauss(filename::String)
+    matrix=load_matrix(filename)
+    b=get_b_from_ones(filename)
+    matrix_after,b_after = Gauss(matrix,b)
+    x=solve_gauss(matrix_after,b_after)
+
+    err = norm(ones(Float64,matrix.n) - x) / norm(ones(Float64,matrix.n))
+    save_solution("wynikGauss.txt", x, err)
+end
+
+function test_solve_Gauss_pivot(filename::String)
+    matrix=load_matrix(filename)
+    b=get_b_from_ones(filename)
+    matrix_after,b_after = Gauss_pivot(matrix,b)
+    x=solve_gauss(matrix_after,b_after)
+
+    err = norm(ones(Float64,matrix.n) - x) / norm(ones(Float64,matrix.n))
+    save_solution("wynikGaussPivot.txt", x, err)
+end
+
+function test_solve_LU(filename::String)
+    matrix=load_matrix(filename)
+    b=get_b_from_ones(filename)
+    matrix_after = LU(matrix)
+    x=solve_LU(matrix_after,b)
+
+    err = norm(ones(Float64,matrix.n) - x) / norm(ones(Float64,matrix.n))
+    save_solution("wynikLU.txt", x, err)
+end
+
+function test_solve_LU_pivot(filename::String)
+    matrix=load_matrix(filename)
+    b=get_b_from_ones(filename)
+    matrix_after,b_after = LU_pivot(matrix,b)
+    x=solve_LU(matrix_after,b_after)
+
+    err = norm(ones(Float64,matrix.n) - x) / norm(ones(Float64,matrix.n))
+    save_solution("wynikLUPivot.txt", x, err)
 end
 
 
