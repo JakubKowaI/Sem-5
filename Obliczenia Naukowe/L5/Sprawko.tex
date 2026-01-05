@@ -19,6 +19,9 @@
   \rule{A->F[+A][-A]}
 }
 
+\usepackage{framed}
+\definecolor{shadecolor}{gray}{0.88}
+
 \title{Sprawozdanie obliczenia naukowe\\Lista 5}
 \author{Jakub Kowal}
 \date{}
@@ -27,43 +30,122 @@
 
 \section*{Zapis macierzy}
 \subsection*{Reprezentacja macierzy}
+
 Macierze są przechowywane w strukturze \textbf{BlockMatrix} jako wektor bloków diagonalnych \textbf{As} oraz wektory bloków nad i poddiagonalnych \textbf{Cs} i \textbf{Bs}. Każdy blok ma rozmiar $l\times l$, a liczba bloków na diagonali to $v=\frac{n}{l}$. Dzięki temu możemy zmniejszyć użycie pamięci z O($n^{2}$) do O($3\times v\times l^{2}$), gdzie $v\times l$ daje nam n, więc otrzymujemy O($n\times l$). Biorąc pod uwagę, że l jest stałe możemy przyjąć O($n$) jako złożoność pamięciową.
 
 Operacje odczytu i zapisu używają pomocniczych funkcji \textbf{matrix\_get} i \textbf{matrix\_put}, które zwracają lub ustawiają wartości w konkretnych blokach znając współrzędne w oryginalnej macierzy. Mają złożoność obliczeniową O($1$).
 
 \section*{Eliminacja Gaussa}
 \subsection*{Implementacja}
+
 Implementacja funkcji \textbf{Gauss} przeprowadza eliminację tylko w obrębie zapisywanych bloków. Taka implementacja jest możliwa dzięki specyficznej naturze naszej macierzy, która oznacza, że nie mamy potrzeby ingerowania w puste pola poza blokami \textbf{A}, \textbf{B} i \textbf{C}. Dla każdego wiersza obliczany jest mnożnik $I$ (Nie ma potrzeby zapisywać w pamięci tych mnożników, więc korzystamy z pojedynczej zmiennej) i wykonywana jest aktualizacja elementów w blokach oraz wektora prawej strony $b$.
 
 Dzięki specyficznej postaci macierzy algorytm ten może wykonywać się tylko na wartościach przechowywanych w blokach, ponieważ reszta i tak byłaby zerowana przez zera spoza bloków. Pozwala nam to niesamowicie obniżyć złożoność z O($n^{3}$) do O($n$), ale to zostanie wytłumaczone w późniejszych punktach.
 
 \subsubsection*{Eliminacja Gaussa z pivotingiem}
+
 Funkcja \textbf{Gauss\_pivot} działa tak jak funkcja \textbf{Gauss}, ale dodatkowo wyszukuje największy element w kolumnie w zakresie pivotowania (ograniczonym przez nasze bloki) i wykonuje zamianę wierszy za pomocą \textbf{matrix\_swap}. Wykonuje też zamianę danych w wektorze b.
 
 \section*{Rozkład LU}
 \subsection*{Implementacja}
+
 Funkcja \textbf{LU} zamienia macierz w postać, w której dolna część (poniżej diagonalnej) zawiera współczynniki L (mnożniki w postaci zmiennej $I$), a górna część macierz U. W implementacji mnożniki zapisywane są w macierzy w miejscu pól, które były zerowane przez eliminację Gaussa. Jest to praktycznie jedyna różnica względem eliminacji Gaussa.
 
 \subsection*{Rozkład LU z pivotingiem}
+
 	Funkcja \textbf{LU\_pivot} wykonuje wyszukiwanie pivotu analogicznie do pivotingu w eliminacji Gaussa i zamiany wierszy (funkcja \textbf{matrix\_LU\_swap}, która operuje na szerszym zakresie indeksów niż zwykły \textbf{matrix\_swap}). Następnie zapisuje mnożniki i aktualizuje elementy macierzy oraz wektorze b.
 
 \section*{Obliczanie}
 \subsection*{Implementacja}
+
 Funkcja \textbf{solve\_gauss} wykonuje obliczanie $x$ od $x_{n}$ do $x_{1}$ na macierzy w postaci po eliminacji Gaussa (przyjmuje macierz i wektor prawej strony). Na wykładzie zostało opisane to wzorem:
 \begin{center}
   $x_{k}=\frac{b_{k}-\sum_{j=k+1}^{n}a_{kj}x_{j}}{a_{kk}}$
 \end{center}
+
  Z kolei \textbf{solve\_LU} najpierw modyfikuje wektor b, żeby wziąć pod uwagę mnożniki, które w eliminacji Gaussa na bieżąco zmieniały b, a w rozkładzie LU dopiero teraz trzeba wziąć pod uwagę. Następnie wykonuje po prostu \textbf{solve\_gauss} dla części U.
  
 \section*{Złożoność}
 \subsection*{Złożoność czasowa}
-Dla operacji ograniczonych do pasma szerokości z grubsza proporcjonalnej do $l$ (blok szerokości $l$) analizujemy koszt pojedynczego kroku $k$: pętle po $i$ i $j$ mają długość rzędu $O(l)$, zatem koszt dla danego $k$ to $O(l^2)$. Sumując po wszystkich $k=1\ldots n$ otrzymujemy złożoność
-$$T(n)=O(n\,l^{2}).$$
-Jeżeli $l$ jest stałe i małą wartością w stosunku do $n$, złożoność redukuje się praktycznie do $O(n)$ (linowa względem $n$).
+\begin{shaded}
+\begin{verbatim}
+  function Gauss(matrix::BlockMatrix,b::Vector)
+    for k in 1:matrix.n-1
+      for i in k+1:min(matrix.n, k + 2*matrix.l)
+        I=matrix_get(matrix,i,k)/matrix_get(matrix,k,k)
+        matrix_put(matrix,i,k,0.0)
+        for j in k+1:min(matrix.n, k + 2*matrix.l)
+            val=matrix_get(matrix,i,j)- I * matrix_get(matrix,k,j)
+            matrix=matrix_put(matrix,i,j,val)
+        end
+        b[i]=b[i]-I*b[k]
+      end
+    end
+    return matrix, b
+  end
+\end{verbatim}
+\end{shaded}
 
-W przeciwieństwie do pełnej eliminacji Gaussa na macierzach gęstych, która ma $O(n^{3})$, wykorzystanie struktury blokowej i ograniczonego pasma daje dużą oszczędność czasu.
+Jak widać w kodzie tej funkcji, korzysta ona z trzech zagnieżdżonych jedna w drugiej pętli. Pierwsza z nich wykonuje się n razy, a kolejne 2l razy. Daje nam to złożoność O($n\times 2l\times 2l$), ale biorąc pod uwagę stałe l otrzymujemy: \textbf{O($n$)}. Warto dodać również, że wszystkie funkcje wywoływane wewnątrz pętli są rzędu O($1$). Wersja Gaussa z częściowym wybieraniem elementu głównego korzysta z dodatkowej pętli rzędu O($l$), także biorąc pod uwagę stałe l możemy stwierdzić, że również jest rzędu O($n$).
+
+W przeciwieństwie do pełnej eliminacji Gaussa na macierzach gęstych, która ma złożoność $O(n^{3})$, wykorzystanie struktury blokowej możliwe, dzięki specyficznej budowie naszej macierzy znacząco pozwala nam zmniejszyć złożoność obliczeniową.
+
+\begin{shaded}
+\begin{verbatim}
+  function LU(matrix::BlockMatrix)
+    for k in 1:matrix.n-1
+      for i in k+1:min(matrix.n, k + 2*matrix.l)
+        I=matrix_get(matrix,i,k)/matrix_get(matrix,k,k)
+        matrix_put(matrix,i,k,I)
+        for j in k+1:min(matrix.n, k + 2*matrix.l)
+          val=matrix_get(matrix,i,j)- I * matrix_get(matrix,k,j)
+          matrix=matrix_put(matrix,i,j,val)
+        end
+      end
+    end
+    return matrix
+  end 
+\end{verbatim}
+\end{shaded}
+
+Funkcja obliczająca rozkład LU, działa na takiej samej zasadzie jak Gauss z drobnymi poprawkami. Oznacza to taką samą złożoność \textbf{O($n$)} zarówno dla wersji z częsciowym wyborem elementu głównego, jak i bez wyboru.
+
+\begin{shaded}
+\begin{verbatim}
+  function solve_gauss(matrix::BlockMatrix,b::Vector{Float64})
+    x = zeros(Float64, matrix.n)
+    for i in matrix.n:-1:1
+      sum_ax = 0.0
+      for j in i+1 : min(matrix.n, i + 2*matrix.l)
+          sum_ax += matrix_get(matrix, i, j) * x[j]
+      end
+      x[i] = (b[i] - sum_ax) / matrix_get(matrix, i, i)
+    end
+
+    return x
+  end
+\end{verbatim}
+\end{shaded}
+
+Funkcja obliczająca Ax=b dla macierzy po eliminacji Gaussa korzysta z dwóch pętli. Jedna wykonuje się n razy, a jej wewnętrzna pętla $2\times l$. Oznacza to złożoność rzędu O($n\times 2l$), czyli \textbf{O($n$)}.
+
+\begin{shaded}
+\begin{verbatim}
+  function solve_LU(matrix::BlockMatrix, b::Vector{Float64})
+    for k in 1:matrix.n-1
+      for i in k+1:min(matrix.n, k + 2*matrix.l)
+        b[i] = b[i] - matrix_get(matrix, i, k) * b[k]
+      end
+    end
+    return solve_gauss(matrix, b)
+  end
+\end{verbatim}
+\end{shaded}
+
+Funkcja obliczająca macierz po rozkładzie LU działa na podobnej zasadzie co funkcja obliczająca eliminację Gaussa, jedynie z dodatkiem mnożenia wektora b poprzez wcześniej wyliczone mnożniki I. Jej złożoność to O($n\times 2l+n$),czyli \textbf{O($n$)}.
 
 \subsection*{Złożoność pamięciowa}
+
 Macierz jest przechowywana jako $v= n/l$ bloków rozmiaru $l\times l$, stąd pamięć zajęta przez bloki diagonalne to $v\cdot l^{2}=n\,l$. Podobnie bloki nad- i poddiagonalne też razem dają rząd $O(n\,l)$. Wektory prawej strony i rozwiązania są długości $n$. Zatem całkowite wymagania pamięciowe to
 $$M(n)=O(n\,l).$$
 Dla stałego i małego $l$ jest to liniowe w $n$, znacząco mniej niż $O(n^{2})$ dla pełnej macierzy gęstej.
