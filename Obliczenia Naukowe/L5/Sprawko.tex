@@ -8,6 +8,7 @@
 \usepackage{multirow}
 \usepackage{longtable}
 \usepackage{hyperref}
+\usepackage[all]{hypcap}
 \usepackage{float}
 \usepackage{enumitem}
 
@@ -146,38 +147,41 @@ Funkcja obliczająca macierz po rozkładzie LU działa na podobnej zasadzie co f
 
 \subsection*{Złożoność pamięciowa}
 
-Macierz jest przechowywana jako $v= n/l$ bloków rozmiaru $l\times l$, stąd pamięć zajęta przez bloki diagonalne to $v\cdot l^{2}=n\,l$. Podobnie bloki nad- i poddiagonalne też razem dają rząd $O(n\,l)$. Wektory prawej strony i rozwiązania są długości $n$. Zatem całkowite wymagania pamięciowe to
-$$M(n)=O(n\,l).$$
+Macierz jest przechowywana jako $v= n/l$ bloków rozmiaru $l\times l$, stąd pamięć zajęta przez bloki diagonalne to $v\cdot l^{2}=n\,l$. Podobnie bloki nad- i poddiagonalne też razem dają rząd $O(n\,l)$. Wektory prawej strony i rozwiązania są długości $n$. Zatem całkowite wymagania pamięciowe to O($n\,l$), czyli \textbf{O($n$)}.
+
 Dla stałego i małego $l$ jest to liniowe w $n$, znacząco mniej niż $O(n^{2})$ dla pełnej macierzy gęstej.
 
 \section*{Wyniki i wnioski}
-W pliku z eksperymentami (\textbf{Usage.jl}) wykonane zostały pomiary czasu i alokacji pamięci dla czterech wariantów: \textbf{Gauss}, \textbf{Gauss Pivot}, \textbf{LU} i \textbf{LU Pivot}. Wykresy wyników zostały dołączone jako \textbf{time\_graph.png} i \textbf{mem\_graph.png}.
+W pliku z eksperymentami (\textbf{Usage.jl}) wykonane zostały pomiary czasu i alokacji pamięci dla czterech wariantów: \textbf{Gauss}, \textbf{Gauss Pivot}, \textbf{LU} i \textbf{LU Pivot}. Wykresy wyników zostały dołączone jako \hyperref[fig:times]{\textbf{time\_graph.png}} i \hyperref[fig:memory]{\textbf{mem\_graph.png}}.\\
 
 Obserwacje istotne dla wniosków:
-- Implementacje operują wewnątrz bloku/pasma, stąd złożoność rośnie liniowo z $n$ mnożoną przez $l^{2}$, a nie jak $n^{3}$.
-- \textbf{LU} zapisuje mnożniki L w macierzy (dolna trójkątna część jest wypełniana wartościami różnymi od zera), co zmienia strukturę danych po obliczeniach w porównaniu do \textbf{Gauss}, który ustawia część eliminowaną na zera. W praktyce jednak pamięć bloków jest wcześniej zaalokowana, więc różnica pamięci bezpośrednio po operacji zależy od dodatkowych alokacji pomocniczych.
-- Wpływ pivotingu: pivoting wymusza dodatkowe zamiany wierszy ( funkcje \textbf{matrix\_swap} i \textbf{matrix\_LU\_swap} ), co zwiększa liczbę odczytów/zapisów i nieznacznie narzut czasowy; \textbf{matrix\_LU\_swap} operuje na nieco szerszym zakresie indeksów, co zwiększa koszty przy pivotingu w LU.
+\begin{enumerate}
+  \item Implementacje operują wewnątrz bloków, stąd złożoność rośnie liniowo z $n$, a nie jak w zwykłej macierzy gęstej $n^{3}$. Potwierdza to wykres \hyperref[fig:times]{\textbf{wykres czasu}}, na którym widać jasno, że czas rośnie liniowo wraz z rozmiarem macierzy.
+  \item \textbf{LU} zapisuje mnożniki L w macierzy (dolna trójkątna część jest wypełniana wartościami różnymi od zera), co zmienia strukturę danych po obliczeniach w porównaniu do \textbf{Gauss}, który ustawia część eliminowaną na zera. W praktyce jednak pamięć bloków jest wcześniej zaalokowana, więc nie ma specjalnych różnic w użyciu pamięci.
+  \item Wpływ pivotingu: pivoting wymusza dodatkowe zamiany wierszy ( funkcje \textbf{matrix\_swap} i \textbf{matrix\_LU\_swap} ), co zwiększa liczbę odczytów/zapisów.  \textbf{matrix\_LU\_swap} operuje na nieco szerszym zakresie indeksów (musi również przestawiać poprzednio wyliczone mnożniki), co zwiększa koszty przy pivotingu w LU.
+\end{enumerate}
 
-Propozycje optymalizacji i uwagi metodyczne:
-- Jeżeli chcemy minimalizować alokacje, należy unikać kopiowania wektora w funkcjach rozwiązujących — w aktualnej wersji \textbf{solve\_LU} modyfikacja wektora jest wykonywana in-place (komentarz z \textbf{y = copy(b)} został zakomentowany), co redukuje jedną dużą alokację.
-- Dla stabilniejszych i powtarzalnych pomiarów rekomenduję użycie pakietu \textbf{BenchmarkTools.@btime} zamiast \textbf{@timed} — daje lepsze statystyki alokacji i czasu.
-- Można też ograniczyć zwroty z \textbf{matrix\_put} (nie musi zwracać macierzy), aby zmniejszyć narzut wywołań funkcyjnych.
-
+Propozycje optymalizacji:
+\begin{enumerate}
+  \item Można zastąpić matryce w naszych blokach \textbf{A}, \textbf{B} oraz \textbf{C} matrycami \href{https://docs.julialang.org/en/v1/stdlib/SparseArrays/}{\textbf{SparseMatrixCSC}} w celu dodatkowego zmniejszenia zużycia pamięci, szczególnie w eliminacji Gaussa.
+\end{enumerate}
 
 \section*{Wyniki}
 \subsection*{Wyniki czasowe}
 \begin{figure}[H]
-    \label{fig:times}
+    \caption{Wykres czasu}
     \includegraphics[width=35em]{time_graph.png}
-\end{figure}
+    \label{fig:times}
+  \end{figure}
 \subsection*{Wyniki pamięciowe}
 \begin{figure}[H]
-    \label{fig:memory}
+    \caption{Wykres pamięci}
     \includegraphics[width=35em]{mem_graph.png}
+    \label{fig:memory}
 \end{figure}
 
 \section*{Wnioski}
-Algorytmy korzystają z reprezentacji blokowej, co pozwala na istotne przyspieszenie i ograniczenie pamięci w porównaniu do pełnej macierzy. Dzięki stałemu l koszty są asymptotycznie rzędu O($n$) w czasie i O($n$) w pamięci, co czyni podejście niesamowicie efektywnym dla dużych $n$.
+Algorytmy korzystają z reprezentacji blokowej, co pozwala na istotne przyspieszenie i ograniczenie pamięci w porównaniu do pełnej macierzy. Dzięki stałemu l koszty są asymptotycznie rzędu O($n$) w czasie i pamięci, co czyni podejście niesamowicie efektywnym dla dużych $n$.
 
 \section*{Ciekawostka}
 Tą animację wygenerował ChatGPT wykorzystując pakiet animate oraz tikz. Do generowania kolejnych klatek użył osobnego skryptu pythonowego.\\
