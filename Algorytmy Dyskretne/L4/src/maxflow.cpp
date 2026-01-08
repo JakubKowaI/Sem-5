@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (!glpkFile.empty()) {
-        graph.writeToLP(glpkFile, source, sink);
+        graph.writeToLP(glpkFile);
     }
 
     auto start = chrono::high_resolution_clock::now();

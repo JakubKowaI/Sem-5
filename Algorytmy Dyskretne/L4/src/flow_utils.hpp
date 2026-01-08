@@ -16,7 +16,6 @@ struct Edge {
     int capacity;
     int flow;
     int rev; // index of reverse edge in adj[to]
-    int id; // original index for tracking if needed
 };
 
 class FlowNetwork {
@@ -32,9 +31,9 @@ public:
 
     FlowNetwork(int n) : n(n), adj(n), level(n), ptr(n) {}
 
-    void addEdge(int from, int to, int cap, int id = -1) {
-        Edge a = {to, cap, 0, (int)adj[to].size(), id};
-        Edge b = {from, 0, 0, (int)adj[from].size(), -1}; // Residual edge has 0 capacity initially for directed graph
+    void addEdge(int from, int to, int cap) {
+        Edge a = {to, cap, 0, (int)adj[to].size()};
+        Edge b = {from, 0, 0, (int)adj[from].size()};
         adj[from].push_back(a);
         adj[to].push_back(b);
     }
@@ -54,6 +53,7 @@ public:
             int pathFlow = 0;
             int lastNode = -1;
 
+            //BFS
             while (!q.empty()) {
                 int u = q.front().first;
                 int flow = q.front().second;
@@ -65,11 +65,11 @@ public:
                     break;
                 }
 
-                for (int i = 0; i < adj[u].size(); ++i) {
-                    Edge &e = adj[u][i];
+                for (int v = 0; v < adj[u].size(); ++v) {
+                    Edge &e = adj[u][v];
                     if (parent[e.to] == -1 && e.capacity - e.flow > 0) {
                         parent[e.to] = u;
-                        parentEdgeIndex[e.to] = i;
+                        parentEdgeIndex[e.to] = v;
                         int newFlow = min(flow, e.capacity - e.flow);
                         q.push({e.to, newFlow});
                     }
@@ -97,7 +97,6 @@ public:
         return maxFlow;
     }
 
-    // Dinic's Algorithm Helpers
     bool bfsEstimate(int s, int t) {
         fill(level.begin(), level.end(), -1);
         level[s] = 0;
@@ -132,7 +131,6 @@ public:
         return 0;
     }
 
-    // Dinic
     long long dinic(int s, int t) {
         long long maxFlow = 0;
         augmentingPaths = 0; // In Dinic, we can count phases or paths. Standard EK metric is paths. 
@@ -149,77 +147,30 @@ public:
         return maxFlow;
     }
 
-    void writeToLP(const string& filename, int s, int t) {
+
+    void writeToLP(const string& filename) {
         ofstream out(filename);
-        // We will generate a Julia file using JuMP
         out << "using JuMP\n";
         out << "using GLPK\n";
         out << "model = Model(GLPK.Optimizer)\n";
-        out << "set_silent(model)\n"; // Suppress solver output
+        out << "set_silent(model)\n";
+        out << "G = zeros(Int, "<<n<<", "<<n<<")\n";
 
-        
-        // Count edges (forward only)
         int m = 0;
         for(int u=0; u<n; ++u) {
             for(auto& e : adj[u]) {
-                if (e.capacity > 0) m++; // Only original edges or those with capacity
+                if (e.capacity > 0){
+                    m++;
+                    out << "G["<<u+1<<","<<e.to+1<<"]="<<e.capacity<<"\n";
+                } 
             }
         }
 
         out << "# Nodes: " << n << ", Edges: " << m << "\n";
-        
-        // Variables: flow for each edge
-        // Map (u, v) -> variable index? Or just use strings/symbols
-        // JuMP allows array of variables.
-        
-        // Let's create a list of edges to index them
-        out << "flows = @variable(model, f[1:" << m << "] >= 0)\n";
-        
-        int edgeParamsIdx = 1;
-        
-        // Store flow conservation constraints strings
-        vector<string> flow_conservation(n, "0");
-        
-        for(int u=0; u<n; ++u) {
-            for(auto& e : adj[u]) {
-                if (e.capacity > 0) { // Forward edge
-                    out << "set_upper_bound(f[" << edgeParamsIdx << "], " << e.capacity << ")\n";
-                    
-                    // Outgoing from u
-                    // flow_conservation[u] -= f[i]
-                    flow_conservation[u] += " - f[" + to_string(edgeParamsIdx) + "]";
-                    
-                    // Incoming to e.to
-                    // flow_conservation[e.to] += f[i]
-                    flow_conservation[e.to] += " + f[" + to_string(edgeParamsIdx) + "]";
-                    
-                    edgeParamsIdx++;
-                }
-            }
-        }
-
-        // Constraints
-        for(int i=0; i<n; ++i) {
-            if (i == s || i == t) continue;
-            out << "@constraint(model, " << flow_conservation[i] << " == 0)\n";
-        }
-        
-        // Objective: max sum of outgoing from s (or incoming to t)
-        string obj = "0";
-        // Iterate edges from s
-        edgeParamsIdx = 1; 
-         for(int u=0; u<n; ++u) {
-            for(auto& e : adj[u]) {
-                if(e.capacity > 0) {
-                     if (u == s) {
-                        obj += " + f[" + to_string(edgeParamsIdx) + "]";
-                     }
-                     edgeParamsIdx++;
-                }
-            }
-        }
-        
-        out << "@objective(model, Max, " << obj << ")\n";
+        out << "@variable(model, f[1:"<<n<<", 1:"<<n<<"] >= 0)\n";        
+        out << "@constraint(model, [i = 1:"<<n<<", j = 1:"<<n<<"], f[i, j] <= G[i, j])\n";
+        out << "@constraint(model, [i = 1:"<<n<<"; i != 1 && i != "<<n<<"], sum(f[i, :]) == sum(f[:, i]))\n";
+        out << "@objective(model, Max, sum(f[1, :]))\n";
         out << "optimize!(model)\n";
         out << "println(objective_value(model))\n";
         out.close();
