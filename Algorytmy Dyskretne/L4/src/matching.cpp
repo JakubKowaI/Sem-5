@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
     long long matchSize = graph.edmondsKarp(source, sink); 
     
     auto end = chrono::high_resolution_clock::now();
-    auto elapsed_ms = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    auto elapsed_ms = chrono::duration_cast<chrono::microseconds>(end - start).count();
 
     cout << matchSize << endl;
     cerr << "Time: " << elapsed_ms << "s" << endl;

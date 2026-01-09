@@ -200,6 +200,7 @@ function run_comparison()
         end
     end
 
+    println("Running Comparison with JuMP for task 2")
     for k in 2:4
         file_lp = joinpath(MODELS_DIR, "model_matching_$k.jl")
         
@@ -236,7 +237,7 @@ function run_comparison()
         
         println("Comparison k=$k:")
         println("JuMP Value: $jump_val, Time: $jump_time s")
-        println("C++ Value: $cpp_flow, Time: $cpp_time ms")
+        println("C++ Value: $cpp_flow, Time: $cpp_time microseconds")
         
         if abs(jump_val - cpp_flow) < 1e-5
             println("SUCCESS: Results match!")

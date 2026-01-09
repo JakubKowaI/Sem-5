@@ -15,6 +15,7 @@
 \usetikzlibrary{positioning}
 \usepackage{amsmath}
 \usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{subcaption}
 
 \usepackage{framed}
 \definecolor{shadecolor}{gray}{0.88}
@@ -50,6 +51,12 @@ Moja implementacja algorytmu Edmondsa-Karpa działa w następujący sposób:
       \caption{}
 \end{algorithm}
 \subsection{Złożoność}
+n --- liczba węzłów.\\
+m --- liczba krawędzi.\\
+Pętla wykona się najwyżej n razy bo każda ścieżka powiększająca wyczerpuje jedną z krawędzi, a ścieżki od s do t są ograniczone przez n, więc możemy wyczerpać najwyżej n ścieżek. O(n)\\
+BFS jest O(m) (ilość krawędzi)\\
+Powiększanie przepływu jest O(m), bo najdłuższa ścieżka powiększająca może być długości m.\\
+Łącznie dostajemy O($n\times m \times m$), czyli \textbf{O($\text{\textbf{nm}}^{2}$)}.
 
 \section{Algorytm Dinica}
 \SetAlgorithmName{Dinic}{}{}
@@ -82,6 +89,9 @@ Klasa FlowNetwork zwyczajnie zapisuje do pliku .jl najpierw wstęp potrzebny do 
 
 \section{Zadanie Hiperkostka}
 \subsection{Opis zadania}
+Dla parametru k zbudować skierowaną k-wymiarową hiperkostkę $H_{k}$ o $2^{k}$ wierzchołkach opisanych k-bitowymi ciągami.
+Krawędzie łączą wierzchołki mające dokładnie jedną jedynkę w zapisie bitowym i skierowane są od wierzchołka o mniejszej wadze Hamminga do tego o większej wadze (mniejsza ilość jedynek $\rightarrow$ większa ilość jedynek).
+Pojemność każdej krawędzi (i,j) losowana jest równomiernie z \{1,\dots,$2^{l}$\}, gdzie l = max\{H(e(i)), Z(e(i)), H(e(j)), Z(e(j))\} (H — waga Hamminga, Z — liczba zer (k-H(e(i)))).
 \subsection{Wyniki}
 Wyniki są średnimi wartościami 25 powtórzeń.
 \begin{figure}[H]
@@ -106,7 +116,8 @@ Jak widać na \hyperref[fig:Z1_flows]{wykresie maksymalnego przepływu} oraz \hy
 \section{Zadanie Maksymalne Skojarzenia}
 \subsection{Opis zadania}
 Prowizoryczna wizualizacja grafu:
-\begin{center}
+\begin{figure}[H]
+    \begin{center}
     \begin{tikzpicture}[
     roundnode/.style={circle, draw=black, fill=white, thick, minimum size=9mm},
     emptynode/.style={circle, draw=white, fill=white, thick, minimum size=9mm}
@@ -163,7 +174,172 @@ Prowizoryczna wizualizacja grafu:
 
     \end{tikzpicture}
 \end{center}
+\label{fig:Z2_graph}
+\end{figure}
+
 
 \subsection{Wyniki}
+\begin{figure}[H]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_1.png}
+  \caption{Czasy dla i = 1}
+  \label{fig:times_i_1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_2.png}
+  \caption{Czasy dla i = 2}
+  \label{fig:times_i_2}
+\end{subfigure}
+
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_3.png}
+  \caption{Czasy dla i = 3}
+  \label{fig:times_i_3}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_4.png}
+  \caption{Czasy dla i = 4}
+  \label{fig:times_i_4}
+\end{subfigure}%
+
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_5.png}
+  \caption{Czasy dla i = 5}
+  \label{fig:times_i_5}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_6.png}
+  \caption{Czasy dla i = 6}
+  \label{fig:times_i_6}
+\end{subfigure}%
+
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_7.png}
+  \caption{Czasy dla i = 7}
+  \label{fig:times_i_7}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_8.png}
+  \caption{Czasy dla i = 8}
+  \label{fig:times_i_8}
+\end{subfigure}%
+
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_9.png}
+  \caption{Czasy dla i = 9}
+  \label{fig:times_i_9}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_time_i_10.png}
+  \caption{Czasy dla i = 10}
+  \label{fig:times_i_10}
+\end{subfigure}%
+
+\label{fig:Z2_times}
+\end{figure}
+
+\begin{figure}[H]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_3.png}
+  \caption{Maksymalne skojarzenia dla k = 3}
+  \label{fig:paths_k_3}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_4.png}
+  \caption{Maksymalne skojarzenia dla k = 4}
+  \label{fig:paths_k_4}
+\end{subfigure}%
+
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_5.png}
+  \caption{Maksymalne skojarzenia dla k = 5}
+  \label{fig:paths_k_5}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_6.png}
+  \caption{Maksymalne skojarzenia dla k = 6}
+  \label{fig:paths_k_6}
+\end{subfigure}%
+
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_7.png}
+  \caption{Maksymalne skojarzenia dla k = 7}
+  \label{fig:paths_k_7}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_8.png}
+  \caption{Maksymalne skojarzenia dla k = 8}
+  \label{fig:paths_k_8}
+\end{subfigure}%
+
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_9.png}
+  \caption{Maksymalne skojarzenia dla k = 9}
+  \label{fig:paths_k_9}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{../plots/matching_size_k_10.png}
+  \caption{Maksymalne skojarzenia dla k = 10}
+  \label{fig:paths_k_10}
+\end{subfigure}%
+
+\label{fig:Z2_paths}
+\end{figure}
+
+\section{Porównanie c++ i Julii}
+\subsection{Hiperkostka}
+\begin{table}[H]
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    k & JuMP Value & JuMP Time (s) & C++ Value & C++ Time (microseconds) \\
+    \hline
+    2 & 3.0 & 6.8233020305633545 & 3 & 2.0 \\
+    \hline
+    3 & 14.0 & 6.6171910762786865 & 14 & 2.0 \\
+    \hline
+    4 & 30.0 & 6.6985039710998535 & 30 & 8.0 \\
+    \hline
+    \end{tabular}
+    \label{tab:comp_1}
+\end{table}
+
+    Jak widać \hyperref[tab:comp_1]{wyniki} się zgadzają, ale c++ bez dwóch zdań pokonuje GLPK z Julii w szybkości. Dla tak niskich wartości k czas wykonywania w c++ musiał być mierzony w mikrosekundach, ponieważ algorytm wykonywał się krócej niż milisekunda. Jest to niewiarygodna prędkość względem solvera, który wykonywał się przez parę sekund.
+
+\subsection{Skojarzenia}
+\begin{table}[H]
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    k & JuMP Value & JuMP Time (s) & C++ Value & C++ Time (microseconds) \\
+    \hline
+    2 & 3.0 & 6.633029937744141 & 3 & 3.0 \\
+    \hline
+    3 & 7.0 & 6.803858041763306 & 7 & 8.0 \\
+    \hline
+    4 & 14.0 & 6.798024892807007 & 14 & 17.0 \\
+    \hline
+    \end{tabular}
+    \label{tab:comp_2}
+\end{table}
+
+    Jak można zauważyć na \hyperref[tab:comp_2]{tabeli}, wyniki znowu się pokrywają oraz c++ ponownie ma wielką przewagę w prędkości.
+
 
 \end{document}
