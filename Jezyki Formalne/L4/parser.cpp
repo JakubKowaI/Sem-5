@@ -42,58 +42,114 @@
 
 
 // Unqualified %code blocks.
-#line 15 "parser.yy"
+#line 47 "parser.yy"
 
   namespace yy {
       parser::symbol_type yylex();
   }
-  int GF=1234577;
 
-  int mod(long long x){
-    if(x<0)return (GF+(x%GF))%GF;
-    else return x%GF;
+  
+
+  int k=0;
+  std::map<std::string, VAR> var_table;
+  std::vector<std::string> code;
+  unsigned long memory_offset = 0;
+  std::vector<std::vector<std::string>> temp_var_table;
+  int depth=0;
+
+  std::string current;
+  unsigned long Rs[8];
+
+  void print(std::string instruction) {
+      code.push_back(instruction);
   }
 
-  int mod2(long long x){
-    long long m = GF - 1;
-    x %= m;
-    if (x < 0) x += m;
-    return x;
+  unsigned long get_addr(std::string name) {
+      if (var_table.find(name) == var_table.end()) {
+          std::cerr << "Error: Undeclared variable " << name << std::endl;
+          exit(1);
+      }
+      return var_table[name].memory_address;
+  }
+
+  void gen_const_to_reg(unsigned long value, char reg = 'a') {
+      std::string r(1, reg);
+      print("RST " + r);
+      if (value == 0) return;
+      
+      // Znajdź najbardziej znaczący bit
+      unsigned long temp = value;
+      std::string binary = "";
+      while(temp > 0){
+          binary += (temp % 2 == 0 ? "0" : "1");
+          temp /= 2;
+      }
+      std::reverse(binary.begin(), binary.end());
+
+      for (size_t i = 0; i < binary.length(); i++) {
+          if (i > 0) print("SHL " + r); 
+          if (binary[i] == '1') print("INC " + r); // Dodaj 1
+      }
+  }
+
+  VAR* get_variable(std::string name) {
+      if (var_table.find(name) == var_table.end()) {
+          std::cerr << "Error: Undeclared variable " << name << std::endl;
+          exit(1);
+      }
+      return  &var_table[name];
+  }
+
+  VAR* get_variable(unsigned long addr) {
+      for(auto [name,v] : var_table){
+        if(v.memory_address==addr){
+          return &var_table[name];
+        }
+      }
+      return  nullptr;
+  }
+
+  
+
+  unsigned long save_at(pid p){
+    if(p.var_index==1){
+      print("SWP c");//wartosc
+      VAR* v = get_variable(p.address);
+      if(v==nullptr)return 0;
+
+      print("LOAD " + p.idx);
+      gen_const_to_reg(v->array_start,'b');
+      print("SUB b");
+      gen_const_to_reg(p.address,'b');
+      print("ADD b");
+      print("SWP c");
+      print("RSTORE c");
+    }else{
+      VAR* v = get_variable(p.address);
+      if(v==nullptr)return 0;
+      unsigned long target=p.address+(p.idx - v->array_start);
+      print("STORE " + target);
+
+    }
+    return 1;
+    
+
+  }
+
+  void stack_push() {
+    print("RSTORE h"); 
+    print("INC h");    
+  }
+
+  void stack_pop_to_rb() {
+      print("DEC h");    
+      print("SWP b");    
+      print("RLOAD h");  
+      print("SWP b");    
   }
   
-  int power(long long b,long long e){
-    //std::cout<<std::endl<<e<<" - "<<std::endl;
-    e=mod2(e);
-    int c=1;
-    for(int i=0;i<e;i++){
-      c=(c*b)%GF;
-    }
-    return c;
-  }
 
-    int power2(long long b,long long e){
-    //std::cout<<std::endl<<e<<" - "<<std::endl;
-    e=mod2(e);
-    int c=1;
-    for(int i=0;i<e;i++){
-      c=(c*b)%(GF-1);
-    }
-    return c;
-  }
-
-  int div(long long a, long long b) {
-    b = mod(b);
-    if (b == 0) { std::cout<<"Dzielienie przez 0!!!"<<std::endl; return 0; }
-    return (a * power(b,GF-2))%GF;
-  }
-
-  int div2(long long a, long long b) {
-    b = mod2(b);
-    if (b == 0) { std::cout<<"Dzielienie przez 0!!!"<<std::endl; return 0; }
-    return (a * power2(b,GF-3))%(GF-1);
-  }
-
-#line 97 "parser.cpp"
+#line 153 "parser.cpp"
 
 
 #ifndef YY_
@@ -166,7 +222,7 @@
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 170 "parser.cpp"
+#line 226 "parser.cpp"
 
   /// Build a parser object.
   parser::parser ()
@@ -233,11 +289,29 @@ namespace yy {
   {
     switch (that.kind ())
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.YY_MOVE_OR_COPY< long long > (YY_MOVE (that.value));
+      case symbol_kind::S_condition: // condition
+        value.YY_MOVE_OR_COPY< bool > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_type: // type
+        value.YY_MOVE_OR_COPY< char > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.YY_MOVE_OR_COPY< pid > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.YY_MOVE_OR_COPY< unsigned long > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_value: // value
+        value.YY_MOVE_OR_COPY< val > (YY_MOVE (that.value));
         break;
 
       default:
@@ -255,11 +329,29 @@ namespace yy {
   {
     switch (that.kind ())
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.move< long long > (YY_MOVE (that.value));
+      case symbol_kind::S_condition: // condition
+        value.move< bool > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_type: // type
+        value.move< char > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.move< pid > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.move< std::string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.move< unsigned long > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_value: // value
+        value.move< val > (YY_MOVE (that.value));
         break;
 
       default:
@@ -277,11 +369,29 @@ namespace yy {
     state = that.state;
     switch (that.kind ())
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.copy< long long > (that.value);
+      case symbol_kind::S_condition: // condition
+        value.copy< bool > (that.value);
+        break;
+
+      case symbol_kind::S_type: // type
+        value.copy< char > (that.value);
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.copy< pid > (that.value);
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.copy< std::string > (that.value);
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.copy< unsigned long > (that.value);
+        break;
+
+      case symbol_kind::S_value: // value
+        value.copy< val > (that.value);
         break;
 
       default:
@@ -297,11 +407,29 @@ namespace yy {
     state = that.state;
     switch (that.kind ())
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.move< long long > (that.value);
+      case symbol_kind::S_condition: // condition
+        value.move< bool > (that.value);
+        break;
+
+      case symbol_kind::S_type: // type
+        value.move< char > (that.value);
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.move< pid > (that.value);
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.move< std::string > (that.value);
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.move< unsigned long > (that.value);
+        break;
+
+      case symbol_kind::S_value: // value
+        value.move< val > (that.value);
         break;
 
       default:
@@ -558,11 +686,29 @@ namespace yy {
          when using variants.  */
       switch (yyr1_[yyn])
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        yylhs.value.emplace< long long > ();
+      case symbol_kind::S_condition: // condition
+        yylhs.value.emplace< bool > ();
+        break;
+
+      case symbol_kind::S_type: // type
+        yylhs.value.emplace< char > ();
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        yylhs.value.emplace< pid > ();
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        yylhs.value.emplace< std::string > ();
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        yylhs.value.emplace< unsigned long > ();
+        break;
+
+      case symbol_kind::S_value: // value
+        yylhs.value.emplace< val > ();
         break;
 
       default:
@@ -579,116 +725,679 @@ namespace yy {
         {
           switch (yyn)
             {
-  case 5: // line: exp "end of line"
-#line 94 "parser.yy"
-          { std::cout << "\nWynik: " << mod(yystack_[1].value.as < long long > ()) << std::endl; }
-#line 586 "parser.cpp"
+  case 2: // program_all: procedures main
+#line 239 "parser.yy"
+                {
+      for (const auto& ins : code) {
+          std::cout << ins << std::endl;
+      }
+      print("HALT");
+  }
+#line 737 "parser.cpp"
     break;
 
-  case 6: // line: error "end of line"
-#line 95 "parser.yy"
-            {std::cout<<std::endl;yyerrok;}
-#line 592 "parser.cpp"
+  case 3: // procedures: procedures PROCEDURE proc_head IS declarations IN commands END
+#line 248 "parser.yy"
+                                                               {}
+#line 743 "parser.cpp"
     break;
 
-  case 7: // EXPEXPR: PRIMARY
-#line 100 "parser.yy"
-              {yylhs.value.as < long long > ()=yystack_[0].value.as < long long > ();std::cout<<mod2(yystack_[0].value.as < long long > ())<<" ";}
-#line 598 "parser.cpp"
+  case 4: // procedures: procedures PROCEDURE proc_head IS IN commands END
+#line 249 "parser.yy"
+                                                    {}
+#line 749 "parser.cpp"
     break;
 
-  case 8: // EXPEXPR: exp "+" exp
-#line 101 "parser.yy"
-               { yylhs.value.as < long long > () = mod2(yystack_[2].value.as < long long > () + yystack_[0].value.as < long long > ()); std::cout<<'+'<<" "; }
-#line 604 "parser.cpp"
+  case 6: // main: PROGRAM IS declarations IN commands END
+#line 254 "parser.yy"
+                                        {}
+#line 755 "parser.cpp"
     break;
 
-  case 9: // EXPEXPR: exp "-" exp
-#line 102 "parser.yy"
-                { yylhs.value.as < long long > () = mod2(yystack_[2].value.as < long long > () - yystack_[0].value.as < long long > ()); std::cout<<'-'<<" "; }
-#line 610 "parser.cpp"
+  case 7: // main: PROGRAM IS IN commands END
+#line 255 "parser.yy"
+                             {}
+#line 761 "parser.cpp"
     break;
 
-  case 10: // EXPEXPR: exp "*" exp
-#line 103 "parser.yy"
-               { yylhs.value.as < long long > () = mod2(yystack_[2].value.as < long long > () * yystack_[0].value.as < long long > ()); std::cout<<'*'<<" "; }
-#line 616 "parser.cpp"
+  case 8: // commands: commands command
+#line 259 "parser.yy"
+                 {}
+#line 767 "parser.cpp"
     break;
 
-  case 11: // EXPEXPR: exp "/" exp
-#line 104 "parser.yy"
-                { yylhs.value.as < long long > () = div2(yystack_[2].value.as < long long > (), yystack_[0].value.as < long long > ()); std::cout<<'/'<<" "; }
-#line 622 "parser.cpp"
+  case 9: // commands: command
+#line 260 "parser.yy"
+          {}
+#line 773 "parser.cpp"
     break;
 
-  case 12: // EXPEXPR: exp "^" EXPEXPR
-#line 106 "parser.yy"
-                  { yylhs.value.as < long long > () = mod2(power2(yystack_[2].value.as < long long > (), yystack_[0].value.as < long long > ())); std::cout<<'^'<<" "; }
-#line 628 "parser.cpp"
+  case 10: // command: identifier ":=" expression ";"
+#line 264 "parser.yy"
+                                    {
+  VAR* v = get_variable(yystack_[3].value.as < pid > ().address);
+  switch(v->type){
+    case T:
+    if(!save_at(yystack_[3].value.as < pid > ()))YYERROR;
+    break;
+    case I:
+    YYERROR;
+    break;
+    case O:
+    print("STORE " + std::to_string(yystack_[3].value.as < pid > ().address));
+    v->type = U;
+    break;
+    case U:
+    print("STORE " + std::to_string(yystack_[3].value.as < pid > ().address));
+    break;
+  }
+}
+#line 796 "parser.cpp"
     break;
 
-  case 13: // EXPEXPR: "(" exp ")"
-#line 107 "parser.yy"
-                    { yylhs.value.as < long long > () = yystack_[1].value.as < long long > (); }
-#line 634 "parser.cpp"
+  case 11: // command: IF condition THEN commands ELSE commands ENDIF
+#line 282 "parser.yy"
+                                                 {}
+#line 802 "parser.cpp"
     break;
 
-  case 14: // exp: PRIMARY
-#line 115 "parser.yy"
-              {yylhs.value.as < long long > ()=yystack_[0].value.as < long long > ();std::cout<<mod(yystack_[0].value.as < long long > ())<<" ";}
-#line 640 "parser.cpp"
+  case 12: // command: IF condition THEN commands ENDIF
+#line 283 "parser.yy"
+                                   {}
+#line 808 "parser.cpp"
     break;
 
-  case 15: // exp: exp "+" exp
-#line 116 "parser.yy"
-               { yylhs.value.as < long long > () = mod(yystack_[2].value.as < long long > () + yystack_[0].value.as < long long > ()); std::cout<<'+'<<" "; }
-#line 646 "parser.cpp"
+  case 13: // command: WHILE condition DO commands ENDWHILE
+#line 284 "parser.yy"
+                                       {}
+#line 814 "parser.cpp"
     break;
 
-  case 16: // exp: exp "-" exp
-#line 117 "parser.yy"
-                { yylhs.value.as < long long > () = mod(yystack_[2].value.as < long long > () - yystack_[0].value.as < long long > ()); std::cout<<'-'<<" "; }
-#line 652 "parser.cpp"
+  case 14: // command: REPEAT commands UNTIL condition ";"
+#line 285 "parser.yy"
+                                            {}
+#line 820 "parser.cpp"
     break;
 
-  case 17: // exp: exp "*" exp
-#line 118 "parser.yy"
-               { yylhs.value.as < long long > () = mod(yystack_[2].value.as < long long > () * yystack_[0].value.as < long long > ()); std::cout<<'*'<<" "; }
-#line 658 "parser.cpp"
+  case 15: // command: FOR PIDENTIFIER FROM value TO value DO commands ENDFOR
+#line 286 "parser.yy"
+                                                         {}
+#line 826 "parser.cpp"
     break;
 
-  case 18: // exp: exp "/" exp
-#line 119 "parser.yy"
-                { yylhs.value.as < long long > () = div(yystack_[2].value.as < long long > (), yystack_[0].value.as < long long > ()); std::cout<<'/'<<" "; }
-#line 664 "parser.cpp"
+  case 16: // command: FOR PIDENTIFIER FROM value DOWNTO value DO commands ENDFOR
+#line 287 "parser.yy"
+                                                             {}
+#line 832 "parser.cpp"
     break;
 
-  case 19: // exp: exp "^" EXPEXPR
-#line 121 "parser.yy"
-                  { yylhs.value.as < long long > () = mod(power(yystack_[2].value.as < long long > (), yystack_[0].value.as < long long > ())); std::cout<<'^'<<" "; }
-#line 670 "parser.cpp"
+  case 17: // command: proc_call ";"
+#line 288 "parser.yy"
+                      {}
+#line 838 "parser.cpp"
     break;
 
-  case 20: // exp: "(" exp ")"
-#line 122 "parser.yy"
-                    { yylhs.value.as < long long > () = yystack_[1].value.as < long long > (); }
-#line 676 "parser.cpp"
+  case 18: // command: READ identifier ";"
+#line 289 "parser.yy"
+                            {
+  print("READ");
+  print("STORE " + std::to_string(yystack_[1].value.as < pid > ().address));
+}
+#line 847 "parser.cpp"
     break;
 
-  case 21: // PRIMARY: NUMBER
-#line 126 "parser.yy"
-         { yylhs.value.as < long long > () = yystack_[0].value.as < long long > ();  }
-#line 682 "parser.cpp"
+  case 19: // command: WRITE value ";"
+#line 293 "parser.yy"
+                        {
+  if(yystack_[1].value.as < val > ().is_num){
+    gen_const_to_reg(yystack_[1].value.as < val > ().bag,'a');
+  }else{
+    print("LOAD " + yystack_[1].value.as < val > ().bag);
+  }
+
+  print("WRITE");
+}
+#line 861 "parser.cpp"
     break;
 
-  case 22: // PRIMARY: "-" PRIMARY
-#line 127 "parser.yy"
-                          {yylhs.value.as < long long > () = -yystack_[0].value.as < long long > ();  }
-#line 688 "parser.cpp"
+  case 20: // command: error ";"
+#line 302 "parser.yy"
+                  { yyerrok;}
+#line 867 "parser.cpp"
+    break;
+
+  case 21: // proc_head: PIDENTIFIER "(" args_decl ")"
+#line 306 "parser.yy"
+                                    {}
+#line 873 "parser.cpp"
+    break;
+
+  case 22: // proc_call: PIDENTIFIER "(" args ")"
+#line 310 "parser.yy"
+                               {}
+#line 879 "parser.cpp"
+    break;
+
+  case 23: // declarations: declarations "," PIDENTIFIER
+#line 314 "parser.yy"
+                               {
+  VAR temp;
+  temp.memory_address = memory_offset++;
+  temp.type = U;
+  var_table[yystack_[0].value.as < std::string > ()]=temp;
+}
+#line 890 "parser.cpp"
+    break;
+
+  case 24: // declarations: declarations "," PIDENTIFIER "[" NUM ":" NUM "]"
+#line 320 "parser.yy"
+                                                               {
+  VAR t;
+  t.array_start = yystack_[3].value.as < unsigned long > ();
+  t.array_end = yystack_[1].value.as < unsigned long > ();
+  if(t.array_start>=t.array_end) YYERROR;
+  t.memory_address = memory_offset;
+  memory_offset += (yystack_[1].value.as < unsigned long > () - yystack_[3].value.as < unsigned long > () + 1);
+  t.type = T;
+  var_table[yystack_[5].value.as < std::string > ()]=t;
+}
+#line 905 "parser.cpp"
+    break;
+
+  case 25: // declarations: PIDENTIFIER
+#line 330 "parser.yy"
+              {
+  VAR t; 
+  t.memory_address = memory_offset++; 
+  t.type = U;
+  var_table[yystack_[0].value.as < std::string > ()] = t;
+}
+#line 916 "parser.cpp"
+    break;
+
+  case 26: // declarations: PIDENTIFIER "[" NUM ":" NUM "]"
+#line 336 "parser.yy"
+                                            {
+  VAR t; 
+  t.type = T; 
+  t.array_start = yystack_[3].value.as < unsigned long > ();
+  t.array_end = yystack_[1].value.as < unsigned long > ();
+  if(t.array_start>=t.array_end) YYERROR;
+  t.memory_address = memory_offset;
+  memory_offset += (yystack_[1].value.as < unsigned long > () - yystack_[3].value.as < unsigned long > () + 1);
+  var_table[yystack_[5].value.as < std::string > ()] = t;}
+#line 930 "parser.cpp"
+    break;
+
+  case 27: // args_decl: args_decl "," type PIDENTIFIER
+#line 348 "parser.yy"
+                                 {}
+#line 936 "parser.cpp"
+    break;
+
+  case 28: // args_decl: type PIDENTIFIER
+#line 349 "parser.yy"
+                   {
+  // VAR temp;
+  // temp.memory_address = memory_offset++;
+  // temp.type = U;
+  // temp_var_table[depth][$3]=temp;
+}
+#line 947 "parser.cpp"
+    break;
+
+  case 29: // type: T
+#line 358 "parser.yy"
+  {yylhs.value.as < char > ()='T';}
+#line 953 "parser.cpp"
+    break;
+
+  case 30: // type: I
+#line 359 "parser.yy"
+    {yylhs.value.as < char > ()='I';}
+#line 959 "parser.cpp"
+    break;
+
+  case 31: // type: O
+#line 360 "parser.yy"
+    {yylhs.value.as < char > ()='O';}
+#line 965 "parser.cpp"
+    break;
+
+  case 32: // type: %empty
+#line 361 "parser.yy"
+         {yylhs.value.as < char > ()='U';}
+#line 971 "parser.cpp"
+    break;
+
+  case 33: // args: args "," PIDENTIFIER
+#line 365 "parser.yy"
+                       {}
+#line 977 "parser.cpp"
+    break;
+
+  case 34: // args: PIDENTIFIER
+#line 366 "parser.yy"
+              {}
+#line 983 "parser.cpp"
+    break;
+
+  case 35: // expression: value
+#line 370 "parser.yy"
+      {
+  if(yystack_[0].value.as < val > ().is_num){
+    gen_const_to_reg(yystack_[0].value.as < val > ().bag,'a');
+  }else{
+    print("LOAD " + std::to_string(yystack_[0].value.as < val > ().bag));
+  }
+}
+#line 995 "parser.cpp"
+    break;
+
+  case 36: // expression: value "+" value
+#line 377 "parser.yy"
+                   {
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+    print("SWP b");
+  }
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+  }
+
+  print("ADD b");
+}
+#line 1019 "parser.cpp"
+    break;
+
+  case 37: // expression: value "-" value
+#line 396 "parser.yy"
+                    {
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+    print("SWP b");
+  }
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+  }
+
+  print("SUB b");
+}
+#line 1043 "parser.cpp"
+    break;
+
+  case 38: // expression: value "*" value
+#line 415 "parser.yy"
+                   {
+//   RST rd         # Zerujemy wynik (rd = 0)
+
+// LOOP_MUL:
+//     RST ra     
+//     ADD rc     # ra = rc (aktualne B)
+//     JZERO END_MUL # Jeśli B == 0, koniec
+
+//     # Sprawdzenie czy rc jest nieparzyste (rc % 2 != 0)
+//     # Robimy to tak: re = rc; re = re / 2; re = re * 2;
+//     # Jeśli (rc - re) > 0, to była reszta (czyli nieparzysta)
+//     RST re
+//     ADD rc     # re = rc
+//     SHR re     # re = rc / 2
+//     SHL re     # re = (rc / 2) * 2
+//     RST ra
+//     ADD rc     # ra = rc
+//     SUB re     # ra = rc - re
+    
+//     JZERO SKIP_ADD # Jeśli ra == 0, to liczba parzysta, pomiń dodawanie
+
+//     # Jeśli nieparzysta, dodajemy A (rb) do wyniku (rd)
+//     RST ra
+//     ADD rd
+//     ADD rb
+//     SWP rd     # rd = rd + rb
+
+// SKIP_ADD:
+//     SHL rb     # A = A * 2
+//     SHR rc     # B = B / 2
+//     JUMP LOOP_MUL
+
+// END_MUL:
+//     RST ra
+//     ADD rd     # Przeniesienie wyniku do ra
+}
+#line 1084 "parser.cpp"
+    break;
+
+  case 39: // expression: value "/" value
+#line 451 "parser.yy"
+                    {}
+#line 1090 "parser.cpp"
+    break;
+
+  case 40: // expression: value "%" value
+#line 452 "parser.yy"
+                  {}
+#line 1096 "parser.cpp"
+    break;
+
+  case 41: // condition: value "=" value
+#line 456 "parser.yy"
+                   {//do optymalizacji
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+    print("SWP b");
+  }
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+  }
+
+  print("SUB b");
+  print("SWP c");
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+    print("SWP b");
+  }
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+  }
+  print("ADD c");
+  print("RST g");
+  print("JPOS " + k + 2);
+  print("INC g");
+}
+#line 1138 "parser.cpp"
+    break;
+
+  case 42: // condition: value "!=" value
+#line 493 "parser.yy"
+                 {//do optymalizacji
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+    print("SWP b");
+  }
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+  }
+
+  print("SUB b");
+  print("SWP c");
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+    print("SWP b");
+  }
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+  }
+  print("ADD c");
+  print("RST g");
+  print("JZERO " + k + 2);
+  print("INC g");
+}
+#line 1180 "parser.cpp"
+    break;
+
+  case 43: // condition: value ">" value
+#line 530 "parser.yy"
+                 {
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+    print("SWP b");
+  }
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+  }
+
+  print("SUB b");
+  print("RST g");
+  print("JPOS " + k + 2);
+  print("INC g");
+}
+#line 1207 "parser.cpp"
+    break;
+
+  case 44: // condition: value "<" value
+#line 552 "parser.yy"
+                 {
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+    print("SWP b");
+  }
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+  }
+
+  print("SUB b");
+  print("RST g");
+  print("JPOS " + k + 2);
+  print("INC g");
+}
+#line 1234 "parser.cpp"
+    break;
+
+  case 45: // condition: value ">=" value
+#line 574 "parser.yy"
+                 {
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+    print("SWP b");
+  }
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+  }
+
+  print("SUB b");
+  print("RST g");
+  
+  print("JPOS " + k + 2);//skok do x
+  int temp=code.size();
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'c');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+    print("SWP c");
+  }
+
+  print("SWP b");
+  print("SUB c");
+
+  int jump=k+2;
+  print("JPOS " + jump);
+  code[temp]="JPOS " + std::to_string(jump);
+  print("INC g");//x
+}
+#line 1277 "parser.cpp"
+    break;
+
+  case 46: // condition: value "<=" value
+#line 612 "parser.yy"
+                 {
+  val one = yystack_[2].value.as < val > ();
+  val two = yystack_[0].value.as < val > ();
+
+  if(one.is_num){
+    gen_const_to_reg(one.bag,'b');
+  }else{
+    print("LOAD " + std::to_string(one.bag));
+    print("SWP b");
+  }
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'a');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+  }
+
+  print("SUB b");
+  print("RST g");
+  
+  print("JPOS " + k + 2);//skok do x
+  int temp=code.size();
+
+  if(two.is_num){
+    gen_const_to_reg(two.bag,'c');
+  }else{
+    print("LOAD " + std::to_string(two.bag));
+    print("SWP c");
+  }
+
+  print("SWP b");
+  print("SUB c");
+
+  int jump=k+2;
+  print("JPOS " + jump);
+  code[temp]="JPOS " + std::to_string(jump);
+  print("INC g");//x
+}
+#line 1320 "parser.cpp"
+    break;
+
+  case 47: // value: NUM
+#line 654 "parser.yy"
+    {
+  val t;
+  t.is_num=1;
+  t.bag=yystack_[0].value.as < unsigned long > ();
+  yylhs.value.as < val > ()=t;
+}
+#line 1331 "parser.cpp"
+    break;
+
+  case 48: // value: identifier
+#line 660 "parser.yy"
+             {
+  val t;
+  t.is_num=0;
+  t.bag=yystack_[0].value.as < pid > ().address;
+  yylhs.value.as < val > ()=t;
+}
+#line 1342 "parser.cpp"
+    break;
+
+  case 49: // identifier: PIDENTIFIER
+#line 670 "parser.yy"
+            {
+  if(get_variable(yystack_[0].value.as < std::string > ())->type==O)YYERROR;
+  pid t;
+  t.is_t=0;
+  t.var_index=0;
+  t.idx=0;
+  t.address=get_addr(yystack_[0].value.as < std::string > ());
+  yylhs.value.as < pid > ()=t;
+}
+#line 1356 "parser.cpp"
+    break;
+
+  case 50: // identifier: PIDENTIFIER "[" PIDENTIFIER "]"
+#line 679 "parser.yy"
+                                          {
+  if(get_variable(yystack_[3].value.as < std::string > ())->type!=T)YYERROR;
+  // print("LOAD " + get_addr($3));
+  // VAR* tab = get_variable($1);
+  // gen_const_to_reg(tab->array_start,'b');
+  // print("SUB b");
+  // gen_const_to_reg(tab->memory_address,'b');
+  // print("ADD b");
+  // print("SWP e");
+
+  pid t;
+  t.is_t=1;
+  t.var_index=1;
+  t.idx=get_addr(yystack_[1].value.as < std::string > ());
+  t.address=get_addr(yystack_[3].value.as < std::string > ());
+  yylhs.value.as < pid > ()=t;
+}
+#line 1378 "parser.cpp"
+    break;
+
+  case 51: // identifier: PIDENTIFIER "[" NUM "]"
+#line 696 "parser.yy"
+                                  {
+  VAR* tab = get_variable(yystack_[3].value.as < std::string > ());
+  if(tab->type!=T)YYERROR;
+  if(yystack_[1].value.as < unsigned long > ()<tab->array_start||yystack_[1].value.as < unsigned long > ()>tab->array_end)YYERROR;
+  gen_const_to_reg(yystack_[1].value.as < unsigned long > ()-tab->array_start+tab->memory_address,'e');
+  //$$=$3-tab->array_start+tab->memory_address;
+
+  pid t;
+  t.is_t=1;
+  t.var_index=0;
+  t.idx=yystack_[1].value.as < unsigned long > ();
+  t.address=get_addr(yystack_[3].value.as < std::string > ());
+  yylhs.value.as < pid > ()=t;
+}
+#line 1397 "parser.cpp"
     break;
 
 
-#line 692 "parser.cpp"
+#line 1401 "parser.cpp"
 
             default:
               break;
@@ -877,90 +1586,173 @@ namespace yy {
 
 
 
-  const signed char parser::yypact_ninf_ = -23;
+  const signed char parser::yypact_ninf_ = -31;
 
   const signed char parser::yytable_ninf_ = -1;
 
-  const signed char
+  const short
   parser::yypact_[] =
   {
-     -23,    17,   -23,    16,   -23,     6,    18,   -23,   -23,    -3,
-     -23,   -23,   -23,    32,    18,    18,    18,    18,    52,   -23,
-     -23,    55,    55,     0,     0,    18,   -23,    46,   -23,    39,
-      18,    18,    18,    18,    52,   -23,    55,    55,     0,     0,
-     -23
+     -31,    28,    -2,   -31,    27,    16,   -31,    38,    35,    -1,
+     -29,     3,    58,   258,   -18,   -31,   -31,   -31,    20,    80,
+     258,    22,    82,    59,    34,    40,    40,   258,    84,    85,
+      40,    55,   -31,    67,    69,    92,   258,   -31,   -29,   -31,
+     137,   258,    56,   -31,    95,    57,   -31,    93,    83,    53,
+     -31,    81,   149,    75,    90,    91,   -31,   -31,   -31,    40,
+     101,   166,   116,   -31,   178,   118,   -31,    31,   109,   110,
+     258,    40,    40,    40,    40,    40,    40,   258,    40,    40,
+     -31,   -31,   104,     5,   129,   -31,   -31,   -31,   114,   -31,
+     130,   -31,   -31,     4,   -31,   -31,   -31,   -31,   -31,   -31,
+     195,   108,    41,   -31,    40,    40,    40,    40,    40,    94,
+     -31,   -31,   258,   -31,   -31,   -31,    40,    40,   -31,   -31,
+     -31,   -31,   -31,   133,   212,   106,   107,   123,   -31,   258,
+     258,   -31,   224,   241,   -31,   -31
   };
 
   const signed char
   parser::yydefact_[] =
   {
-       2,     0,     1,     0,    21,     0,     0,     4,     3,     0,
-      14,     6,    22,     0,     0,     0,     0,     0,     0,     5,
-      20,    15,    16,    17,    18,     0,    19,     0,     7,     0,
-       0,     0,     0,     0,     0,    13,     8,     9,    10,    11,
-      12
+       5,     0,     0,     1,     0,     0,     2,     0,     0,     0,
+      32,     0,    25,     0,     0,    29,    30,    31,     0,     0,
+       0,     0,     0,     0,    49,     0,     0,     0,     0,     0,
+       0,     0,     9,     0,     0,     0,     0,    21,    32,    28,
+       0,     0,     0,    20,     0,     0,    47,    49,     0,     0,
+      48,     0,     0,     0,     0,     0,     7,     8,    17,     0,
+      23,     0,     0,     4,     0,     0,    34,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      18,    19,     0,    35,     0,     6,    27,     3,     0,    22,
+       0,    51,    50,     0,    41,    42,    43,    44,    45,    46,
+       0,     0,     0,    10,     0,     0,     0,     0,     0,     0,
+      26,    33,     0,    12,    13,    14,     0,     0,    36,    37,
+      38,    39,    40,     0,     0,     0,     0,     0,    11,     0,
+       0,    24,     0,     0,    15,    16
   };
 
-  const signed char
+  const short
   parser::yypgoto_[] =
   {
-     -23,   -23,   -23,   -22,    -1,     1
+     -31,   -31,   -31,   -31,   -20,   -30,   -31,   -31,   134,   -31,
+     111,   -31,   -31,   -24,    52,     0
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-       0,     1,     8,    26,    27,    10
+       0,     1,     2,     6,    31,    32,     8,    33,    14,    18,
+      19,    67,    82,    48,    49,    34
   };
 
-  const signed char
+  const unsigned char
   parser::yytable_[] =
   {
-       9,    14,    15,    16,    17,    13,    12,    18,    19,     4,
-      18,     5,    40,    21,    22,    23,    24,     2,     3,    28,
-       4,     4,     5,     5,    29,     6,     6,    11,     7,    36,
-      37,    38,    39,     0,     0,    28,    14,    15,    16,    17,
-       0,    20,    18,    14,    15,    16,    17,     0,    35,    18,
-      30,    31,    32,    33,     0,     4,    34,     5,     0,     0,
-      25,    16,    17,     0,     0,    18
+      40,    57,    51,    35,    12,    23,    36,    52,    12,    24,
+      57,   104,   105,   106,   107,   108,    61,    15,    16,    17,
+       4,    64,    57,    13,     5,    50,    50,    20,     3,    54,
+      50,    57,     7,    25,    57,   112,   113,    26,    37,     9,
+      27,    38,    28,    35,    46,    47,    41,    29,    30,    89,
+      93,    44,    90,    45,   101,    10,    23,   100,    11,    50,
+      24,    68,    69,    57,    71,    72,    73,    74,    75,    76,
+      57,    50,    50,    50,    50,    50,    50,    22,    50,    50,
+      56,   116,    55,   117,    25,    39,    42,    43,    26,    53,
+      47,    27,   124,    28,    57,    58,    59,    60,    29,    30,
+      66,    65,    57,    57,    50,    50,    50,    50,    50,   132,
+     133,    83,    45,    70,    79,    77,    50,    50,    80,    81,
+      84,    86,    88,    94,    95,    96,    97,    98,    99,    91,
+      92,   102,   103,   109,   110,   111,   115,   127,    23,   123,
+     129,   130,    24,   131,     0,    21,     0,     0,     0,    62,
+      23,     0,     0,     0,    24,     0,   118,   119,   120,   121,
+     122,     0,    63,     0,     0,     0,    25,    23,   125,   126,
+      26,    24,     0,    27,     0,    28,     0,     0,    25,    23,
+      29,    30,    26,    24,     0,    27,    78,    28,     0,     0,
+       0,    85,    29,    30,     0,    25,    23,     0,     0,    26,
+      24,     0,    27,    87,    28,     0,     0,    25,     0,    29,
+      30,    26,     0,    23,    27,     0,    28,    24,     0,     0,
+       0,    29,    30,     0,    25,    23,     0,     0,    26,    24,
+     114,    27,     0,    28,     0,     0,     0,     0,    29,    30,
+       0,    25,    23,     0,   128,    26,    24,     0,    27,     0,
+      28,     0,     0,    25,     0,    29,    30,    26,     0,    23,
+      27,     0,    28,    24,     0,   134,     0,    29,    30,     0,
+      25,     0,     0,     0,    26,     0,     0,    27,     0,    28,
+       0,     0,   135,     0,    29,    30,     0,    25,     0,     0,
+       0,    26,     0,     0,    27,     0,    28,     0,     0,     0,
+       0,    29,    30
   };
 
-  const signed char
+  const short
   parser::yycheck_[] =
   {
-       1,     4,     5,     6,     7,     6,     5,    10,    11,     3,
-      10,     5,    34,    14,    15,    16,    17,     0,     1,    18,
-       3,     3,     5,     5,    25,     8,     8,    11,    11,    30,
-      31,    32,    33,    -1,    -1,    34,     4,     5,     6,     7,
-      -1,     9,    10,     4,     5,     6,     7,    -1,     9,    10,
-       4,     5,     6,     7,    -1,     3,    10,     5,    -1,    -1,
-       8,     6,     7,    -1,    -1,    10
+      20,    31,    26,    21,     5,     1,    24,    27,     5,     5,
+      40,     6,     7,     8,     9,    10,    36,    46,    47,    48,
+      22,    41,    52,    24,    26,    25,    26,    24,     0,    29,
+      30,    61,     5,    29,    64,    31,    32,    33,    18,    23,
+      36,    21,    38,    21,     4,     5,    24,    43,    44,    18,
+      70,    17,    21,    19,    78,    17,     1,    77,    23,    59,
+       5,     4,     5,    93,    11,    12,    13,    14,    15,    16,
+     100,    71,    72,    73,    74,    75,    76,    19,    78,    79,
+      25,    40,    30,    42,    29,     5,     4,    28,    33,     5,
+       5,    36,   112,    38,   124,    28,    27,     5,    43,    44,
+       5,    45,   132,   133,   104,   105,   106,   107,   108,   129,
+     130,    59,    19,    30,    39,    34,   116,   117,    28,    28,
+      19,     5,     4,    71,    72,    73,    74,    75,    76,    20,
+      20,    79,    28,     4,    20,     5,    28,     4,     1,    45,
+      34,    34,     5,    20,    -1,    11,    -1,    -1,    -1,    38,
+       1,    -1,    -1,    -1,     5,    -1,   104,   105,   106,   107,
+     108,    -1,    25,    -1,    -1,    -1,    29,     1,   116,   117,
+      33,     5,    -1,    36,    -1,    38,    -1,    -1,    29,     1,
+      43,    44,    33,     5,    -1,    36,    37,    38,    -1,    -1,
+      -1,    25,    43,    44,    -1,    29,     1,    -1,    -1,    33,
+       5,    -1,    36,    25,    38,    -1,    -1,    29,    -1,    43,
+      44,    33,    -1,     1,    36,    -1,    38,     5,    -1,    -1,
+      -1,    43,    44,    -1,    29,     1,    -1,    -1,    33,     5,
+      35,    36,    -1,    38,    -1,    -1,    -1,    -1,    43,    44,
+      -1,    29,     1,    -1,    32,    33,     5,    -1,    36,    -1,
+      38,    -1,    -1,    29,    -1,    43,    44,    33,    -1,     1,
+      36,    -1,    38,     5,    -1,    41,    -1,    43,    44,    -1,
+      29,    -1,    -1,    -1,    33,    -1,    -1,    36,    -1,    38,
+      -1,    -1,    41,    -1,    43,    44,    -1,    29,    -1,    -1,
+      -1,    33,    -1,    -1,    36,    -1,    38,    -1,    -1,    -1,
+      -1,    43,    44
   };
 
   const signed char
   parser::yystos_[] =
   {
-       0,    14,     0,     1,     3,     5,     8,    11,    15,    17,
-      18,    11,    18,    17,     4,     5,     6,     7,    10,    11,
-       9,    17,    17,    17,    17,     8,    16,    17,    18,    17,
-       4,     5,     6,     7,    10,     9,    17,    17,    17,    17,
-      16
+       0,    50,    51,     0,    22,    26,    52,     5,    55,    23,
+      17,    23,     5,    24,    57,    46,    47,    48,    58,    59,
+      24,    57,    19,     1,     5,    29,    33,    36,    38,    43,
+      44,    53,    54,    56,    64,    21,    24,    18,    21,     5,
+      53,    24,     4,    28,    17,    19,     4,     5,    62,    63,
+      64,    62,    53,     5,    64,    63,    25,    54,    28,    27,
+       5,    53,    59,    25,    53,    45,     5,    60,     4,     5,
+      30,    11,    12,    13,    14,    15,    16,    34,    37,    39,
+      28,    28,    61,    63,    19,    25,     5,    25,     4,    18,
+      21,    20,    20,    53,    63,    63,    63,    63,    63,    63,
+      53,    62,    63,    28,     6,     7,     8,     9,    10,     4,
+      20,     5,    31,    32,    35,    28,    40,    42,    63,    63,
+      63,    63,    63,    45,    53,    63,    63,     4,    32,    34,
+      34,    20,    53,    53,    41,    41
   };
 
   const signed char
   parser::yyr1_[] =
   {
-       0,    13,    14,    14,    15,    15,    15,    16,    16,    16,
-      16,    16,    16,    16,    17,    17,    17,    17,    17,    17,
-      17,    18,    18
+       0,    49,    50,    51,    51,    51,    52,    52,    53,    53,
+      54,    54,    54,    54,    54,    54,    54,    54,    54,    54,
+      54,    55,    56,    57,    57,    57,    57,    58,    58,    59,
+      59,    59,    59,    60,    60,    61,    61,    61,    61,    61,
+      61,    62,    62,    62,    62,    62,    62,    63,    63,    64,
+      64,    64
   };
 
   const signed char
   parser::yyr2_[] =
   {
-       0,     2,     0,     2,     1,     2,     2,     1,     3,     3,
-       3,     3,     3,     3,     1,     3,     3,     3,     3,     3,
-       3,     1,     2
+       0,     2,     2,     8,     7,     0,     6,     5,     2,     1,
+       4,     7,     5,     5,     5,     9,     9,     2,     3,     3,
+       2,     4,     4,     3,     8,     1,     6,     4,     2,     1,
+       1,     1,     0,     3,     1,     1,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     1,     1,     1,
+       4,     4
   };
 
 
@@ -970,20 +1762,30 @@ namespace yy {
   const char*
   const parser::yytname_[] =
   {
-  "\"end of file\"", "error", "\"invalid token\"", "NUMBER", "\"+\"",
-  "\"-\"", "\"*\"", "\"/\"", "\"(\"", "\")\"", "\"^\"", "\"end of line\"",
-  "NEG", "$accept", "input", "line", "EXPEXPR", "exp", "PRIMARY", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "\"end of line\"",
+  "NUM", "PIDENTIFIER", "\"+\"", "\"-\"", "\"*\"", "\"/\"", "\"%\"",
+  "\"=\"", "\"!=\"", "\">\"", "\"<\"", "\">=\"", "\"<=\"", "\"(\"",
+  "\")\"", "\"[\"", "\"]\"", "\",\"", "PROCEDURE", "IS", "IN", "END",
+  "PROGRAM", "\":=\"", "\";\"", "IF", "THEN", "ELSE", "ENDIF", "WHILE",
+  "DO", "ENDWHILE", "REPEAT", "UNTIL", "FOR", "FROM", "TO", "ENDFOR",
+  "DOWNTO", "READ", "WRITE", "\":\"", "T", "I", "O", "$accept",
+  "program_all", "procedures", "main", "commands", "command", "proc_head",
+  "proc_call", "declarations", "args_decl", "type", "args", "expression",
+  "condition", "value", "identifier", YY_NULLPTR
   };
 #endif
 
 
 #if YYDEBUG
-  const signed char
+  const short
   parser::yyrline_[] =
   {
-       0,    88,    88,    89,    93,    94,    95,   100,   101,   102,
-     103,   104,   106,   107,   115,   116,   117,   118,   119,   121,
-     122,   126,   127
+       0,   239,   239,   248,   249,   250,   254,   255,   259,   260,
+     264,   282,   283,   284,   285,   286,   287,   288,   289,   293,
+     302,   306,   310,   314,   320,   330,   336,   348,   349,   358,
+     359,   360,   361,   365,   366,   370,   377,   396,   415,   451,
+     452,   456,   493,   530,   552,   574,   612,   654,   660,   670,
+     679,   696
   };
 
   void
@@ -1015,9 +1817,9 @@ namespace yy {
 
 
 } // yy
-#line 1019 "parser.cpp"
+#line 1821 "parser.cpp"
 
-#line 130 "parser.yy"
+#line 712 "parser.yy"
 
 
 namespace yy {

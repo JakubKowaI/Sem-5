@@ -1,0 +1,73 @@
+// ...existing code...
+%code {
+  // ...existing code...
+
+  static std::vector<unsigned long> scope_mem_mark;
+  static std::vector<std::vector<std::string>> scope_names;
+
+  static void begin_scope() {
+    scope_mem_mark.push_back(memory_offset);
+    scope_names.emplace_back();
+  }
+
+  // reclaim_memory = true  -> scope blokowy: cofamy memory_offset (reuse w obrębie procedury)
+  // reclaim_memory = false -> scope procedury: NIE cofamy memory_offset (unikalne adresy między procedurami)
+  static void end_scope(bool reclaim_memory) {
+    if (scope_names.empty()) return;
+
+    for (const auto& name : scope_names.back()) {
+      var_table.erase(name);
+    }
+    scope_names.pop_back();
+
+    if (reclaim_memory) {
+      memory_offset = scope_mem_mark.back();
+    }
+    scope_mem_mark.pop_back();
+  }
+
+  static void declare_scalar_in_scope(const std::string& name, TYPE type = U) {
+    if (var_table.count(name)) {
+      std::cerr << "Error: Redeclaration of " << name << std::endl;
+      exit(1);
+    }
+    VAR t{};
+    t.memory_address = memory_offset++;
+    t.type = type;
+    t.array_start = 0;
+    t.array_end = 0;
+    var_table[name] = t;
+
+    if (!scope_names.empty()) scope_names.back().push_back(name);
+  }
+
+  // ...existing code...
+}
+// ...existing code...
+%%
+// ...existing code...
+
+proc_head:
+PIDENTIFIER LPAREN args_decl RPAREN {
+  begin_scope(); // scope procedury
+}
+;
+
+procedures:
+procedures PROCEDURE proc_head IS declarations IN commands END { end_scope(false); }
+| procedures PROCEDURE proc_head IS IN commands END { end_scope(false); }
+| %empty
+;
+
+// przykład: scope pętli FOR w obrębie procedury możesz reclaimować (bo to wciąż w tej samej procedurze)
+command:
+  // ...existing code...
+| FOR PIDENTIFIER FROM value TO value DO {
+    begin_scope();                 // scope blokowy
+    declare_scalar_in_scope($2, U); // iterator lokalny dla tej pętli
+  } commands ENDFOR {
+    end_scope(true);              // tu można cofnąć memory_offset
+  }
+  // ...existing code...
+;
+// ...existing code...

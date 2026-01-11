@@ -16,7 +16,7 @@
 
 NUM   [0-9]
 WS      [ \t\r]+
-PIDENTIFIER [_a-Z]+
+PIDENTIFIER [_a-zA-Z]
 
 %%
 
@@ -85,7 +85,7 @@ PIDENTIFIER [_a-Z]+
 "O"                       { return yy::parser::make_O(); }
 
 
-{NUM}+                    { return yy::parser::make_NUMBER(std::stoul(yytext)); }
+{NUM}+                    { return yy::parser::make_NUM(std::stoul(yytext)); }
 {PIDENTIFIER}+            { return yy::parser::make_PIDENTIFIER(yytext);}
 
 . {

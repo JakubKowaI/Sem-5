@@ -52,8 +52,40 @@
   #include <vector>
   #include <cmath>
   #include <cstdio>
+  #include <map>
+  #include <algorithm>
 
-#line 57 "parser.hpp"
+  #undef at
+
+  enum TYPE{
+    T,
+    I,
+    O,
+    U
+  };
+
+  struct VAR {
+      unsigned long memory_address;
+      enum TYPE type;
+      unsigned long array_start;
+      unsigned long array_end;
+  };
+
+  struct val {
+    bool is_num;
+    unsigned long bag; 
+  };
+
+  struct pid{
+    bool is_t;
+    bool var_index;
+    unsigned long idx;
+    unsigned long address;
+  };
+
+  
+
+#line 89 "parser.hpp"
 
 
 # include <cstdlib> // std::abort
@@ -188,7 +220,7 @@
 #endif
 
 namespace yy {
-#line 192 "parser.hpp"
+#line 224 "parser.hpp"
 
 
 
@@ -384,11 +416,24 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // NUMBER
-      // EXPEXPR
-      // exp
-      // PRIMARY
-      char dummy1[sizeof (long long)];
+      // condition
+      char dummy1[sizeof (bool)];
+
+      // type
+      char dummy2[sizeof (char)];
+
+      // identifier
+      char dummy3[sizeof (pid)];
+
+      // PIDENTIFIER
+      char dummy4[sizeof (std::string)];
+
+      // NUM
+      // expression
+      char dummy5[sizeof (unsigned long)];
+
+      // value
+      char dummy6[sizeof (val)];
     };
 
     /// The size of the largest semantic type.
@@ -432,16 +477,52 @@ namespace yy {
     YYEOF = 0,                     // "end of file"
     YYerror = 256,                 // error
     YYUNDEF = 257,                 // "invalid token"
-    NUMBER = 258,                  // NUMBER
-    PLUS = 259,                    // "+"
-    MINUS = 260,                   // "-"
-    STAR = 261,                    // "*"
-    SLASH = 262,                   // "/"
-    LPAREN = 263,                  // "("
-    RPAREN = 264,                  // ")"
-    HAT = 265,                     // "^"
-    EOL = 266,                     // "end of line"
-    NEG = 267                      // NEG
+    EOL = 258,                     // "end of line"
+    NUM = 259,                     // NUM
+    PIDENTIFIER = 260,             // PIDENTIFIER
+    PLUS = 261,                    // "+"
+    MINUS = 262,                   // "-"
+    STAR = 263,                    // "*"
+    SLASH = 264,                   // "/"
+    MOD = 265,                     // "%"
+    EQUALS = 266,                  // "="
+    NE = 267,                      // "!="
+    GT = 268,                      // ">"
+    LT = 269,                      // "<"
+    GE = 270,                      // ">="
+    LE = 271,                      // "<="
+    LPAREN = 272,                  // "("
+    RPAREN = 273,                  // ")"
+    LSQUARE = 274,                 // "["
+    RSQUARE = 275,                 // "]"
+    COMMA = 276,                   // ","
+    PROCEDURE = 277,               // PROCEDURE
+    IS = 278,                      // IS
+    IN = 279,                      // IN
+    END = 280,                     // END
+    PROGRAM = 281,                 // PROGRAM
+    SET = 282,                     // ":="
+    SEMICOLON = 283,               // ";"
+    IF = 284,                      // IF
+    THEN = 285,                    // THEN
+    ELSE = 286,                    // ELSE
+    ENDIF = 287,                   // ENDIF
+    WHILE = 288,                   // WHILE
+    DO = 289,                      // DO
+    ENDWHILE = 290,                // ENDWHILE
+    REPEAT = 291,                  // REPEAT
+    UNTIL = 292,                   // UNTIL
+    FOR = 293,                     // FOR
+    FROM = 294,                    // FROM
+    TO = 295,                      // TO
+    ENDFOR = 296,                  // ENDFOR
+    DOWNTO = 297,                  // DOWNTO
+    READ = 298,                    // READ
+    WRITE = 299,                   // WRITE
+    COLON = 300,                   // ":"
+    T = 301,                       // T
+    I = 302,                       // I
+    O = 303                        // O
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -458,27 +539,73 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 13, ///< Number of tokens.
+        YYNTOKENS = 49, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
         S_YYUNDEF = 2,                           // "invalid token"
-        S_NUMBER = 3,                            // NUMBER
-        S_PLUS = 4,                              // "+"
-        S_MINUS = 5,                             // "-"
-        S_STAR = 6,                              // "*"
-        S_SLASH = 7,                             // "/"
-        S_LPAREN = 8,                            // "("
-        S_RPAREN = 9,                            // ")"
-        S_HAT = 10,                              // "^"
-        S_EOL = 11,                              // "end of line"
-        S_NEG = 12,                              // NEG
-        S_YYACCEPT = 13,                         // $accept
-        S_input = 14,                            // input
-        S_line = 15,                             // line
-        S_EXPEXPR = 16,                          // EXPEXPR
-        S_exp = 17,                              // exp
-        S_PRIMARY = 18                           // PRIMARY
+        S_EOL = 3,                               // "end of line"
+        S_NUM = 4,                               // NUM
+        S_PIDENTIFIER = 5,                       // PIDENTIFIER
+        S_PLUS = 6,                              // "+"
+        S_MINUS = 7,                             // "-"
+        S_STAR = 8,                              // "*"
+        S_SLASH = 9,                             // "/"
+        S_MOD = 10,                              // "%"
+        S_EQUALS = 11,                           // "="
+        S_NE = 12,                               // "!="
+        S_GT = 13,                               // ">"
+        S_LT = 14,                               // "<"
+        S_GE = 15,                               // ">="
+        S_LE = 16,                               // "<="
+        S_LPAREN = 17,                           // "("
+        S_RPAREN = 18,                           // ")"
+        S_LSQUARE = 19,                          // "["
+        S_RSQUARE = 20,                          // "]"
+        S_COMMA = 21,                            // ","
+        S_PROCEDURE = 22,                        // PROCEDURE
+        S_IS = 23,                               // IS
+        S_IN = 24,                               // IN
+        S_END = 25,                              // END
+        S_PROGRAM = 26,                          // PROGRAM
+        S_SET = 27,                              // ":="
+        S_SEMICOLON = 28,                        // ";"
+        S_IF = 29,                               // IF
+        S_THEN = 30,                             // THEN
+        S_ELSE = 31,                             // ELSE
+        S_ENDIF = 32,                            // ENDIF
+        S_WHILE = 33,                            // WHILE
+        S_DO = 34,                               // DO
+        S_ENDWHILE = 35,                         // ENDWHILE
+        S_REPEAT = 36,                           // REPEAT
+        S_UNTIL = 37,                            // UNTIL
+        S_FOR = 38,                              // FOR
+        S_FROM = 39,                             // FROM
+        S_TO = 40,                               // TO
+        S_ENDFOR = 41,                           // ENDFOR
+        S_DOWNTO = 42,                           // DOWNTO
+        S_READ = 43,                             // READ
+        S_WRITE = 44,                            // WRITE
+        S_COLON = 45,                            // ":"
+        S_T = 46,                                // T
+        S_I = 47,                                // I
+        S_O = 48,                                // O
+        S_YYACCEPT = 49,                         // $accept
+        S_program_all = 50,                      // program_all
+        S_procedures = 51,                       // procedures
+        S_main = 52,                             // main
+        S_commands = 53,                         // commands
+        S_command = 54,                          // command
+        S_proc_head = 55,                        // proc_head
+        S_proc_call = 56,                        // proc_call
+        S_declarations = 57,                     // declarations
+        S_args_decl = 58,                        // args_decl
+        S_type = 59,                             // type
+        S_args = 60,                             // args
+        S_expression = 61,                       // expression
+        S_condition = 62,                        // condition
+        S_value = 63,                            // value
+        S_identifier = 64                        // identifier
       };
     };
 
@@ -513,11 +640,29 @@ namespace yy {
       {
         switch (this->kind ())
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.move< long long > (std::move (that.value));
+      case symbol_kind::S_condition: // condition
+        value.move< bool > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_type: // type
+        value.move< char > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.move< pid > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.move< std::string > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.move< unsigned long > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_value: // value
+        value.move< val > (std::move (that.value));
         break;
 
       default:
@@ -542,12 +687,72 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, long long&& v)
+      basic_symbol (typename Base::kind_type t, bool&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const long long& v)
+      basic_symbol (typename Base::kind_type t, const bool& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, char&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const char& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, pid&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const pid& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::string&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::string& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, unsigned long&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const unsigned long& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, val&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const val& v)
         : Base (t)
         , value (v)
       {}
@@ -577,11 +782,29 @@ namespace yy {
         // Value type destructor.
 switch (yykind)
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.template destroy< long long > ();
+      case symbol_kind::S_condition: // condition
+        value.template destroy< bool > ();
+        break;
+
+      case symbol_kind::S_type: // type
+        value.template destroy< char > ();
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.template destroy< pid > ();
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.template destroy< std::string > ();
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.template destroy< unsigned long > ();
+        break;
+
+      case symbol_kind::S_value: // value
+        value.template destroy< val > ();
         break;
 
       default:
@@ -681,10 +904,18 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, long long v)
+      symbol_type (int tok, std::string v)
         : super_type (token_kind_type (tok), std::move (v))
 #else
-      symbol_type (int tok, const long long& v)
+      symbol_type (int tok, const std::string& v)
+        : super_type (token_kind_type (tok), v)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, unsigned long v)
+        : super_type (token_kind_type (tok), std::move (v))
+#else
+      symbol_type (int tok, const unsigned long& v)
         : super_type (token_kind_type (tok), v)
 #endif
       {}
@@ -786,16 +1017,46 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_NUMBER (long long v)
+      make_EOL ()
       {
-        return symbol_type (token::NUMBER, std::move (v));
+        return symbol_type (token::EOL);
       }
 #else
       static
       symbol_type
-      make_NUMBER (const long long& v)
+      make_EOL ()
       {
-        return symbol_type (token::NUMBER, v);
+        return symbol_type (token::EOL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NUM (unsigned long v)
+      {
+        return symbol_type (token::NUM, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_NUM (const unsigned long& v)
+      {
+        return symbol_type (token::NUM, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PIDENTIFIER (std::string v)
+      {
+        return symbol_type (token::PIDENTIFIER, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_PIDENTIFIER (const std::string& v)
+      {
+        return symbol_type (token::PIDENTIFIER, v);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -861,6 +1122,111 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_MOD ()
+      {
+        return symbol_type (token::MOD);
+      }
+#else
+      static
+      symbol_type
+      make_MOD ()
+      {
+        return symbol_type (token::MOD);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EQUALS ()
+      {
+        return symbol_type (token::EQUALS);
+      }
+#else
+      static
+      symbol_type
+      make_EQUALS ()
+      {
+        return symbol_type (token::EQUALS);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NE ()
+      {
+        return symbol_type (token::NE);
+      }
+#else
+      static
+      symbol_type
+      make_NE ()
+      {
+        return symbol_type (token::NE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_GT ()
+      {
+        return symbol_type (token::GT);
+      }
+#else
+      static
+      symbol_type
+      make_GT ()
+      {
+        return symbol_type (token::GT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LT ()
+      {
+        return symbol_type (token::LT);
+      }
+#else
+      static
+      symbol_type
+      make_LT ()
+      {
+        return symbol_type (token::LT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_GE ()
+      {
+        return symbol_type (token::GE);
+      }
+#else
+      static
+      symbol_type
+      make_GE ()
+      {
+        return symbol_type (token::GE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LE ()
+      {
+        return symbol_type (token::LE);
+      }
+#else
+      static
+      symbol_type
+      make_LE ()
+      {
+        return symbol_type (token::LE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_LPAREN ()
       {
         return symbol_type (token::LPAREN);
@@ -891,46 +1257,451 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_HAT ()
+      make_LSQUARE ()
       {
-        return symbol_type (token::HAT);
+        return symbol_type (token::LSQUARE);
       }
 #else
       static
       symbol_type
-      make_HAT ()
+      make_LSQUARE ()
       {
-        return symbol_type (token::HAT);
+        return symbol_type (token::LSQUARE);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_EOL ()
+      make_RSQUARE ()
       {
-        return symbol_type (token::EOL);
+        return symbol_type (token::RSQUARE);
       }
 #else
       static
       symbol_type
-      make_EOL ()
+      make_RSQUARE ()
       {
-        return symbol_type (token::EOL);
+        return symbol_type (token::RSQUARE);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_NEG ()
+      make_COMMA ()
       {
-        return symbol_type (token::NEG);
+        return symbol_type (token::COMMA);
       }
 #else
       static
       symbol_type
-      make_NEG ()
+      make_COMMA ()
       {
-        return symbol_type (token::NEG);
+        return symbol_type (token::COMMA);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PROCEDURE ()
+      {
+        return symbol_type (token::PROCEDURE);
+      }
+#else
+      static
+      symbol_type
+      make_PROCEDURE ()
+      {
+        return symbol_type (token::PROCEDURE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IS ()
+      {
+        return symbol_type (token::IS);
+      }
+#else
+      static
+      symbol_type
+      make_IS ()
+      {
+        return symbol_type (token::IS);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IN ()
+      {
+        return symbol_type (token::IN);
+      }
+#else
+      static
+      symbol_type
+      make_IN ()
+      {
+        return symbol_type (token::IN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_END ()
+      {
+        return symbol_type (token::END);
+      }
+#else
+      static
+      symbol_type
+      make_END ()
+      {
+        return symbol_type (token::END);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PROGRAM ()
+      {
+        return symbol_type (token::PROGRAM);
+      }
+#else
+      static
+      symbol_type
+      make_PROGRAM ()
+      {
+        return symbol_type (token::PROGRAM);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SET ()
+      {
+        return symbol_type (token::SET);
+      }
+#else
+      static
+      symbol_type
+      make_SET ()
+      {
+        return symbol_type (token::SET);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SEMICOLON ()
+      {
+        return symbol_type (token::SEMICOLON);
+      }
+#else
+      static
+      symbol_type
+      make_SEMICOLON ()
+      {
+        return symbol_type (token::SEMICOLON);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IF ()
+      {
+        return symbol_type (token::IF);
+      }
+#else
+      static
+      symbol_type
+      make_IF ()
+      {
+        return symbol_type (token::IF);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_THEN ()
+      {
+        return symbol_type (token::THEN);
+      }
+#else
+      static
+      symbol_type
+      make_THEN ()
+      {
+        return symbol_type (token::THEN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ELSE ()
+      {
+        return symbol_type (token::ELSE);
+      }
+#else
+      static
+      symbol_type
+      make_ELSE ()
+      {
+        return symbol_type (token::ELSE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ENDIF ()
+      {
+        return symbol_type (token::ENDIF);
+      }
+#else
+      static
+      symbol_type
+      make_ENDIF ()
+      {
+        return symbol_type (token::ENDIF);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WHILE ()
+      {
+        return symbol_type (token::WHILE);
+      }
+#else
+      static
+      symbol_type
+      make_WHILE ()
+      {
+        return symbol_type (token::WHILE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DO ()
+      {
+        return symbol_type (token::DO);
+      }
+#else
+      static
+      symbol_type
+      make_DO ()
+      {
+        return symbol_type (token::DO);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ENDWHILE ()
+      {
+        return symbol_type (token::ENDWHILE);
+      }
+#else
+      static
+      symbol_type
+      make_ENDWHILE ()
+      {
+        return symbol_type (token::ENDWHILE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_REPEAT ()
+      {
+        return symbol_type (token::REPEAT);
+      }
+#else
+      static
+      symbol_type
+      make_REPEAT ()
+      {
+        return symbol_type (token::REPEAT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UNTIL ()
+      {
+        return symbol_type (token::UNTIL);
+      }
+#else
+      static
+      symbol_type
+      make_UNTIL ()
+      {
+        return symbol_type (token::UNTIL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FOR ()
+      {
+        return symbol_type (token::FOR);
+      }
+#else
+      static
+      symbol_type
+      make_FOR ()
+      {
+        return symbol_type (token::FOR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FROM ()
+      {
+        return symbol_type (token::FROM);
+      }
+#else
+      static
+      symbol_type
+      make_FROM ()
+      {
+        return symbol_type (token::FROM);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_TO ()
+      {
+        return symbol_type (token::TO);
+      }
+#else
+      static
+      symbol_type
+      make_TO ()
+      {
+        return symbol_type (token::TO);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ENDFOR ()
+      {
+        return symbol_type (token::ENDFOR);
+      }
+#else
+      static
+      symbol_type
+      make_ENDFOR ()
+      {
+        return symbol_type (token::ENDFOR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DOWNTO ()
+      {
+        return symbol_type (token::DOWNTO);
+      }
+#else
+      static
+      symbol_type
+      make_DOWNTO ()
+      {
+        return symbol_type (token::DOWNTO);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_READ ()
+      {
+        return symbol_type (token::READ);
+      }
+#else
+      static
+      symbol_type
+      make_READ ()
+      {
+        return symbol_type (token::READ);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WRITE ()
+      {
+        return symbol_type (token::WRITE);
+      }
+#else
+      static
+      symbol_type
+      make_WRITE ()
+      {
+        return symbol_type (token::WRITE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#else
+      static
+      symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_T ()
+      {
+        return symbol_type (token::T);
+      }
+#else
+      static
+      symbol_type
+      make_T ()
+      {
+        return symbol_type (token::T);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_I ()
+      {
+        return symbol_type (token::I);
+      }
+#else
+      static
+      symbol_type
+      make_I ()
+      {
+        return symbol_type (token::I);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_O ()
+      {
+        return symbol_type (token::O);
+      }
+#else
+      static
+      symbol_type
+      make_O ()
+      {
+        return symbol_type (token::O);
       }
 #endif
 
@@ -945,7 +1716,7 @@ switch (yykind)
 
 
     /// Stored state numbers (used for stacks).
-    typedef signed char state_type;
+    typedef unsigned char state_type;
 
     /// Compute post-reduction state.
     /// \param yystate   the current state
@@ -977,7 +1748,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -985,7 +1756,7 @@ switch (yykind)
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const signed char yypgoto_[];
+    static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
     static const signed char yydefgoto_[];
@@ -993,9 +1764,9 @@ switch (yykind)
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const signed char yytable_[];
+    static const unsigned char yytable_[];
 
-    static const signed char yycheck_[];
+    static const short yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
@@ -1010,7 +1781,7 @@ switch (yykind)
 
 #if YYDEBUG
     // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-    static const signed char yyrline_[];
+    static const short yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r) const;
     /// Print the state stack on the debug stream.
@@ -1237,9 +2008,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 65,     ///< Last index in yytable_.
-      yynnts_ = 6,  ///< Number of nonterminal symbols.
-      yyfinal_ = 2 ///< Termination state number.
+      yylast_ = 302,     ///< Last index in yytable_.
+      yynnts_ = 16,  ///< Number of nonterminal symbols.
+      yyfinal_ = 3 ///< Termination state number.
     };
 
 
@@ -1282,10 +2053,14 @@ switch (yykind)
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48
     };
     // Last valid token kind.
-    const int code_max = 267;
+    const int code_max = 303;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -1303,11 +2078,29 @@ switch (yykind)
   {
     switch (this->kind ())
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.copy< long long > (YY_MOVE (that.value));
+      case symbol_kind::S_condition: // condition
+        value.copy< bool > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_type: // type
+        value.copy< char > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.copy< pid > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.copy< std::string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.copy< unsigned long > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_value: // value
+        value.copy< val > (YY_MOVE (that.value));
         break;
 
       default:
@@ -1341,11 +2134,29 @@ switch (yykind)
     super_type::move (s);
     switch (this->kind ())
     {
-      case symbol_kind::S_NUMBER: // NUMBER
-      case symbol_kind::S_EXPEXPR: // EXPEXPR
-      case symbol_kind::S_exp: // exp
-      case symbol_kind::S_PRIMARY: // PRIMARY
-        value.move< long long > (YY_MOVE (s.value));
+      case symbol_kind::S_condition: // condition
+        value.move< bool > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_type: // type
+        value.move< char > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_identifier: // identifier
+        value.move< pid > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_PIDENTIFIER: // PIDENTIFIER
+        value.move< std::string > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_NUM: // NUM
+      case symbol_kind::S_expression: // expression
+        value.move< unsigned long > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_value: // value
+        value.move< val > (YY_MOVE (s.value));
         break;
 
       default:
@@ -1413,7 +2224,7 @@ switch (yykind)
 
 
 } // yy
-#line 1417 "parser.hpp"
+#line 2228 "parser.hpp"
 
 
 
