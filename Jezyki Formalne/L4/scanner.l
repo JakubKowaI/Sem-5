@@ -11,8 +11,8 @@
   #define YY_DECL yy::parser::symbol_type yy::yylex()
 %}
 
-%option noyywrap nounput noinput debug
-
+/* %option noyywrap nounput noinput debug */
+%option noyywrap nounput noinput
 
 NUM   [0-9]
 WS      [ \t\r]+
@@ -22,7 +22,7 @@ PIDENTIFIER [_a-zA-Z]
 
 \#.*                      { BEGIN(INITIAL); }
 \\{WS}*"\n"               { }
-\n                        { return yy::parser::make_EOL(); }
+\n                        { }
 
 {WS}                      { }
 
@@ -80,20 +80,23 @@ PIDENTIFIER [_a-zA-Z]
 ":"                       { return yy::parser::make_COLON();}
 
 
-"T"                       { return yy::parser::make_T(); }
-"I"                       { return yy::parser::make_I(); }
-"O"                       { return yy::parser::make_O(); }
+"T"                       { return yy::parser::make_typeT(); }
+"I"                       { return yy::parser::make_typeI(); }
+"O"                       { return yy::parser::make_typeO(); }
 
 
 {NUM}+                    { return yy::parser::make_NUM(std::stoul(yytext)); }
-{PIDENTIFIER}+            { return yy::parser::make_PIDENTIFIER(yytext);}
-
-. {
-  std::cerr << "Nieznany znak: " << yytext << std::endl;
-}
+{PIDENTIFIER}+            { return yy::parser::make_PIDENTIFIER(std::string(yytext));}
 
 <<EOF>> {
   return yy::parser::make_YYEOF();
 }
+
+. {
+  std::cerr << "Nieznany znak: " << yytext << std::endl;
+  return yy::parser::make_YYerror();
+}
+
+
 
 %%

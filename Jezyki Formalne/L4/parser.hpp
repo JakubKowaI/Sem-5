@@ -45,15 +45,18 @@
 #ifndef YY_YY_PARSER_HPP_INCLUDED
 # define YY_YY_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 7 "parser.yy"
+#line 8 "parser.yy"
 
   #include <iostream>
   #include <string>
   #include <vector>
   #include <cmath>
   #include <cstdio>
+  #include <fstream>
   #include <map>
   #include <algorithm>
+  #include <stack>
+  #include <unordered_set>
 
   #undef at
 
@@ -83,9 +86,10 @@
     unsigned long address;
   };
 
-  
+  struct FormalParam { TYPE type; unsigned long addr; };
+  struct LoopPatch { unsigned long start; unsigned long jexit; };
 
-#line 89 "parser.hpp"
+#line 93 "parser.hpp"
 
 
 # include <cstdlib> // std::abort
@@ -220,7 +224,7 @@
 #endif
 
 namespace yy {
-#line 224 "parser.hpp"
+#line 228 "parser.hpp"
 
 
 
@@ -416,11 +420,11 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // condition
-      char dummy1[sizeof (bool)];
-
       // type
-      char dummy2[sizeof (char)];
+      char dummy1[sizeof (TYPE)];
+
+      // condition
+      char dummy2[sizeof (bool)];
 
       // identifier
       char dummy3[sizeof (pid)];
@@ -520,9 +524,9 @@ namespace yy {
     READ = 298,                    // READ
     WRITE = 299,                   // WRITE
     COLON = 300,                   // ":"
-    T = 301,                       // T
-    I = 302,                       // I
-    O = 303                        // O
+    typeT = 301,                   // typeT
+    typeI = 302,                   // typeI
+    typeO = 303                    // typeO
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -587,25 +591,39 @@ namespace yy {
         S_READ = 43,                             // READ
         S_WRITE = 44,                            // WRITE
         S_COLON = 45,                            // ":"
-        S_T = 46,                                // T
-        S_I = 47,                                // I
-        S_O = 48,                                // O
+        S_typeT = 46,                            // typeT
+        S_typeI = 47,                            // typeI
+        S_typeO = 48,                            // typeO
         S_YYACCEPT = 49,                         // $accept
         S_program_all = 50,                      // program_all
-        S_procedures = 51,                       // procedures
-        S_main = 52,                             // main
-        S_commands = 53,                         // commands
-        S_command = 54,                          // command
-        S_proc_head = 55,                        // proc_head
-        S_proc_call = 56,                        // proc_call
-        S_declarations = 57,                     // declarations
-        S_args_decl = 58,                        // args_decl
-        S_type = 59,                             // type
-        S_args = 60,                             // args
-        S_expression = 61,                       // expression
-        S_condition = 62,                        // condition
-        S_value = 63,                            // value
-        S_identifier = 64                        // identifier
+        S_51_1 = 51,                             // $@1
+        S_procedures = 52,                       // procedures
+        S_main = 53,                             // main
+        S_54_2 = 54,                             // $@2
+        S_55_3 = 55,                             // $@3
+        S_commands = 56,                         // commands
+        S_subroutine = 57,                       // subroutine
+        S_command = 58,                          // command
+        S_59_4 = 59,                             // $@4
+        S_60_5 = 60,                             // $@5
+        S_61_6 = 61,                             // $@6
+        S_62_7 = 62,                             // $@7
+        S_63_8 = 63,                             // $@8
+        S_64_9 = 64,                             // $@9
+        S_65_10 = 65,                            // $@10
+        S_66_11 = 66,                            // $@11
+        S_proc_head = 67,                        // proc_head
+        S_68_12 = 68,                            // $@12
+        S_proc_call = 69,                        // proc_call
+        S_70_13 = 70,                            // $@13
+        S_declarations = 71,                     // declarations
+        S_args_decl = 72,                        // args_decl
+        S_type = 73,                             // type
+        S_args = 74,                             // args
+        S_expression = 75,                       // expression
+        S_condition = 76,                        // condition
+        S_value = 77,                            // value
+        S_identifier = 78                        // identifier
       };
     };
 
@@ -640,12 +658,12 @@ namespace yy {
       {
         switch (this->kind ())
     {
-      case symbol_kind::S_condition: // condition
-        value.move< bool > (std::move (that.value));
+      case symbol_kind::S_type: // type
+        value.move< TYPE > (std::move (that.value));
         break;
 
-      case symbol_kind::S_type: // type
-        value.move< char > (std::move (that.value));
+      case symbol_kind::S_condition: // condition
+        value.move< bool > (std::move (that.value));
         break;
 
       case symbol_kind::S_identifier: // identifier
@@ -687,24 +705,24 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, bool&& v)
+      basic_symbol (typename Base::kind_type t, TYPE&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const bool& v)
+      basic_symbol (typename Base::kind_type t, const TYPE& v)
         : Base (t)
         , value (v)
       {}
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, char&& v)
+      basic_symbol (typename Base::kind_type t, bool&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const char& v)
+      basic_symbol (typename Base::kind_type t, const bool& v)
         : Base (t)
         , value (v)
       {}
@@ -782,12 +800,12 @@ namespace yy {
         // Value type destructor.
 switch (yykind)
     {
-      case symbol_kind::S_condition: // condition
-        value.template destroy< bool > ();
+      case symbol_kind::S_type: // type
+        value.template destroy< TYPE > ();
         break;
 
-      case symbol_kind::S_type: // type
-        value.template destroy< char > ();
+      case symbol_kind::S_condition: // condition
+        value.template destroy< bool > ();
         break;
 
       case symbol_kind::S_identifier: // identifier
@@ -814,14 +832,11 @@ switch (yykind)
         Base::clear ();
       }
 
-#if YYDEBUG || 0
       /// The user-facing name of this symbol.
-      const char *name () const YY_NOEXCEPT
+      std::string name () const YY_NOEXCEPT
       {
         return parser::symbol_name (this->kind ());
       }
-#endif // #if YYDEBUG || 0
-
 
       /// Backward compatibility (Bison 3.6).
       symbol_kind_type type_get () const YY_NOEXCEPT;
@@ -961,12 +976,9 @@ switch (yykind)
     /// Report a syntax error.
     void error (const syntax_error& err);
 
-#if YYDEBUG || 0
     /// The user-facing name of the symbol whose (internal) number is
     /// YYSYMBOL.  No bounds checking.
-    static const char *symbol_name (symbol_kind_type yysymbol);
-#endif // #if YYDEBUG || 0
-
+    static std::string symbol_name (symbol_kind_type yysymbol);
 
     // Implementation of make_symbol for each token kind.
 #if 201103L <= YY_CPLUSPLUS
@@ -1662,49 +1674,65 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_T ()
+      make_typeT ()
       {
-        return symbol_type (token::T);
+        return symbol_type (token::typeT);
       }
 #else
       static
       symbol_type
-      make_T ()
+      make_typeT ()
       {
-        return symbol_type (token::T);
+        return symbol_type (token::typeT);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_I ()
+      make_typeI ()
       {
-        return symbol_type (token::I);
+        return symbol_type (token::typeI);
       }
 #else
       static
       symbol_type
-      make_I ()
+      make_typeI ()
       {
-        return symbol_type (token::I);
+        return symbol_type (token::typeI);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_O ()
+      make_typeO ()
       {
-        return symbol_type (token::O);
+        return symbol_type (token::typeO);
       }
 #else
       static
       symbol_type
-      make_O ()
+      make_typeO ()
       {
-        return symbol_type (token::O);
+        return symbol_type (token::typeO);
       }
 #endif
 
+
+    class context
+    {
+    public:
+      context (const parser& yyparser, const symbol_type& yyla);
+      const symbol_type& lookahead () const YY_NOEXCEPT { return yyla_; }
+      symbol_kind_type token () const YY_NOEXCEPT { return yyla_.kind (); }
+      /// Put in YYARG at most YYARGN of the expected tokens, and return the
+      /// number of tokens stored in YYARG.  If YYARG is null, return the
+      /// number of expected tokens (guaranteed to be less than YYNTOKENS).
+      int expected_tokens (symbol_kind_type yyarg[], int yyargn) const;
+
+    private:
+      const parser& yyparser_;
+      const symbol_type& yyla_;
+    };
 
   private:
 #if YY_CPLUSPLUS < 201103L
@@ -1718,6 +1746,13 @@ switch (yykind)
     /// Stored state numbers (used for stacks).
     typedef unsigned char state_type;
 
+    /// The arguments of the error message.
+    int yy_syntax_error_arguments_ (const context& yyctx,
+                                    symbol_kind_type yyarg[], int yyargn) const;
+
+    /// Generate an error message.
+    /// \param yyctx     the context in which the error occurred.
+    virtual std::string yysyntax_error_ (const context& yyctx) const;
     /// Compute post-reduction state.
     /// \param yystate   the current state
     /// \param yysym     the nonterminal to push on the stack
@@ -1739,10 +1774,11 @@ switch (yykind)
     /// are valid, yet not members of the token_kind_type enum.
     static symbol_kind_type yytranslate_ (int t) YY_NOEXCEPT;
 
-#if YYDEBUG || 0
+    /// Convert the symbol name \a n to a form suitable for a diagnostic.
+    static std::string yytnamerr_ (const char *yystr);
+
     /// For a symbol, its name in clear.
     static const char* const yytname_[];
-#endif // #if YYDEBUG || 0
 
 
     // Tables.
@@ -1759,12 +1795,12 @@ switch (yykind)
     static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
-    static const signed char yydefgoto_[];
+    static const unsigned char yydefgoto_[];
 
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const unsigned char yytable_[];
+    static const short yytable_[];
 
     static const short yycheck_[];
 
@@ -2008,8 +2044,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 302,     ///< Last index in yytable_.
-      yynnts_ = 16,  ///< Number of nonterminal symbols.
+      yylast_ = 291,     ///< Last index in yytable_.
+      yynnts_ = 30,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
 
@@ -2078,12 +2114,12 @@ switch (yykind)
   {
     switch (this->kind ())
     {
-      case symbol_kind::S_condition: // condition
-        value.copy< bool > (YY_MOVE (that.value));
+      case symbol_kind::S_type: // type
+        value.copy< TYPE > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_type: // type
-        value.copy< char > (YY_MOVE (that.value));
+      case symbol_kind::S_condition: // condition
+        value.copy< bool > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_identifier: // identifier
@@ -2134,12 +2170,12 @@ switch (yykind)
     super_type::move (s);
     switch (this->kind ())
     {
-      case symbol_kind::S_condition: // condition
-        value.move< bool > (YY_MOVE (s.value));
+      case symbol_kind::S_type: // type
+        value.move< TYPE > (YY_MOVE (s.value));
         break;
 
-      case symbol_kind::S_type: // type
-        value.move< char > (YY_MOVE (s.value));
+      case symbol_kind::S_condition: // condition
+        value.move< bool > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_identifier: // identifier
@@ -2224,7 +2260,7 @@ switch (yykind)
 
 
 } // yy
-#line 2228 "parser.hpp"
+#line 2264 "parser.hpp"
 
 
 

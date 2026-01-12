@@ -42,7 +42,7 @@
 
 
 // Unqualified %code blocks.
-#line 52 "parser.yy"
+#line 50 "parser.yy"
 
   namespace yy {
       parser::symbol_type yylex();
@@ -60,10 +60,6 @@
   static std::stack<unsigned long> if_false_stack;
   static std::stack<unsigned long> if_end_stack;
   static std::stack<unsigned long> repeat_stack;
-  static std::stack<unsigned long> for_stack;
-
-  static std::stack<LoopPatch> while_patches;
-  static std::stack<LoopPatch> for_patches;
 
   static unsigned long start_point=0;
 
@@ -74,18 +70,10 @@
   static std::vector<FormalParam> current_formals;
 
   
+
+  //Do tymczasowych zmiennych
   static std::vector<unsigned long> scope_mem_mark;
   static std::vector<std::vector<std::string>> scope_names;
-
-  static std::unordered_set<unsigned long> ref_cells;
-  static std::unordered_set<unsigned long> array_ref_cells;
-
-  static inline bool is_ref_cell(unsigned long addr) {
-    return ref_cells.find(addr) != ref_cells.end();
-  }
-  static inline bool is_array_ref_cell(unsigned long addr) {
-    return array_ref_cells.find(addr) != array_ref_cells.end();
-  }
 
   // reclaim_memory = true  -> scope blokowy: cofamy memory_offset (reuse w obrębie procedury)
   // reclaim_memory = false -> scope procedury: NIE cofamy memory_offset (unikalne adresy między procedurami)
@@ -133,33 +121,6 @@
           exit(1);
       }
       return var_table[name].memory_address;
-  }
-
-  // Odczyt skalaru: jeśli to ref-param, to RLOAD spod adresu z komórki parametru.
-  static void load_scalar_by_addr_or_ref(unsigned long addr) {
-    if (!is_ref_cell(addr)) {
-      print("LOAD " + std::to_string(addr)); k++;
-      return;
-    }
-    // a = mem[ mem[addr] ]
-    print("LOAD " + std::to_string(addr)); k++; // a = ptr
-    print("SWP e"); k++;
-    print("RLOAD e"); k++;
-  }
-
-  // Zapis skalaru: jeśli to ref-param, to RSTORE pod adres z komórki parametru.
-  // Zakłada: wartość jest w rejestrze a.
-  static void store_scalar_by_addr_or_ref(unsigned long addr) {
-    if (!is_ref_cell(addr)) {
-      print("STORE " + std::to_string(addr)); k++;
-      return;
-    }
-    // mem[ mem[addr] ] = a
-    print("SWP c"); k++;                    // c = value
-    print("LOAD " + std::to_string(addr)); k++; // a = ptr
-    print("SWP e"); k++;                    // e = ptr
-    print("SWP c"); k++;                    // a = value
-    print("RSTORE e"); k++;
   }
 
   void gen_const_to_reg(unsigned long value, char reg = 'a') {
@@ -636,36 +597,6 @@
     }
   }
 
-  // Wylicz adres elementu tablicy dla pid (tab[indeks]) i zostaw go w rejestrze e.
-  // Obsługuje:
-  // - zwykłą tablicę: base = tab.memory_address, index = i, adres = base + (i - array_start)
-  // - tablicę T-param (array_ref_cells): w komórce tab.memory_address siedzi base0 = base - array_start,
-  //   więc adres = base0 + i
-  static void array_elem_addr_to_e(const pid& p) {
-    VAR* tab = get_variable(p.address);
-
-  const bool is_ref = is_array_ref_cell(tab->memory_address);
-
-  // b = base (albo base0 przy T-param)
-  if (is_ref) {
-    print("LOAD " + std::to_string(tab->memory_address)); k++; // a = base0
-    print("SWP b"); k++;
-  } else {
-    gen_const_to_reg(tab->memory_address, 'a'); // baza indeksu 0
-    print("SWP b"); k++;
-  }
-
-  // a = index (bez -array_start)
-  if (p.var_index) {
-    print("LOAD " + std::to_string(p.idx)); k++;
-  } else {
-    gen_const_to_reg(p.idx, 'a');
-  }
-
-  print("ADD b"); k++;
-  print("SWP e"); k++;
-  }
-
   // Mnożenie w czasie O(log b): "Russian peasant multiplication".
   // Wejście: left, right; Wyjście: ra = left * right
   // Używa rejestrów: b (A), c (B), d (res), e (temp)
@@ -819,7 +750,7 @@
   }
   
 
-#line 823 "parser.cpp"
+#line 754 "parser.tab.cc"
 
 
 #ifndef YY_
@@ -892,7 +823,7 @@
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 896 "parser.cpp"
+#line 827 "parser.tab.cc"
 
   /// Build a parser object.
   parser::parser ()
@@ -1396,191 +1327,233 @@ namespace yy {
           switch (yyn)
             {
   case 2: // $@1: %empty
-#line 912 "parser.yy"
+#line 844 "parser.yy"
 {
     gen_const_to_reg(100000UL , 'h');
     start_point =(unsigned long) pc();
     //std::cerr<<"SAM START "<<start_point<<std::endl;
+    //$<unsigned long>$ = wtf;
     print("JUMP 0"); k++;
 }
-#line 1407 "parser.cpp"
+#line 1339 "parser.tab.cc"
     break;
 
   case 3: // program_all: $@1 procedures main
-#line 918 "parser.yy"
+#line 851 "parser.yy"
                 {
     //std::cerr<<"START "<<start_point<<std::endl;
     patch(start_point, (int)procedures["PROGRAM"]);
     print("HALT");
     k++;
 }
-#line 1418 "parser.cpp"
+#line 1350 "parser.tab.cc"
     break;
 
   case 4: // procedures: procedures PROCEDURE proc_head IS declarations IN commands END
-#line 927 "parser.yy"
+#line 860 "parser.yy"
                                                                { 
   pop_ra();
   print("RTRN");    k++;
 
   end_scope(false);
  }
-#line 1429 "parser.cpp"
+#line 1361 "parser.tab.cc"
     break;
 
   case 5: // procedures: procedures PROCEDURE proc_head IS IN commands END
-#line 933 "parser.yy"
+#line 866 "parser.yy"
                                                     { 
   pop_ra();
   print("RTRN");    k++;
 
   end_scope(false); 
   }
-#line 1440 "parser.cpp"
+#line 1372 "parser.tab.cc"
     break;
 
   case 7: // $@2: %empty
-#line 943 "parser.yy"
+#line 876 "parser.yy"
            {
   procedures["PROGRAM"]=pc();
   begin_scope();
 }
-#line 1449 "parser.cpp"
+#line 1381 "parser.tab.cc"
     break;
 
   case 8: // main: PROGRAM IS $@2 declarations IN commands END
-#line 946 "parser.yy"
+#line 879 "parser.yy"
                                {
 
 }
-#line 1457 "parser.cpp"
+#line 1389 "parser.tab.cc"
     break;
 
   case 9: // $@3: %empty
-#line 949 "parser.yy"
+#line 882 "parser.yy"
              {
   procedures["PROGRAM"]=pc();
   begin_scope();
 }
-#line 1466 "parser.cpp"
+#line 1398 "parser.tab.cc"
     break;
 
   case 10: // main: PROGRAM IS $@3 IN commands END
-#line 952 "parser.yy"
+#line 885 "parser.yy"
                   {}
-#line 1472 "parser.cpp"
+#line 1404 "parser.tab.cc"
     break;
 
   case 11: // commands: commands command
-#line 956 "parser.yy"
+#line 889 "parser.yy"
                  {}
-#line 1478 "parser.cpp"
+#line 1410 "parser.tab.cc"
     break;
 
   case 12: // commands: command
-#line 957 "parser.yy"
+#line 890 "parser.yy"
           {}
-#line 1484 "parser.cpp"
+#line 1416 "parser.tab.cc"
     break;
 
-  case 13: // subroutine: %empty
-#line 961 "parser.yy"
-       {print("SWP g");
-  k++;
-  if_false_stack.push((unsigned long)pc());
-  print("JZERO 0");
-  k++;
-  }
-#line 1495 "parser.cpp"
-    break;
-
-  case 14: // command: identifier ":=" expression ";"
-#line 970 "parser.yy"
+  case 13: // command: identifier ":=" expression ";"
+#line 894 "parser.yy"
                                     {
   VAR* v = get_variable(yystack_[3].value.as < pid > ().address);
-  if (v && v->type == I) YYERROR; // I nie może być nadpisywane
-
-  if (yystack_[3].value.as < pid > ().is_t) {
-    // zapis do elementu tablicy
-    // value (expr) jest w rejestrze a
-    print("SWP c"); k++;          // c = value
-    array_elem_addr_to_e(yystack_[3].value.as < pid > ());     // e = addr(tab[idx])
-    print("SWP c"); k++;          // a = value
-    print("RSTORE e"); k++;      
+  // switch(v->type){
+  //   case T:
+  //   if(!save_at($1))YYERROR;
+  //   break;
+  //   case I:
+  //   YYERROR;
+  //   break;
+  //   case O:
+  //   print("STORE " + std::to_string($1.address));
+  //   k++;
+  //   v->type = U;
+  //   break;
+  //   case U:
+  //   print("STORE " + std::to_string($1.address));
+  //   k++;
+  //   break;
+  // }
+  if (v && v->type == O) {
+    store_through_pointer_cell(yystack_[3].value.as < pid > ().address);
   } else {
-    store_scalar_by_addr_or_ref(yystack_[3].value.as < pid > ().address);
+    switch(v->type){
+      case T:
+        if(!save_at(yystack_[3].value.as < pid > ()))YYERROR;
+        break;
+      case I:
+        YYERROR;
+        break;
+      case O:
+        // obsłużone wyżej
+        break;
+      case U:
+        print("STORE " + std::to_string(yystack_[3].value.as < pid > ().address));
+        k++;
+        break;
+    }
   }
 }
-#line 1515 "parser.cpp"
+#line 1460 "parser.tab.cc"
     break;
 
-  case 15: // command: IF condition subroutine THEN commands ENDIF
-#line 985 "parser.yy"
-                                              {
-  patch(if_false_stack.top(), pc());
-  if_false_stack.pop();
-  }
-#line 1524 "parser.cpp"
+  case 14: // $@4: %empty
+#line 933 "parser.yy"
+               {
+  print("SWP g"); k++;
+  if_false_stack.push((unsigned long)pc());
+  print("JZERO 0"); k++;
+}
+#line 1470 "parser.tab.cc"
     break;
 
-  case 16: // $@4: %empty
-#line 989 "parser.yy"
-                                             {
+  case 15: // $@5: %empty
+#line 937 "parser.yy"
+                     {
+  //$<unsigned long>$ = (unsigned long)code.size();
+  // patch(temp.top(), k);
+  // temp.pop();
+  // temp.push(code.size()); 
   if_end_stack.push((unsigned long)pc());
   print("JUMP 0"); k++;
   patch(if_false_stack.top(), pc());
   if_false_stack.pop();
 }
-#line 1535 "parser.cpp"
+#line 1485 "parser.tab.cc"
     break;
 
-  case 17: // command: IF condition subroutine THEN commands ELSE $@4 commands ENDIF
-#line 994 "parser.yy"
+  case 16: // command: IF condition $@4 THEN commands ELSE $@5 commands ENDIF
+#line 946 "parser.yy"
                  {
   patch(if_end_stack.top(), pc());
   if_end_stack.pop();
 }
-#line 1544 "parser.cpp"
+#line 1494 "parser.tab.cc"
     break;
 
-  case 18: // $@5: %empty
-#line 998 "parser.yy"
-        {
-  while_patches.push(LoopPatch{(unsigned long)pc(), 0});   // start pętli
+  case 17: // $@6: %empty
+#line 950 "parser.yy"
+               {
+  print("SWP g");
+  k++;
+  if_false_stack.push((unsigned long)pc());
+  print("JZERO 0");
+  k++;
 }
-#line 1552 "parser.cpp"
+#line 1506 "parser.tab.cc"
     break;
 
-  case 19: // $@6: %empty
-#line 1000 "parser.yy"
+  case 18: // command: IF condition $@6 THEN commands ENDIF
+#line 956 "parser.yy"
+                      {
+  patch(if_false_stack.top(), pc());
+  if_false_stack.pop();
+  }
+#line 1515 "parser.tab.cc"
+    break;
+
+  case 19: // $@7: %empty
+#line 960 "parser.yy"
+        {
+  temp.push((unsigned long)pc());   // start pętli
+}
+#line 1523 "parser.tab.cc"
+    break;
+
+  case 20: // $@8: %empty
+#line 962 "parser.yy"
                {
   print("SWP g"); k++;
-  while_patches.top().jexit = (unsigned long)pc();
+  temp.push((unsigned long)pc());   // indeks JZERO do patcha (wyjście)
   print("JZERO 0"); k++;
 }
-#line 1562 "parser.cpp"
+#line 1533 "parser.tab.cc"
     break;
 
-  case 20: // command: WHILE $@5 condition DO $@6 commands ENDWHILE
-#line 1004 "parser.yy"
+  case 21: // command: WHILE $@7 condition DO $@8 commands ENDWHILE
+#line 966 "parser.yy"
                     {
-  auto lp = while_patches.top(); while_patches.pop();
-  print("JUMP " + std::to_string(lp.start)); k++;
-  patch(lp.jexit, pc());
+  unsigned long jexit = temp.top(); temp.pop();
+  unsigned long jstart = temp.top(); temp.pop();
+
+  print("JUMP " + std::to_string(jstart)); k++;
+  patch(jexit, pc());
 }
-#line 1572 "parser.cpp"
+#line 1545 "parser.tab.cc"
     break;
 
-  case 21: // $@7: %empty
-#line 1009 "parser.yy"
+  case 22: // $@9: %empty
+#line 973 "parser.yy"
          {
   repeat_stack.push((unsigned long)pc()); // początek pętli (body)
 }
-#line 1580 "parser.cpp"
+#line 1553 "parser.tab.cc"
     break;
 
-  case 22: // command: REPEAT $@7 commands UNTIL condition ";"
-#line 1011 "parser.yy"
+  case 23: // command: REPEAT $@9 commands UNTIL condition ";"
+#line 975 "parser.yy"
                                      {
   print("SWP g");
   k++;
@@ -1588,11 +1561,11 @@ namespace yy {
   k++;
   repeat_stack.pop();
 }
-#line 1592 "parser.cpp"
+#line 1565 "parser.tab.cc"
     break;
 
-  case 23: // $@8: %empty
-#line 1018 "parser.yy"
+  case 24: // @10: %empty
+#line 982 "parser.yy"
                                          {
   begin_scope();
 
@@ -1614,136 +1587,122 @@ namespace yy {
   iter.is_num=0;
   iter.bag=it.memory_address;
 
-  unsigned long jstart = (unsigned long)pc();
+  temp.push(code.size());
 
   le(iter,yystack_[1].value.as < val > ());
   print("SWP g"); k++;
-  unsigned long jexit = (unsigned long)pc();
+  temp.push(code.size());
   print("JZERO 0"); k++;
-  for_patches.push(LoopPatch{jstart, jexit});
-  for_stack.push(it.memory_address);
+  yylhs.value.as< unsigned long > ()=it.memory_address;
+
 }
-#line 1627 "parser.cpp"
+#line 1600 "parser.tab.cc"
     break;
 
-  case 24: // $@9: %empty
-#line 1047 "parser.yy"
+  case 25: // $@11: %empty
+#line 1011 "parser.yy"
            {
-
-  print("LOAD " + std::to_string(for_stack.top())); k++;
+  print("LOAD " + std::to_string(yystack_[1].value.as< unsigned long > ())); k++;
   print("INC a"); k++;
-  print("STORE " + std::to_string(for_stack.top())); k++;
-  for_stack.pop();
+  print("STORE " + std::to_string(yystack_[1].value.as< unsigned long > ())); k++;
 
   unsigned long jexit = temp.top(); temp.pop();
   unsigned long jstart = temp.top(); temp.pop();
 
-  auto lp = for_patches.top(); // nie pop jeszcze (pop w ENDFOR)
-  print("JUMP " + std::to_string(lp.start)); k++;
+  print("JUMP " + std::to_string(jstart));
+
+  temp.push(jexit);
 }
-#line 1645 "parser.cpp"
+#line 1617 "parser.tab.cc"
     break;
 
-  case 25: // command: FOR PIDENTIFIER FROM value TO value DO $@8 commands $@9 ENDFOR
-#line 1059 "parser.yy"
+  case 26: // command: FOR PIDENTIFIER FROM value TO value DO @10 commands $@11 ENDFOR
+#line 1022 "parser.yy"
          {
-  auto lp = for_patches.top(); for_patches.pop();
-  patch(lp.jexit, pc());
+  patch(temp.top(),code.size());
+  temp.pop();
   end_scope(true);
 }
-#line 1655 "parser.cpp"
+#line 1627 "parser.tab.cc"
     break;
 
-  case 26: // $@10: %empty
-#line 1064 "parser.yy"
+  case 27: // @12: %empty
+#line 1027 "parser.yy"
                                              {
   begin_scope();
-
   VAR it;
   it.memory_address=memory_offset++;
   it.type=U;
   it.array_start=0;
   it.array_end=0;
   declare_var_in_scope(it,yystack_[5].value.as < std::string > ());
-
   if(yystack_[3].value.as < val > ().is_num){
     gen_const_to_reg(yystack_[3].value.as < val > ().bag,'a');
   }else{
     print("LOAD " + std::to_string(yystack_[3].value.as < val > ().bag)); k++;
   }
   print("STORE " + std::to_string(it.memory_address)); k++;
-
   val iter;
   iter.is_num=0;
   iter.bag=it.memory_address;
-
-  unsigned long jstart = (unsigned long)pc();
+  temp.push(code.size());
 
   ge(iter,yystack_[1].value.as < val > ());
   print("SWP g"); k++;
-  unsigned long jexit = (unsigned long)pc();
+  temp.push(code.size());
   print("JZERO 0"); k++;
-  for_patches.push(LoopPatch{jstart, jexit});
-  for_stack.push(it.memory_address);
+  yylhs.value.as< unsigned long > ()=it.memory_address;
+
 }
-#line 1690 "parser.cpp"
+#line 1658 "parser.tab.cc"
     break;
 
-  case 27: // $@11: %empty
-#line 1093 "parser.yy"
+  case 28: // $@13: %empty
+#line 1052 "parser.yy"
            {
-  print("LOAD " + std::to_string(for_stack.top())); k++;
+  print("LOAD " + std::to_string(yystack_[1].value.as< unsigned long > ())); k++;
   print("DEC a"); k++;
-  print("STORE " + std::to_string(for_stack.top())); k++;
-  for_stack.pop();
-
-  unsigned long jexit = temp.top(); temp.pop();
-  unsigned long jstart = temp.top(); temp.pop();
-
-  auto lp = for_patches.top(); // nie pop jeszcze (pop w ENDFOR)
-  print("JUMP " + std::to_string(lp.start)); k++;
+  print("STORE " + std::to_string(yystack_[1].value.as< unsigned long > ())); k++;
+  unsigned long ttt=temp.top();
+  temp.pop();
+  print("JUMP " + std::to_string(temp.top()));
+  temp.pop();
+  temp.push(ttt);
 }
-#line 1707 "parser.cpp"
+#line 1673 "parser.tab.cc"
     break;
 
-  case 28: // command: FOR PIDENTIFIER FROM value DOWNTO value DO $@10 commands $@11 ENDFOR
-#line 1104 "parser.yy"
+  case 29: // command: FOR PIDENTIFIER FROM value DOWNTO value DO @12 commands $@13 ENDFOR
+#line 1061 "parser.yy"
          {
-  auto lp = for_patches.top(); for_patches.pop();
-  patch(lp.jexit, pc());
+  patch(temp.top(),code.size());
+  temp.pop();
   end_scope(true);
 }
-#line 1717 "parser.cpp"
+#line 1683 "parser.tab.cc"
     break;
 
-  case 29: // command: proc_call ";"
-#line 1109 "parser.yy"
+  case 30: // command: proc_call ";"
+#line 1066 "parser.yy"
                       {
   //end_scope(false);
 }
-#line 1725 "parser.cpp"
+#line 1691 "parser.tab.cc"
     break;
 
-  case 30: // command: READ identifier ";"
-#line 1112 "parser.yy"
+  case 31: // command: READ identifier ";"
+#line 1069 "parser.yy"
                             {
-  print("READ"); k++;
-  // READ do tablicy też powinien działać: jeśli tab[i], to RSTORE pod adres elementu.
-  if (yystack_[1].value.as < pid > ().is_t) {
-    // a = input; zapisz do tab[idx]
-    print("SWP c"); k++;
-    array_elem_addr_to_e(yystack_[1].value.as < pid > ());
-    print("SWP c"); k++;
-    print("RSTORE e"); k++;
-  } else {
-    print("STORE " + std::to_string(yystack_[1].value.as < pid > ().address)); k++;
-  }
+  print("READ");
+  k++;
+  print("STORE " + std::to_string(yystack_[1].value.as < pid > ().address));
+  k++;
 }
-#line 1743 "parser.cpp"
+#line 1702 "parser.tab.cc"
     break;
 
-  case 31: // command: WRITE value ";"
-#line 1125 "parser.yy"
+  case 32: // command: WRITE value ";"
+#line 1075 "parser.yy"
                         {
   if(yystack_[1].value.as < val > ().is_num){
     gen_const_to_reg(yystack_[1].value.as < val > ().bag,'a');
@@ -1755,17 +1714,17 @@ namespace yy {
   print("WRITE");
   k++;
 }
-#line 1759 "parser.cpp"
+#line 1718 "parser.tab.cc"
     break;
 
-  case 32: // command: error ";"
-#line 1136 "parser.yy"
+  case 33: // command: error ";"
+#line 1086 "parser.yy"
                   { yyerrok;}
-#line 1765 "parser.cpp"
+#line 1724 "parser.tab.cc"
     break;
 
-  case 33: // $@12: %empty
-#line 1140 "parser.yy"
+  case 34: // $@14: %empty
+#line 1090 "parser.yy"
                    {
   procedures[yystack_[1].value.as < std::string > ()] = (unsigned long)pc();
 
@@ -1776,60 +1735,64 @@ namespace yy {
   current_proc_name = yystack_[1].value.as < std::string > ();
   current_formals.clear();
 }
-#line 1780 "parser.cpp"
+#line 1739 "parser.tab.cc"
     break;
 
-  case 34: // proc_head: PIDENTIFIER "(" $@12 args_decl ")"
-#line 1149 "parser.yy"
+  case 35: // proc_head: PIDENTIFIER "(" $@14 args_decl ")"
+#line 1099 "parser.yy"
                    {
   proc_formals[current_proc_name] = current_formals;
 }
-#line 1788 "parser.cpp"
+#line 1747 "parser.tab.cc"
     break;
 
-  case 35: // $@13: %empty
-#line 1155 "parser.yy"
+  case 36: // $@15: %empty
+#line 1105 "parser.yy"
             {
+  //begin_scope();
   current_call_name = yystack_[0].value.as < std::string > ();
   current_call_args.clear();
+  //print("CALL " + std::to_string(procedures[$1])); k++;
 }
-#line 1797 "parser.cpp"
+#line 1758 "parser.tab.cc"
     break;
 
-  case 36: // proc_call: PIDENTIFIER $@13 "(" args ")"
-#line 1158 "parser.yy"
+  case 37: // proc_call: PIDENTIFIER $@15 "(" args ")"
+#line 1110 "parser.yy"
                     {
+  if (proc_formals.find(current_call_name) == proc_formals.end()) {
+    std::cerr << "Error: Unknown procedure " << current_call_name << std::endl;
+    exit(1);
+  }
   const auto& formals = proc_formals[current_call_name];
-  if (formals.size() != current_call_args.size()) YYERROR;
+  if (formals.size() != current_call_args.size()) {
+    std::cerr << "Error: Bad arity in call to " << current_call_name << std::endl;
+    exit(1);
+  }
 
+  // Ustaw formalne komórki w pamięci
   for (size_t i = 0; i < formals.size(); ++i) {
-    unsigned long formal_cell = formals[i].addr;
-
-    if (formals[i].type == T) {
-      VAR* actual = get_variable(current_call_args[i]);
-      if (!actual || actual->type != T) YYERROR;
-
-      // base0 = baza indeksu 0
-      unsigned long base0 = actual->memory_address;
-
-      gen_const_to_reg(base0, 'a');
-      print("STORE " + std::to_string(formal_cell)); k++;
-      continue;
-    }
-
-    // I/O: przechowuj adres zmiennej
+    unsigned long formal_addr = formals[i].addr;
     unsigned long actual_addr = get_addr(current_call_args[i]);
-    gen_const_to_reg(actual_addr, 'a');
-    print("STORE " + std::to_string(formal_cell)); k++;
+
+    if (formals[i].type == O) {
+      // Przekazanie przez adres: formal = &actual
+      gen_const_to_reg(actual_addr, 'a');
+      print("STORE " + std::to_string(formal_addr)); k++;
+    } else {
+      // I/U/T: kopiuj wartość (dla T to będzie "adres początku", jeśli tak ustalisz; tu kopiujemy LOAD/STORE)
+      print("LOAD " + std::to_string(actual_addr)); k++;
+      print("STORE " + std::to_string(formal_addr)); k++;
+    }
   }
 
   print("CALL " + std::to_string(procedures[current_call_name])); k++;
 }
-#line 1829 "parser.cpp"
+#line 1792 "parser.tab.cc"
     break;
 
-  case 37: // declarations: declarations "," PIDENTIFIER
-#line 1188 "parser.yy"
+  case 38: // declarations: declarations "," PIDENTIFIER
+#line 1142 "parser.yy"
                                {
   VAR t;
   t.memory_address = memory_offset++;
@@ -1838,26 +1801,26 @@ namespace yy {
   t.array_end = 0;
   declare_var_in_scope(t, yystack_[0].value.as < std::string > ());
 }
-#line 1842 "parser.cpp"
+#line 1805 "parser.tab.cc"
     break;
 
-  case 38: // declarations: declarations "," PIDENTIFIER "[" NUM ":" NUM "]"
-#line 1196 "parser.yy"
+  case 39: // declarations: declarations "," PIDENTIFIER "[" NUM ":" NUM "]"
+#line 1150 "parser.yy"
                                                                {
   VAR t;
   t.array_start = yystack_[3].value.as < unsigned long > ();
   t.array_end = yystack_[1].value.as < unsigned long > ();
   if(t.array_start>=t.array_end) YYERROR;
   t.memory_address = memory_offset;
-  memory_offset += (t.array_end + 1);
+  memory_offset += (yystack_[1].value.as < unsigned long > () - yystack_[3].value.as < unsigned long > () + 1);
   t.type = T;
   declare_var_in_scope(t, yystack_[5].value.as < std::string > ());
 }
-#line 1857 "parser.cpp"
+#line 1820 "parser.tab.cc"
     break;
 
-  case 39: // declarations: PIDENTIFIER
-#line 1206 "parser.yy"
+  case 40: // declarations: PIDENTIFIER
+#line 1160 "parser.yy"
               {
   VAR t;
   t.memory_address = memory_offset++;
@@ -1866,11 +1829,11 @@ namespace yy {
   t.array_end = 0;
   declare_var_in_scope(t, yystack_[0].value.as < std::string > ());
 }
-#line 1870 "parser.cpp"
+#line 1833 "parser.tab.cc"
     break;
 
-  case 40: // declarations: PIDENTIFIER "[" NUM ":" NUM "]"
-#line 1214 "parser.yy"
+  case 41: // declarations: PIDENTIFIER "[" NUM ":" NUM "]"
+#line 1168 "parser.yy"
                                             {
   VAR t; 
   t.type = T; 
@@ -1878,87 +1841,92 @@ namespace yy {
   t.array_end = yystack_[1].value.as < unsigned long > ();
   if(t.array_start>=t.array_end) YYERROR;
   t.memory_address = memory_offset;
-  memory_offset += (t.array_end + 1);
+  memory_offset += (yystack_[1].value.as < unsigned long > () - yystack_[3].value.as < unsigned long > () + 1);
   declare_var_in_scope(t, yystack_[5].value.as < std::string > ());
   }
-#line 1885 "parser.cpp"
+#line 1848 "parser.tab.cc"
     break;
 
-  case 41: // args_decl: args_decl "," type PIDENTIFIER
-#line 1227 "parser.yy"
+  case 42: // args_decl: args_decl "," type PIDENTIFIER
+#line 1181 "parser.yy"
                                  {
-VAR p;
-  p.memory_address = memory_offset++;
-  p.type = yystack_[1].value.as < TYPE > ();
-  p.array_start = 0; p.array_end = 0;
-
-  declare_var_in_scope(p, yystack_[0].value.as < std::string > ());
-
-  // oznacz, że to "komórka-wskaźnik"
-  if (p.type == T) array_ref_cells.insert(p.memory_address);
-  else             ref_cells.insert(p.memory_address);
-
-  current_formals.push_back(FormalParam{p.type, p.memory_address});
+  VAR it;
+  it.memory_address=memory_offset;
+  it.type=yystack_[1].value.as < TYPE > ();
+  it.array_start=0;
+  it.array_end=0;
+  if(it.type==T){
+    it.array_start=0;
+  it.array_end=100;
+  memory_offset += (it.array_end - it.array_start + 1);
+  }else{
+    memory_offset++;
   }
-#line 1904 "parser.cpp"
-    break;
-
-  case 42: // args_decl: type PIDENTIFIER
-#line 1241 "parser.yy"
-                   {
-  VAR p;
-  p.memory_address = memory_offset++;
-  p.type = yystack_[1].value.as < TYPE > ();
-  p.array_start = 0; p.array_end = 0;
-
-  declare_var_in_scope(p, yystack_[0].value.as < std::string > ());
-
-  if (p.type == T) array_ref_cells.insert(p.memory_address);
-  else             ref_cells.insert(p.memory_address);
-
-  current_formals.push_back(FormalParam{p.type, p.memory_address});
+  declare_var_in_scope(it,yystack_[0].value.as < std::string > ());
+  current_formals.push_back(FormalParam{it.type, it.memory_address});
 }
-#line 1922 "parser.cpp"
+#line 1869 "parser.tab.cc"
     break;
 
-  case 43: // type: typeT
-#line 1257 "parser.yy"
+  case 43: // args_decl: type PIDENTIFIER
+#line 1197 "parser.yy"
+                   {
+  VAR it;
+  it.memory_address=memory_offset;
+  it.type=yystack_[1].value.as < TYPE > ();
+  it.array_start=0;
+  it.array_end=0;
+  if(it.type==T){
+    it.array_start=0;
+  it.array_end=100;
+  memory_offset += (it.array_end - it.array_start + 1);
+  }else{
+    memory_offset++;
+  }
+  declare_var_in_scope(it,yystack_[0].value.as < std::string > ());
+  current_formals.push_back(FormalParam{it.type, it.memory_address});
+}
+#line 1890 "parser.tab.cc"
+    break;
+
+  case 44: // type: typeT
+#line 1216 "parser.yy"
       {yylhs.value.as < TYPE > ()=T;}
-#line 1928 "parser.cpp"
+#line 1896 "parser.tab.cc"
     break;
 
-  case 44: // type: typeI
-#line 1258 "parser.yy"
+  case 45: // type: typeI
+#line 1217 "parser.yy"
         {yylhs.value.as < TYPE > ()=I;}
-#line 1934 "parser.cpp"
+#line 1902 "parser.tab.cc"
     break;
 
-  case 45: // type: typeO
-#line 1259 "parser.yy"
+  case 46: // type: typeO
+#line 1218 "parser.yy"
         {yylhs.value.as < TYPE > ()=O;}
-#line 1940 "parser.cpp"
+#line 1908 "parser.tab.cc"
     break;
 
-  case 46: // type: %empty
-#line 1260 "parser.yy"
+  case 47: // type: %empty
+#line 1219 "parser.yy"
          {yylhs.value.as < TYPE > ()=U;}
-#line 1946 "parser.cpp"
+#line 1914 "parser.tab.cc"
     break;
 
-  case 47: // args: args "," PIDENTIFIER
-#line 1264 "parser.yy"
+  case 48: // args: args "," PIDENTIFIER
+#line 1223 "parser.yy"
                        {current_call_args.push_back(yystack_[0].value.as < std::string > ());}
-#line 1952 "parser.cpp"
+#line 1920 "parser.tab.cc"
     break;
 
-  case 48: // args: PIDENTIFIER
-#line 1265 "parser.yy"
+  case 49: // args: PIDENTIFIER
+#line 1224 "parser.yy"
               {current_call_args.push_back(yystack_[0].value.as < std::string > ());}
-#line 1958 "parser.cpp"
+#line 1926 "parser.tab.cc"
     break;
 
-  case 49: // expression: value
-#line 1269 "parser.yy"
+  case 50: // expression: value
+#line 1228 "parser.yy"
       {
   if(yystack_[0].value.as < val > ().is_num){
     gen_const_to_reg(yystack_[0].value.as < val > ().bag,'a');
@@ -1967,11 +1935,11 @@ VAR p;
     k++;
   }
 }
-#line 1971 "parser.cpp"
+#line 1939 "parser.tab.cc"
     break;
 
-  case 50: // expression: value "+" value
-#line 1277 "parser.yy"
+  case 51: // expression: value "+" value
+#line 1236 "parser.yy"
                    {
   val one = yystack_[2].value.as < val > ();
   val two = yystack_[0].value.as < val > ();
@@ -1995,11 +1963,11 @@ VAR p;
   print("ADD b");
   k++;
 }
-#line 1999 "parser.cpp"
+#line 1967 "parser.tab.cc"
     break;
 
-  case 51: // expression: value "-" value
-#line 1300 "parser.yy"
+  case 52: // expression: value "-" value
+#line 1259 "parser.yy"
                     {
   val one = yystack_[2].value.as < val > ();
   val two = yystack_[0].value.as < val > ();
@@ -2023,11 +1991,11 @@ VAR p;
   print("SUB b");
   k++;
 }
-#line 2027 "parser.cpp"
+#line 1995 "parser.tab.cc"
     break;
 
-  case 52: // expression: value "*" value
-#line 1323 "parser.yy"
+  case 53: // expression: value "*" value
+#line 1282 "parser.yy"
                    {
   gen_mul(yystack_[2].value.as < val > (), yystack_[0].value.as < val > ());
   // print("LOAD " + std::to_string($3.bag));
@@ -2035,11 +2003,11 @@ VAR p;
   // print("SHL a");
   // k++;
 }
-#line 2039 "parser.cpp"
+#line 2007 "parser.tab.cc"
     break;
 
-  case 53: // expression: value "/" value
-#line 1330 "parser.yy"
+  case 54: // expression: value "/" value
+#line 1289 "parser.yy"
                     {
   gen_divmod(yystack_[2].value.as < val > (), yystack_[0].value.as < val > (), true);
   // print("LOAD " + std::to_string($1.bag));
@@ -2047,119 +2015,88 @@ VAR p;
   // print("SHR a");
   // k++;
 }
-#line 2051 "parser.cpp"
+#line 2019 "parser.tab.cc"
     break;
 
-  case 54: // expression: value "%" value
-#line 1337 "parser.yy"
+  case 55: // expression: value "%" value
+#line 1296 "parser.yy"
                   {
   gen_divmod(yystack_[2].value.as < val > (), yystack_[0].value.as < val > (), false);
 }
-#line 2059 "parser.cpp"
+#line 2027 "parser.tab.cc"
     break;
 
-  case 55: // condition: value "=" value
-#line 1343 "parser.yy"
+  case 56: // condition: value "=" value
+#line 1302 "parser.yy"
                    {//do optymalizacji
   equals(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2067 "parser.cpp"
+#line 2035 "parser.tab.cc"
     break;
 
-  case 56: // condition: value "!=" value
-#line 1346 "parser.yy"
+  case 57: // condition: value "!=" value
+#line 1305 "parser.yy"
                  {//do optymalizacji
   ne(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2075 "parser.cpp"
+#line 2043 "parser.tab.cc"
     break;
 
-  case 57: // condition: value ">" value
-#line 1349 "parser.yy"
+  case 58: // condition: value ">" value
+#line 1308 "parser.yy"
                  {
   gt(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2083 "parser.cpp"
+#line 2051 "parser.tab.cc"
     break;
 
-  case 58: // condition: value "<" value
-#line 1352 "parser.yy"
+  case 59: // condition: value "<" value
+#line 1311 "parser.yy"
                  {
   lt(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2091 "parser.cpp"
+#line 2059 "parser.tab.cc"
     break;
 
-  case 59: // condition: value ">=" value
-#line 1355 "parser.yy"
+  case 60: // condition: value ">=" value
+#line 1314 "parser.yy"
                  {
   ge(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2099 "parser.cpp"
+#line 2067 "parser.tab.cc"
     break;
 
-  case 60: // condition: value "<=" value
-#line 1358 "parser.yy"
+  case 61: // condition: value "<=" value
+#line 1317 "parser.yy"
                  {
   le(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2107 "parser.cpp"
+#line 2075 "parser.tab.cc"
     break;
 
-  case 61: // value: NUM
-#line 1365 "parser.yy"
+  case 62: // value: NUM
+#line 1324 "parser.yy"
     {
   val t;
   t.is_num=1;
   t.bag=yystack_[0].value.as < unsigned long > ();
-  yylhs.value.as < val > ()=t;
+  yylhs.value.as< val > ()=t;
 }
-#line 2118 "parser.cpp"
+#line 2086 "parser.tab.cc"
     break;
 
-  case 62: // value: identifier
-#line 1371 "parser.yy"
+  case 63: // value: identifier
+#line 1330 "parser.yy"
              {
   VAR* v = get_variable(yystack_[0].value.as < pid > ().address);
-
-  // O nie wolno czytać jako wartości
   if (v && v->type == O) YYERROR;
-
-  if (!yystack_[0].value.as < pid > ().is_t) {
-    unsigned long tmp = memory_offset++;
-    load_scalar_by_addr_or_ref(yystack_[0].value.as < pid > ().address);
-    print("STORE " + std::to_string(tmp)); k++;
-
-    val t; t.is_num=0; t.bag=tmp; yylhs.value.as < val > ()=t;
-  } else {
-    // odczyt elementu tablicy jako wartość
-    VAR* tab = get_variable(yystack_[0].value.as < pid > ().address);
-    if (!tab || tab->type != T) YYERROR;
-
-    const bool is_ref = is_array_ref_cell(tab->memory_address);
-
-    // Jeśli to zwykła tablica i indeks stały, możemy zwrócić bezpośredni adres komórki.
-    if (!is_ref && !yystack_[0].value.as < pid > ().var_index) {
-      unsigned long target = tab->memory_address + yystack_[0].value.as < pid > ().idx;
-      val t; t.is_num=0; t.bag=target; yylhs.value.as < val > ()=t;
-    } else {
-      // T-param albo indeks zmienny => RLOAD spod obliczonego adresu
-      unsigned long tmp = memory_offset++;
-
-      if(!yystack_[0].value.as < pid > ().is_t)YYERROR;
-      array_elem_addr_to_e(yystack_[0].value.as < pid > ());     // e = addr(tab[idx])
-      print("RLOAD e"); k++;        // a = mem[e]
-      print("STORE " + std::to_string(tmp)); k++;
-
-      val t; t.is_num=0; t.bag=tmp; yylhs.value.as < val > ()=t;
-    }
-  }
+  val t; t.is_num=0; t.bag=yystack_[0].value.as < pid > ().address; yylhs.value.as< val > ()=t;
 }
-#line 2159 "parser.cpp"
+#line 2096 "parser.tab.cc"
     break;
 
-  case 63: // identifier: PIDENTIFIER
-#line 1411 "parser.yy"
+  case 64: // identifier: PIDENTIFIER
+#line 1339 "parser.yy"
             {
   //if(get_variable($1)->type==O)YYERROR;
   pid t;
@@ -2167,13 +2104,13 @@ VAR p;
   t.var_index=0;
   t.idx=0;
   t.address=get_addr(yystack_[0].value.as < std::string > ());
-  yylhs.value.as < pid > ()=t;
+  yylhs.value.as< pid > ()=t;
 }
-#line 2173 "parser.cpp"
+#line 2110 "parser.tab.cc"
     break;
 
-  case 64: // identifier: PIDENTIFIER "[" PIDENTIFIER "]"
-#line 1420 "parser.yy"
+  case 65: // identifier: PIDENTIFIER "[" PIDENTIFIER "]"
+#line 1348 "parser.yy"
                                           {
   if(get_variable(yystack_[3].value.as < std::string > ())->type!=T)YYERROR;
   // print("LOAD " + get_addr($3));
@@ -2189,30 +2126,31 @@ VAR p;
   t.var_index=1;
   t.idx=get_addr(yystack_[1].value.as < std::string > ());
   t.address=get_addr(yystack_[3].value.as < std::string > ());
-  yylhs.value.as < pid > ()=t;
+  yylhs.value.as< pid > ()=t;
 }
-#line 2195 "parser.cpp"
+#line 2132 "parser.tab.cc"
     break;
 
-  case 65: // identifier: PIDENTIFIER "[" NUM "]"
-#line 1437 "parser.yy"
+  case 66: // identifier: PIDENTIFIER "[" NUM "]"
+#line 1365 "parser.yy"
                                   {
   VAR* tab = get_variable(yystack_[3].value.as < std::string > ());
   if(tab->type!=T)YYERROR;
   if(yystack_[1].value.as < unsigned long > ()<tab->array_start||yystack_[1].value.as < unsigned long > ()>tab->array_end)YYERROR;
+  gen_const_to_reg(yystack_[1].value.as < unsigned long > ()-tab->array_start+tab->memory_address,'e');
 
   pid t;
   t.is_t=1;
   t.var_index=0;
   t.idx=yystack_[1].value.as < unsigned long > ();
   t.address=get_addr(yystack_[3].value.as < std::string > ());
-  yylhs.value.as < pid > ()=t;
+  yylhs.value.as< pid > ()=t;
 }
-#line 2212 "parser.cpp"
+#line 2150 "parser.tab.cc"
     break;
 
 
-#line 2216 "parser.cpp"
+#line 2154 "parser.tab.cc"
 
             default:
               break;
@@ -2562,95 +2500,104 @@ VAR p;
 
   const signed char parser::yypact_ninf_ = -54;
 
-  const signed char parser::yytable_ninf_ = -64;
+  const signed char parser::yytable_ninf_ = -65;
 
   const short
   parser::yypact_[] =
   {
-     -54,     7,   -54,   -54,   -17,     8,     6,   -54,    16,    21,
-      22,   -54,    -2,    47,    30,    27,    36,   247,    -7,    29,
-     247,   -54,   -54,   -54,    50,    57,    65,    59,   -15,    14,
-     -54,   -54,    80,    83,    14,     5,   -54,    66,    68,    93,
-     247,   247,   104,   -54,    27,   -54,    54,   -54,    75,    86,
-     -54,    81,   -54,    12,   -54,    14,   247,    69,    76,    79,
-     -54,   -54,   -54,    14,    94,   138,   150,   -54,   109,   126,
-     112,   114,   130,   106,    14,    14,    14,    14,    14,    14,
-     107,   172,    14,   -54,   -54,   116,   110,   134,   -54,   -54,
-     -54,   125,   -54,   -54,   -54,    63,   247,   -54,   -54,   -54,
-     -54,   -54,   -54,   -54,    14,     0,   -54,    14,    14,    14,
-      14,    14,   101,   -54,   -54,   144,    34,   247,   122,    14,
-      14,   -54,   -54,   -54,   -54,   -54,   148,   -54,   -54,   -54,
-     184,   -54,   119,   120,   141,   247,   -54,   -54,   -54,   -54,
-     197,   247,   247,   -54,   213,   231,   121,   123,   -54,   -54
+     -54,     6,   -54,   -54,   -17,     8,    10,   -54,    29,    11,
+      28,   -54,    -2,    42,    30,     3,    36,   297,   -14,    -7,
+     297,   -54,   -54,   -54,    17,    51,    60,    40,   -15,    14,
+     -54,   -54,    61,    64,    14,    38,   -54,    44,    43,    68,
+     297,   297,   111,   -54,     3,   -54,    34,   -54,    25,    58,
+     -54,    70,   -54,    12,   -54,    14,   297,    41,    55,    59,
+     -54,   -54,   -54,    14,    71,   147,   168,   -54,    91,    93,
+      78,    81,    97,    73,    76,    14,    14,    14,    14,    14,
+      14,    74,   181,    14,   -54,   -54,    79,   113,   106,   -54,
+     -54,   -54,   114,   -54,   -54,   -54,    23,   297,   297,   -54,
+     -54,   -54,   -54,   -54,   -54,   -54,    14,     0,   -54,    14,
+      14,    14,    14,    14,    66,   -54,   -54,   112,   197,   215,
+     297,    98,    14,    14,   -54,   -54,   -54,   -54,   -54,   129,
+     -54,   -54,   -54,   231,   -54,   103,   104,   119,   297,   -54,
+     -54,   -54,   -54,   244,   297,   297,   -54,   256,   278,   100,
+     101,   -54,   -54
   };
 
   const signed char
   parser::yydefact_[] =
   {
        2,     0,     6,     1,     0,     0,     0,     3,     0,     0,
-       7,    33,     0,     0,     0,    46,    39,     0,     0,     0,
-       0,    43,    44,    45,     0,     0,     0,     0,    35,     0,
-      18,    21,     0,     0,     0,     0,    12,     0,     0,     0,
-       0,     0,     0,    34,    46,    42,     0,    32,     0,     0,
-      61,    63,    13,     0,    62,     0,     0,     0,     0,     0,
-       5,    11,    29,     0,    37,     0,     0,    10,     0,     0,
+       7,    34,     0,     0,     0,    47,    40,     0,     0,     0,
+       0,    44,    45,    46,     0,     0,     0,     0,    36,     0,
+      19,    22,     0,     0,     0,     0,    12,     0,     0,     0,
+       0,     0,     0,    35,    47,    43,     0,    33,     0,     0,
+      62,    64,    14,     0,    63,     0,     0,     0,     0,     0,
+       5,    11,    30,     0,    38,     0,     0,    10,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    30,    31,     0,    49,     0,     4,     8,
-      41,     0,    65,    64,    48,     0,     0,    55,    56,    57,
-      58,    59,    60,    19,     0,     0,    14,     0,     0,     0,
-       0,     0,     0,    40,    36,     0,     0,     0,     0,     0,
-       0,    50,    51,    52,    53,    54,     0,    47,    16,    15,
-       0,    22,     0,     0,     0,     0,    20,    23,    26,    38,
-       0,     0,     0,    17,     0,     0,     0,     0,    25,    28
+       0,     0,     0,     0,    31,    32,     0,    50,     0,     4,
+       8,    42,     0,    66,    65,    49,     0,     0,     0,    56,
+      57,    58,    59,    60,    61,    20,     0,     0,    13,     0,
+       0,     0,     0,     0,     0,    41,    37,     0,     0,     0,
+       0,     0,     0,     0,    51,    52,    53,    54,    55,     0,
+      48,    15,    18,     0,    23,     0,     0,     0,     0,    21,
+      24,    27,    39,     0,     0,     0,    16,     0,     0,     0,
+       0,    26,    29
   };
 
   const short
   parser::yypgoto_[] =
   {
-     -54,   -54,   -54,   -54,   -54,   -54,   -54,   -20,   -54,   -34,
+     -54,   -54,   -54,   -54,   -54,   -54,   -54,   -20,   -34,   -54,
      -54,   -54,   -54,   -54,   -54,   -54,   -54,   -54,   -54,   -54,
-     -54,   -54,   152,   -54,   128,   -54,   -54,   -53,    49,   -18
+     -54,   -54,   -54,   130,   -54,   102,   -54,   -54,   -53,    52,
+     -18
   };
 
   const unsigned char
   parser::yydefgoto_[] =
   {
-       0,     1,     2,     4,     7,    13,    14,    35,    73,    36,
-     135,    55,   117,    56,   141,   146,   142,   147,     9,    15,
-      37,    49,    18,    24,    25,    95,    85,    52,    53,    38
+       0,     1,     2,     4,     7,    13,    14,    35,    36,    73,
+     138,    74,    55,   120,    56,   144,   149,   145,   150,     9,
+      15,    37,    49,    18,    24,    25,    96,    86,    52,    53,
+      38
   };
 
   const short
   parser::yytable_[] =
   {
-      42,    61,    80,    16,    48,     5,    27,     3,    61,     6,
-      28,    54,   -63,     8,    39,    58,    54,    40,    50,    51,
-      65,    66,    17,    74,    75,    76,    77,    78,    79,    10,
-      60,    61,    61,    11,    29,    27,    81,    54,    30,    28,
-     119,    31,   120,    32,    12,    54,    -9,    61,    33,    34,
-      39,   118,    16,    41,    20,    26,    54,    54,    54,    54,
-      54,    54,    45,    29,    54,   128,   129,    30,    43,    46,
-      31,    44,    32,    21,    22,    23,   116,    33,    34,    70,
-      71,   114,    61,    59,   115,    57,    54,    47,    51,    54,
-      54,    54,    54,    54,    62,    63,    61,   130,    64,    69,
-      48,    54,    54,    72,    83,    27,    61,    84,    82,    28,
-      61,    61,    86,    87,    90,   140,   107,   108,   109,   110,
-     111,   144,   145,    97,    98,    99,   100,   101,   102,    67,
-      91,   105,    92,    29,    93,    94,    96,    30,   112,    27,
-      31,   103,    32,    28,   106,   113,   126,    33,    34,   127,
-     131,    27,   134,   137,   138,    28,   121,   122,   123,   124,
-     125,   139,   148,    88,   149,    19,     0,    29,   132,   133,
-       0,    30,    68,    27,    31,    89,    32,    28,     0,    29,
-       0,    33,    34,    30,     0,    27,    31,     0,    32,    28,
-       0,     0,     0,    33,    34,     0,     0,     0,    27,     0,
-       0,    29,    28,     0,     0,    30,     0,     0,    31,   104,
-      32,     0,     0,    29,    27,    33,    34,    30,    28,   136,
-      31,     0,    32,     0,     0,     0,    29,    33,    34,   143,
+      42,    61,    81,    16,    48,     5,     3,    39,    61,     6,
+      40,    54,   -64,     8,    39,    58,    54,    41,    50,    51,
+      65,    66,    17,    75,    76,    77,    78,    79,    80,    70,
+      71,    61,    61,    10,    12,    43,    82,    54,    44,    27,
+     122,   116,   123,    28,   117,    54,    11,    16,    61,    21,
+      22,    23,    -9,   121,    20,    26,    45,    54,    54,    54,
+      54,    54,    54,    60,    46,    54,    57,    29,    47,    51,
+      63,    30,    62,    64,    31,    72,    32,   118,   119,    69,
+      83,    33,    34,    84,    61,    61,    59,    85,    54,    48,
+      88,    54,    54,    54,    54,    54,    91,    92,    93,    61,
+     133,    94,    95,    97,    54,    54,    98,   108,   105,    61,
+     114,   129,    27,    61,    61,    87,    28,   130,   143,   109,
+     110,   111,   112,   113,   147,   148,   134,    99,   100,   101,
+     102,   103,   104,   137,   115,   107,    67,   140,   141,   142,
+      29,   151,   152,    19,    30,     0,    68,    31,    27,    32,
+       0,     0,    28,     0,    33,    34,     0,     0,     0,     0,
+       0,   124,   125,   126,   127,   128,     0,     0,     0,    27,
+       0,     0,    89,    28,   135,   136,    29,     0,     0,     0,
       30,     0,    27,    31,     0,    32,    28,     0,     0,     0,
-      33,    34,    29,     0,     0,     0,    30,     0,    27,    31,
-       0,    32,    28,     0,   -24,     0,    33,    34,     0,     0,
-      29,     0,     0,     0,    30,     0,     0,    31,     0,    32,
-       0,     0,   -27,     0,    33,    34,    29,     0,     0,     0,
+      33,    34,     0,    90,     0,     0,     0,    29,    27,     0,
+       0,    30,    28,     0,    31,     0,    32,     0,     0,     0,
+      29,    33,    34,     0,    30,     0,    27,    31,   106,    32,
+      28,     0,     0,     0,    33,    34,    29,     0,   131,     0,
+      30,     0,    27,    31,     0,    32,    28,     0,     0,     0,
+      33,    34,     0,     0,    29,    27,     0,   132,    30,    28,
+       0,    31,     0,    32,     0,     0,     0,    27,    33,    34,
+      29,    28,     0,     0,    30,     0,   139,    31,     0,    32,
+       0,     0,     0,    29,    33,    34,   146,    30,     0,    27,
+      31,     0,    32,    28,     0,    29,     0,    33,    34,    30,
+       0,     0,    31,     0,    32,     0,     0,   -25,    27,    33,
+      34,     0,    28,     0,     0,     0,     0,    29,     0,     0,
+       0,    30,     0,     0,    31,     0,    32,     0,     0,   -28,
+       0,    33,    34,     0,     0,     0,    29,     0,     0,     0,
       30,     0,     0,    31,     0,    32,     0,     0,     0,     0,
       33,    34
   };
@@ -2658,34 +2605,39 @@ VAR p;
   const short
   parser::yycheck_[] =
   {
-      20,    35,    55,     5,    19,    22,     1,     0,    42,    26,
-       5,    29,    27,     5,    21,    33,    34,    24,     4,     5,
-      40,    41,    24,    11,    12,    13,    14,    15,    16,    23,
-      25,    65,    66,    17,    29,     1,    56,    55,    33,     5,
-      40,    36,    42,    38,    23,    63,    24,    81,    43,    44,
-      21,   104,     5,    24,    24,    19,    74,    75,    76,    77,
-      78,    79,     5,    29,    82,    31,    32,    33,    18,     4,
-      36,    21,    38,    46,    47,    48,    96,    43,    44,     4,
-       5,    18,   116,    34,    21,     5,   104,    28,     5,   107,
-     108,   109,   110,   111,    28,    27,   130,   117,     5,    45,
-      19,   119,   120,    17,    28,     1,   140,    28,    39,     5,
-     144,   145,    63,    19,     5,   135,     6,     7,     8,     9,
-      10,   141,   142,    74,    75,    76,    77,    78,    79,    25,
-       4,    82,    20,    29,    20,     5,    30,    33,     4,     1,
-      36,    34,    38,     5,    28,    20,    45,    43,    44,     5,
-      28,     1,     4,    34,    34,     5,   107,   108,   109,   110,
-     111,    20,    41,    25,    41,    13,    -1,    29,   119,   120,
-      -1,    33,    44,     1,    36,    25,    38,     5,    -1,    29,
-      -1,    43,    44,    33,    -1,     1,    36,    -1,    38,     5,
-      -1,    -1,    -1,    43,    44,    -1,    -1,    -1,     1,    -1,
-      -1,    29,     5,    -1,    -1,    33,    -1,    -1,    36,    37,
-      38,    -1,    -1,    29,     1,    43,    44,    33,     5,    35,
-      36,    -1,    38,    -1,    -1,    -1,    29,    43,    44,    32,
+      20,    35,    55,     5,    19,    22,     0,    21,    42,    26,
+      24,    29,    27,     5,    21,    33,    34,    24,     4,     5,
+      40,    41,    24,    11,    12,    13,    14,    15,    16,     4,
+       5,    65,    66,    23,    23,    18,    56,    55,    21,     1,
+      40,    18,    42,     5,    21,    63,    17,     5,    82,    46,
+      47,    48,    24,   106,    24,    19,     5,    75,    76,    77,
+      78,    79,    80,    25,     4,    83,     5,    29,    28,     5,
+      27,    33,    28,     5,    36,    17,    38,    97,    98,    45,
+      39,    43,    44,    28,   118,   119,    34,    28,   106,    19,
+      19,   109,   110,   111,   112,   113,     5,     4,    20,   133,
+     120,    20,     5,    30,   122,   123,    30,    28,    34,   143,
+       4,    45,     1,   147,   148,    63,     5,     5,   138,     6,
+       7,     8,     9,    10,   144,   145,    28,    75,    76,    77,
+      78,    79,    80,     4,    20,    83,    25,    34,    34,    20,
+      29,    41,    41,    13,    33,    -1,    44,    36,     1,    38,
+      -1,    -1,     5,    -1,    43,    44,    -1,    -1,    -1,    -1,
+      -1,   109,   110,   111,   112,   113,    -1,    -1,    -1,     1,
+      -1,    -1,    25,     5,   122,   123,    29,    -1,    -1,    -1,
       33,    -1,     1,    36,    -1,    38,     5,    -1,    -1,    -1,
-      43,    44,    29,    -1,    -1,    -1,    33,    -1,     1,    36,
-      -1,    38,     5,    -1,    41,    -1,    43,    44,    -1,    -1,
-      29,    -1,    -1,    -1,    33,    -1,    -1,    36,    -1,    38,
-      -1,    -1,    41,    -1,    43,    44,    29,    -1,    -1,    -1,
+      43,    44,    -1,    25,    -1,    -1,    -1,    29,     1,    -1,
+      -1,    33,     5,    -1,    36,    -1,    38,    -1,    -1,    -1,
+      29,    43,    44,    -1,    33,    -1,     1,    36,    37,    38,
+       5,    -1,    -1,    -1,    43,    44,    29,    -1,    31,    -1,
+      33,    -1,     1,    36,    -1,    38,     5,    -1,    -1,    -1,
+      43,    44,    -1,    -1,    29,     1,    -1,    32,    33,     5,
+      -1,    36,    -1,    38,    -1,    -1,    -1,     1,    43,    44,
+      29,     5,    -1,    -1,    33,    -1,    35,    36,    -1,    38,
+      -1,    -1,    -1,    29,    43,    44,    32,    33,    -1,     1,
+      36,    -1,    38,     5,    -1,    29,    -1,    43,    44,    33,
+      -1,    -1,    36,    -1,    38,    -1,    -1,    41,     1,    43,
+      44,    -1,     5,    -1,    -1,    -1,    -1,    29,    -1,    -1,
+      -1,    33,    -1,    -1,    36,    -1,    38,    -1,    -1,    41,
+      -1,    43,    44,    -1,    -1,    -1,    29,    -1,    -1,    -1,
       33,    -1,    -1,    36,    -1,    38,    -1,    -1,    -1,    -1,
       43,    44
   };
@@ -2693,45 +2645,46 @@ VAR p;
   const signed char
   parser::yystos_[] =
   {
-       0,    50,    51,     0,    52,    22,    26,    53,     5,    67,
-      23,    17,    23,    54,    55,    68,     5,    24,    71,    71,
-      24,    46,    47,    48,    72,    73,    19,     1,     5,    29,
-      33,    36,    38,    43,    44,    56,    58,    69,    78,    21,
-      24,    24,    56,    18,    21,     5,     4,    28,    19,    70,
-       4,     5,    76,    77,    78,    60,    62,     5,    78,    77,
-      25,    58,    28,    27,     5,    56,    56,    25,    73,    45,
-       4,     5,    17,    57,    11,    12,    13,    14,    15,    16,
-      76,    56,    39,    28,    28,    75,    77,    19,    25,    25,
-       5,     4,    20,    20,     5,    74,    30,    77,    77,    77,
-      77,    77,    77,    34,    37,    77,    28,     6,     7,     8,
-       9,    10,     4,    20,    18,    21,    56,    61,    76,    40,
-      42,    77,    77,    77,    77,    77,    45,     5,    31,    32,
-      56,    28,    77,    77,     4,    59,    35,    34,    34,    20,
-      56,    63,    65,    32,    56,    56,    64,    66,    41,    41
+       0,    50,    51,     0,    52,    22,    26,    53,     5,    68,
+      23,    17,    23,    54,    55,    69,     5,    24,    72,    72,
+      24,    46,    47,    48,    73,    74,    19,     1,     5,    29,
+      33,    36,    38,    43,    44,    56,    57,    70,    79,    21,
+      24,    24,    56,    18,    21,     5,     4,    28,    19,    71,
+       4,     5,    77,    78,    79,    61,    63,     5,    79,    78,
+      25,    57,    28,    27,     5,    56,    56,    25,    74,    45,
+       4,     5,    17,    58,    60,    11,    12,    13,    14,    15,
+      16,    77,    56,    39,    28,    28,    76,    78,    19,    25,
+      25,     5,     4,    20,    20,     5,    75,    30,    30,    78,
+      78,    78,    78,    78,    78,    34,    37,    78,    28,     6,
+       7,     8,     9,    10,     4,    20,    18,    21,    56,    56,
+      62,    77,    40,    42,    78,    78,    78,    78,    78,    45,
+       5,    31,    32,    56,    28,    78,    78,     4,    59,    35,
+      34,    34,    20,    56,    64,    66,    32,    56,    56,    65,
+      67,    41,    41
   };
 
   const signed char
   parser::yyr1_[] =
   {
        0,    49,    51,    50,    52,    52,    52,    54,    53,    55,
-      53,    56,    56,    57,    58,    58,    59,    58,    60,    61,
-      58,    62,    58,    63,    64,    58,    65,    66,    58,    58,
-      58,    58,    58,    68,    67,    70,    69,    71,    71,    71,
-      71,    72,    72,    73,    73,    73,    73,    74,    74,    75,
-      75,    75,    75,    75,    75,    76,    76,    76,    76,    76,
-      76,    77,    77,    78,    78,    78
+      53,    56,    56,    57,    58,    59,    57,    60,    57,    61,
+      62,    57,    63,    57,    64,    65,    57,    66,    67,    57,
+      57,    57,    57,    57,    69,    68,    71,    70,    72,    72,
+      72,    72,    73,    73,    74,    74,    74,    74,    75,    75,
+      76,    76,    76,    76,    76,    76,    77,    77,    77,    77,
+      77,    77,    78,    78,    79,    79,    79
   };
 
   const signed char
   parser::yyr2_[] =
   {
        0,     2,     0,     3,     8,     7,     0,     0,     7,     0,
-       6,     2,     1,     0,     4,     6,     0,     9,     0,     0,
-       7,     0,     6,     0,     0,    11,     0,     0,    11,     2,
-       3,     3,     2,     0,     5,     0,     5,     3,     8,     1,
-       6,     4,     2,     1,     1,     1,     0,     3,     1,     1,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     1,     1,     1,     4,     4
+       6,     2,     1,     4,     0,     0,     9,     0,     6,     0,
+       0,     7,     0,     6,     0,     0,    11,     0,     0,    11,
+       2,     3,     3,     2,     0,     5,     0,     5,     3,     8,
+       1,     6,     4,     2,     1,     1,     1,     0,     3,     1,
+       1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     1,     1,     1,     4,     4
   };
 
 
@@ -2749,8 +2702,8 @@ VAR p;
   "DO", "ENDWHILE", "REPEAT", "UNTIL", "FOR", "FROM", "TO", "ENDFOR",
   "DOWNTO", "READ", "WRITE", "\":\"", "typeT", "typeI", "typeO", "$accept",
   "program_all", "$@1", "procedures", "main", "$@2", "$@3", "commands",
-  "subroutine", "command", "$@4", "$@5", "$@6", "$@7", "$@8", "$@9",
-  "$@10", "$@11", "proc_head", "$@12", "proc_call", "$@13", "declarations",
+  "command", "$@4", "$@5", "$@6", "$@7", "$@8", "$@9", "@10", "$@11",
+  "@12", "$@13", "proc_head", "$@14", "proc_call", "$@15", "declarations",
   "args_decl", "type", "args", "expression", "condition", "value",
   "identifier", YY_NULLPTR
   };
@@ -2761,13 +2714,13 @@ VAR p;
   const short
   parser::yyrline_[] =
   {
-       0,   912,   912,   912,   927,   933,   939,   943,   943,   949,
-     949,   956,   957,   961,   970,   985,   989,   989,   998,  1000,
-     998,  1009,  1009,  1018,  1047,  1018,  1064,  1093,  1064,  1109,
-    1112,  1125,  1136,  1140,  1140,  1155,  1155,  1188,  1196,  1206,
-    1214,  1227,  1241,  1257,  1258,  1259,  1260,  1264,  1265,  1269,
-    1277,  1300,  1323,  1330,  1337,  1343,  1346,  1349,  1352,  1355,
-    1358,  1365,  1371,  1411,  1420,  1437
+       0,   844,   844,   844,   860,   866,   872,   876,   876,   882,
+     882,   889,   890,   894,   933,   937,   933,   950,   950,   960,
+     962,   960,   973,   973,   982,  1011,   982,  1027,  1052,  1027,
+    1066,  1069,  1075,  1086,  1090,  1090,  1105,  1105,  1142,  1150,
+    1160,  1168,  1181,  1197,  1216,  1217,  1218,  1219,  1223,  1224,
+    1228,  1236,  1259,  1282,  1289,  1296,  1302,  1305,  1308,  1311,
+    1314,  1317,  1324,  1330,  1339,  1348,  1365
   };
 
   void
@@ -2799,9 +2752,9 @@ VAR p;
 
 
 } // yy
-#line 2803 "parser.cpp"
+#line 2756 "parser.tab.cc"
 
-#line 1451 "parser.yy"
+#line 1380 "parser.yy"
 
 
 namespace yy {
