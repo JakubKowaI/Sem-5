@@ -59,6 +59,7 @@ Powiększanie przepływu jest O(m), bo najdłuższa ścieżka powiększająca mo
 Łącznie dostajemy O($n\times m \times m$), czyli \textbf{O($\text{\textbf{nm}}^{2}$)}.
 
 \section{Algorytm Dinica}
+\subsection{Implementacja}
 \SetAlgorithmName{Dinic}{}{}
 \begin{algorithm}[H]
     \SetKwInOut{Input}{Input}
@@ -66,28 +67,23 @@ Powiększanie przepływu jest O(m), bo najdłuższa ścieżka powiększająca mo
 
     \Input{źródło s, cel t}
     \Output{Maksymalny możliwy przepływ}
-    \While{True (faktycznie to dopóki jest ścieżka powiększająca z s do t)}{
-        queue.push(s)\;
-        //Szukanie ścieżki poprzez BFS (zwraca minimalny łuk residualny)
-        \eIf{Nie ma ścieżki powiększającej}{
-            break;
-        }
-        {
-            //Przejdź znalezioną ścieżką powiekszającą od końca (t) i powiększaj o znaleziony pathFlow
+    \While{bfsEstimate(s, t) (dopóli jest ścieżka między s a t)}{
+        \While{dfsPush(s, t, max\_int) > 0 (dopóki nie wyczerpały się ścieżki w grafie wartwowym stworzonym przez bfsEstimate(s, t))}{
+          //Zliczamy łączną ilość ścieżek powiekszających i sumę powiększonego przepływu.
         }
 
     }
     return maxFlow;
       \caption{}
 \end{algorithm}
-\subsection{Implementacja}
 \subsection{Złożoność}
+Algorytm w każdej fazie wykona BFS o złożoności O(m) oraz maksymalnie n DFS o złożoności O(m). Wiemy, że graf nie będzie cykliczny, co oznacza, że po każdej fazie będziemy nasycać przynajmniej jedną krawedź. Uświadamia nam to, że faz może być najwyżej n (brak cykli w grafie). Więc ostatecznie otrzymujemy O($n \times (m + n \times m)$), co daje nam: \textbf{O($\textbf{n}^{2}\textbf{m}$)}.
 
 \section{Zapisywanie do modeli LP}
 \subsection{Implementacja}
 Klasa FlowNetwork zwyczajnie zapisuje do pliku .jl najpierw wstęp potrzebny do modelu. Potem zapisuje ograniczenia przepływu wszystkich krawędzi (domyślnie jest 0) jako macierz kwadratową \textit{G}. Jako zmienną tworzy macierz kwadratową \textit{f} z ograniczeniami zapisanymi wcześniej w \textit{G}. Następnie zapewnia ograniczeniami, że węzły inne niż \textit{{s,t}} będą przyjmowały taki sam przepływ jaki przekazują dalej. Ostatecznie maksymalizujemy sumę przepływów wychodzących z pierwszego węzła, czyli naszego \textit{s}.
 
-\section{Zadanie Hiperkostka}
+\section{Zadanie Hiperkostka} 
 \subsection{Opis zadania}
 Dla parametru k zbudować skierowaną k-wymiarową hiperkostkę $H_{k}$ o $2^{k}$ wierzchołkach opisanych k-bitowymi ciągami.
 Krawędzie łączą wierzchołki mające dokładnie jedną jedynkę w zapisie bitowym i skierowane są od wierzchołka o mniejszej wadze Hamminga do tego o większej wadze (mniejsza ilość jedynek $\rightarrow$ większa ilość jedynek).

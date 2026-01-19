@@ -86,10 +86,16 @@
     unsigned long address;
   };
 
+  struct Procedure{
+    unsigned long jumped_from;
+    unsigned long procedure_start;
+    
+  };
+
   struct FormalParam { TYPE type; unsigned long addr; };
   struct LoopPatch { unsigned long start; unsigned long jexit; };
 
-#line 93 "parser.hpp"
+#line 99 "parser.hpp"
 
 
 # include <cstdlib> // std::abort
@@ -224,7 +230,7 @@
 #endif
 
 namespace yy {
-#line 228 "parser.hpp"
+#line 234 "parser.hpp"
 
 
 
@@ -2260,7 +2266,7 @@ switch (yykind)
 
 
 } // yy
-#line 2264 "parser.hpp"
+#line 2270 "parser.hpp"
 
 
 

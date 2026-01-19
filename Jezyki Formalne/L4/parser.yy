@@ -23,7 +23,8 @@
     T,
     I,
     O,
-    U
+    U,
+    R
   };
 
   struct VAR {
@@ -45,6 +46,22 @@
     unsigned long address;
   };
 
+  struct ref{
+    std::string name;
+    enum TYPE type;
+    unsigned long address;
+  };
+
+  struct Procedure{
+    unsigned long jumped_from;
+    unsigned long procedure_start;
+    //std::map<std::string, unsigned long> variables;
+    std::vector<ref> variables;
+    std::vector<VAR> to_declare;
+    unsigned long appearances;
+    
+  };
+
   struct FormalParam { TYPE type; unsigned long addr; };
   struct LoopPatch { unsigned long start; unsigned long jexit; };
 }
@@ -58,7 +75,7 @@
 
   unsigned long k=0;
   std::map<std::string, VAR> var_table;
-  std::map<std::string, unsigned long> procedures;
+  std::vector<std::pair<std::string, Procedure>> procedures;
   std::vector<std::string> code;
   unsigned long memory_offset = 0;
   std::stack<unsigned long> temp;
@@ -78,6 +95,25 @@
   static std::string current_call_name;
   static std::vector<std::string> current_call_args;
   static std::vector<FormalParam> current_formals;
+
+  static std::vector<ref> args_in_proc;
+  static std::string current_proc;
+
+  // Procedure temp;
+  // temp.procedure_start=(unsigned long)pc();
+  // temp.jumped_from=memory_offset++;
+  // temp.variables=args_in_proc;
+  // temp.appearances=0;
+
+  // args_in_proc.clear();
+
+  // procedures.push_back({[$1],temp});
+
+  //  unsigned long a;
+    
+  //   for(auto [name,Proc] : procedures){
+  //     if(name == "PROGRAM")a=Proc.procedure_start;
+  //   }
 
   
   static std::vector<unsigned long> scope_mem_mark;
@@ -267,18 +303,6 @@
     k++;
   }
 
-  static void push_ra() {
-    // push(ra): mem[h]=ra; h++
-    print("RSTORE h"); k++;
-    print("INC h");    k++;
-  }
-
-  static void pop_ra() {
-    // pop(ra): h--; ra=mem[h]
-    print("DEC h");    k++;
-    print("RLOAD h");  k++;
-  }
-
   void stack_pop_to_rb() {
       print("DEC h");    
       k++;
@@ -290,28 +314,7 @@
       k++;
   }
 
-  static void invert_g() {
-  // g := 1 - g, zakładając że g jest 0/1
-  // Używa ra do testu, patchuje skoki po pc()
-  print("RST a"); k++;
-  print("ADD g"); k++;                 // a = g
-  unsigned long j_is_zero = (unsigned long)pc();
-  print("JZERO 0"); k++;               // jeśli g==0 -> ustawimy g=1
-
-  // g != 0 => g = 0
-  print("RST g"); k++;
-  unsigned long j_end = (unsigned long)pc();
-  print("JUMP 0"); k++;
-
-  // g == 0 => g = 1
-  patch(j_is_zero, pc());
-  print("RST g"); k++;
-  print("INC g"); k++;
-
-  patch(j_end, pc());
-}
-
-  void gt(val one,val two){
+  void gt(val one,val two){w
     if(two.is_num){
       gen_const_to_reg(two.bag,'b');
     }else{
@@ -320,7 +323,6 @@
       print("SWP b");
       k++;
     }
-
 
     if(one.is_num){
       gen_const_to_reg(one.bag,'a');
@@ -370,262 +372,156 @@
     patch(jskip, pc());
   }
 
-  // void ge(val one, val two){
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
-
-
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //   }
-
-  //   print("SUB b"); k++;
-  //   print("RST g"); k++;
-  //   print("INC g"); k++;
-  //   unsigned long jset0 = (unsigned long)pc();
-  //   print("JPOS 0");
-  //   k++;
-  //   unsigned long jend = (unsigned long)pc();
-  //   print("JUMP 0"); k++;
-  //   patch(jset0, pc());
-  //   print("RST g"); k++;
-  //   patch(jend,pc());
-  // }
-
   void ge(val one, val two){
-  // one >= two  <=>  NOT(two > one)
-  gt(two, one);
-  invert_g();
-}
+    if(two.is_num){
+      gen_const_to_reg(two.bag,'b');
+    }else{
+      print("LOAD " + std::to_string(two.bag));
+      k++;
+      print("SWP b");
+      k++;
+    }
 
-  // void le(val one, val two){
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
 
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //   }
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag));
+      k++;
+    }
 
-  //   print("SUB b"); k++;
-  //   print("RST g"); k++;
-  //   print("INC g"); k++;
-  //   unsigned long jset0 = (unsigned long)pc();
-  //   print("JPOS 0"); k++;
-  //   unsigned long jend = (unsigned long)pc();
-  //   print("JUMP 0"); k++;
-  //   patch(jset0, pc());
-  //   print("RST g"); k++;
-  //   patch(jend, pc());
-  // }
+    print("SUB b"); k++;
+    print("RST g"); k++;
+    unsigned long jgt = (unsigned long)pc();
+    print("JPOS 0"); k++;
+    print("SWP c"); k++;
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag));
+      k++;
+    }
+
+    print("SWP b"); k++;
+    print("SUB b"); k++;
+    print("ADD c"); k++;
+    unsigned long jeq = (unsigned long)pc();
+    print("JPOS 0"); k++;
+    patch(jgt, pc());
+    print("INC g"); k++;
+    patch(jeq, pc());
+  }
 
   void le(val one, val two){
-  // one <= two  <=>  NOT(one > two)
-  gt(one, two);
-  invert_g();
-}
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'b');
+    }else{
+      print("LOAD " + std::to_string(one.bag));
+      k++;
+      print("SWP b");
+      k++;
+    }
 
-  // void equals(val one, val two){
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
 
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //   }
+    if(two.is_num){
+      gen_const_to_reg(two.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(two.bag));
+      k++;
+    }
 
-  //   print("SUB b");
-  //   k++;
-  //   print("SWP c");
-  //   k++;
-    
-    
-  //   if(one.is_num){
-  //     print("SWP b");
-  //     k++;
-  //     gen_const_to_reg(one.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
+    print("SUB b"); k++;
+    print("RST g"); k++;
+    unsigned long jgt = (unsigned long)pc();
+    print("JPOS 0"); k++;
+    print("SWP c"); k++;
 
-  //   print("SUB b");
-  //   k++;
-  //   print("ADD c");
-  //   k++;
-  //   print("RST g");
-  //   k++;
-  //   unsigned long jset = pc(); 
-  //   print("JPOS 0");
-  //   k++;
-  //   print("INC g");
-  //   k++;
-  //   patch(jset, pc());
-  // }
+    if(two.is_num){
+      gen_const_to_reg(two.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(two.bag));
+      k++;
+    }
+
+    print("SWP b"); k++;
+    print("SUB b"); k++;
+    print("ADD c"); k++;
+    unsigned long jeq = (unsigned long)pc();
+    print("JPOS 0"); k++;
+    patch(jgt, pc());
+    print("INC g"); k++;
+    patch(jeq, pc());
+  }
 
   void equals(val one, val two){
-  // equals: (one==two) <=> max(one-two,0)+max(two-one,0) == 0
-  // r1 = max(one-two,0) -> c
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
+    if(two.is_num){
+      gen_const_to_reg(two.bag,'b');
+    }else{
+      print("LOAD " + std::to_string(two.bag)); k++;
+      print("SWP b"); k++;
+    }
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
+
+    print("SUB b"); k++;
+    print("SWP c"); k++;
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
     print("SWP b"); k++;
-  }
 
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-  }
+    print("SUB b"); k++;
+    print("ADD c"); k++;
 
-  print("SUB b"); k++;
-  print("SWP c"); k++; // c = r1
-
-  // r2 = max(two-one,0) -> a
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-    print("SWP b"); k++;
-  }
-
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
-  }
-
-  print("SUB b"); k++;  // a = r2
-  print("ADD c"); k++;  // a = r1+r2 (sum)
-
-  // g = 1 jeśli sum==0, inaczej 0
-  print("RST g"); k++;
-  print("INC g"); k++;            // g=1
-  unsigned long j_end = (unsigned long)pc();
-  print("JZERO 0"); k++;          // jeśli sum==0 -> zostaw g=1 i skocz na koniec
-  print("RST g"); k++;            // sum>0 -> g=0
-  patch(j_end, pc());
+    print("RST g"); k++;
+    print("INC g"); k++;
+    unsigned long j_end = (unsigned long)pc();
+    print("JZERO 0"); k++;
+    print("RST g"); k++;
+    patch(j_end, pc());
 }
 
-  // void ne(val one, val two){
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
-
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //   }
-
-  //   print("SUB b");
-  //   k++;
-  //   print("SWP c");
-  //   k++;
-
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
-
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //   }
-  //   print("ADD c");
-  //   k++;
-  //   print("RST g");
-  //   k++;
-  //   unsigned long jset = pc();
-  //   print("JZERO 0");
-  //   k++;
-  //   print("INC g");
-  //   k++;
-  //   patch(jset, pc());
-  // }
-
   void ne(val one, val two){
-  // ne: (one!=two) <=> r1+r2 > 0
-  // r1 = max(one-two,0) -> c
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
+    if(two.is_num){
+      gen_const_to_reg(two.bag,'b');
+    }else{
+      print("LOAD " + std::to_string(two.bag)); k++;
+      print("SWP b"); k++;
+    }
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
+
+    print("SUB b"); k++;
+    print("SWP c"); k++;
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
     print("SWP b"); k++;
-  }
 
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-  }
+    print("SUB b"); k++;
+    print("ADD c"); k++;
 
-  print("SUB b"); k++;
-  print("SWP c"); k++; // c = r1
-
-  // r2 = max(two-one,0) -> a
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-    print("SWP b"); k++;
-  }
-
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
-  }
-
-  print("SUB b"); k++;  // a = r2
-  print("ADD c"); k++;  // a = sum
-
-  // g = 1 jeśli sum>0, inaczej 0
-  print("RST g"); k++;
-  unsigned long jskip = (unsigned long)pc();
-  print("JZERO 0"); k++;  // sum==0 -> pomiń INC
-  print("INC g"); k++;    // sum>0 -> true
-  patch(jskip, pc());
+    print("RST g"); k++;
+    print("INC g"); k++;
+    unsigned long j_end = (unsigned long)pc();
+    print("JPOS 0"); k++;
+    print("RST g"); k++;
+    patch(j_end, pc());
 }
 
 
@@ -910,14 +806,21 @@
 
 program_all:
 {
-    gen_const_to_reg(100000UL , 'h');
+    // gen_const_to_reg(100000UL , 'h');
     start_point =(unsigned long) pc();
     //std::cerr<<"SAM START "<<start_point<<std::endl;
     print("JUMP 0"); k++;
+    begin_scope();
 }
 procedures main {
     //std::cerr<<"START "<<start_point<<std::endl;
-    patch(start_point, (int)procedures["PROGRAM"]);
+    unsigned long a;
+    
+    for(auto [name,Proc] : procedures){
+      if(name == "PROGRAM")a=Proc.procedure_start;
+    }
+
+    patch(start_point, a);
     print("HALT");
     k++;
 }
@@ -925,13 +828,12 @@ procedures main {
 
 procedures:
 procedures PROCEDURE proc_head IS declarations IN commands END { 
-  pop_ra();
+  gen_const
   print("RTRN");    k++;
 
   end_scope(false);
  }
 | procedures PROCEDURE proc_head IS IN commands END { 
-  pop_ra();
   print("RTRN");    k++;
 
   end_scope(false); 
@@ -941,13 +843,29 @@ procedures PROCEDURE proc_head IS declarations IN commands END {
 
 main:
 PROGRAM IS {
-  procedures["PROGRAM"]=pc();
+  Procedure m;
+  m.procedure_start=(unsigned long)pc();
+  m.jumped_from=memory_offset++;
+  m.variables=args_in_proc;
+  m.appearances=0;
+
+  args_in_proc.clear();
+
+  procedures.push_back({"PROGRAM",m});
   begin_scope();
 } declarations IN commands END {
 
 }
 | PROGRAM IS {
-  procedures["PROGRAM"]=pc();
+  Procedure m;
+  m.procedure_start=(unsigned long)pc();
+  m.jumped_from=memory_offset++;
+  m.variables=args_in_proc;
+  m.appearances=0;
+
+  args_in_proc.clear();
+
+  procedures.push_back({"PROGRAM",m});
   begin_scope();
 } IN commands END {}
 ;
@@ -1138,16 +1056,23 @@ identifier SET expression SEMICOLON {
 
 proc_head:
 PIDENTIFIER LPAREN {
-  procedures[$1] = (unsigned long)pc();
+  //procedures[$1] = (unsigned long)pc();
 
-  begin_scope();
+  //begin_scope();
 
-  push_ra();
-
-  current_proc_name = $1;
-  current_formals.clear();
+  //current_proc_name = $1;
+  //current_formals.clear();
 } args_decl RPAREN {
-  proc_formals[current_proc_name] = current_formals;
+  Procedure temp;
+  temp.procedure_start=(unsigned long)pc();
+  temp.jumped_from=memory_offset++;
+  temp.variables=args_in_proc;
+  temp.appearances=0;
+
+  args_in_proc.clear();
+
+  procedures.push_back({[$1],temp});
+  //proc_formals[current_proc_name] = current_formals;
 }
 ;
 
@@ -1225,31 +1150,39 @@ declarations COMMA PIDENTIFIER {
 
 args_decl:
 args_decl COMMA type PIDENTIFIER {
-VAR p;
-  p.memory_address = memory_offset++;
-  p.type = $3;
-  p.array_start = 0; p.array_end = 0;
+  // VAR p;
+  // p.memory_address = memory_offset++;
+  // p.type = $3;
+  // p.array_start = 0; p.array_end = 0;
 
-  declare_var_in_scope(p, $4);
+  // declare_var_in_scope(p, $4);
 
-  // oznacz, że to "komórka-wskaźnik"
-  if (p.type == T) array_ref_cells.insert(p.memory_address);
-  else             ref_cells.insert(p.memory_address);
+  // // oznacz, że to "komórka-wskaźnik"
+  // if (p.type == T) array_ref_cells.insert(p.memory_address);
+  // else             ref_cells.insert(p.memory_address);
 
-  current_formals.push_back(FormalParam{p.type, p.memory_address});
+  // current_formals.push_back(FormalParam{p.type, p.memory_address});
+  ref v;
+  v.name = $4;
+  v.type = $3;
+  args_in_proc.push_back(v);
   }
 | type PIDENTIFIER {
-  VAR p;
-  p.memory_address = memory_offset++;
-  p.type = $1;
-  p.array_start = 0; p.array_end = 0;
+  // VAR p;
+  // p.memory_address = memory_offset++;
+  // p.type = $1;
+  // p.array_start = 0; p.array_end = 0;
 
-  declare_var_in_scope(p, $2);
+  // declare_var_in_scope(p, $2);
 
-  if (p.type == T) array_ref_cells.insert(p.memory_address);
-  else             ref_cells.insert(p.memory_address);
+  // if (p.type == T) array_ref_cells.insert(p.memory_address);
+  // else             ref_cells.insert(p.memory_address);
 
-  current_formals.push_back(FormalParam{p.type, p.memory_address});
+  // current_formals.push_back(FormalParam{p.type, p.memory_address});
+  ref v;
+  v.name = $2;
+  v.type = $1;
+  args_in_proc.push_back(v);
 }
 ;
 
@@ -1419,13 +1352,6 @@ PIDENTIFIER {
 }
 | PIDENTIFIER LSQUARE PIDENTIFIER RSQUARE {
   if(get_variable($1)->type!=T)YYERROR;
-  // print("LOAD " + get_addr($3));
-  // VAR* tab = get_variable($1);
-  // gen_const_to_reg(tab->array_start,'b');
-  // print("SUB b");
-  // gen_const_to_reg(tab->memory_address,'b');
-  // print("ADD b");
-  // print("SWP e");
 
   pid t;
   t.is_t=1;

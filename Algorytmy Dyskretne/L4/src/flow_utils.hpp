@@ -23,7 +23,7 @@ public:
     int n;
     vector<vector<Edge>> adj;
     
-    // For Dinic
+    //Dinic
     vector<int> level;
     vector<int> ptr;
 
@@ -77,7 +77,7 @@ public:
                 if (lastNode != -1) break;
             }
 
-            if (lastNode == -1) break; // No augmenting path
+            if (lastNode == -1) break;
 
             augmentingPaths++;
             maxFlow += pathFlow;
@@ -120,12 +120,12 @@ public:
         if (u == t) return pushed;
         for (int& i = ptr[u]; i < adj[u].size(); ++i) {
             Edge &e = adj[u][i];
-            int tr = e.to;
-            if (level[u] + 1 != level[tr] || e.capacity - e.flow == 0) continue;
-            int push = dfsPush(tr, t, min(pushed, e.capacity - e.flow));
+            int v = e.to;
+            if (level[u] + 1 != level[v] || e.capacity - e.flow == 0) continue;
+            int push = dfsPush(v, t, min(pushed, e.capacity - e.flow));
             if (push == 0) continue;
             e.flow += push;
-            adj[tr][e.rev].flow -= push; // Residual
+            adj[v][e.rev].flow -= push;
             return push;
         }
         return 0;
@@ -133,9 +133,7 @@ public:
 
     long long dinic(int s, int t) {
         long long maxFlow = 0;
-        augmentingPaths = 0; // In Dinic, we can count phases or paths. Standard EK metric is paths. 
-                             // Counting exact "augmenting paths" in Dinic is tricky because it pushes multiple paths in one DFS.
-                             // We will count the number of DFS pushes that result in flow > 0.
+        augmentingPaths = 0;
         
         while (bfsEstimate(s, t)) {
             fill(ptr.begin(), ptr.end(), 0);

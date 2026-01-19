@@ -42,7 +42,7 @@
 
 
 // Unqualified %code blocks.
-#line 52 "parser.yy"
+#line 58 "parser.yy"
 
   namespace yy {
       parser::symbol_type yylex();
@@ -261,17 +261,17 @@
     k++;
   }
 
-  static void push_ra() {
-    // push(ra): mem[h]=ra; h++
-    print("RSTORE h"); k++;
-    print("INC h");    k++;
-  }
+  // static void push_ra() {
+  //   // push(ra): mem[h]=ra; h++
+  //   print("RSTORE h"); k++;
+  //   print("INC h");    k++;
+  // }
 
-  static void pop_ra() {
-    // pop(ra): h--; ra=mem[h]
-    print("DEC h");    k++;
-    print("RLOAD h");  k++;
-  }
+  // static void pop_ra() {
+  //   // pop(ra): h--; ra=mem[h]
+  //   print("DEC h");    k++;
+  //   print("RLOAD h");  k++;
+  // }
 
   void stack_pop_to_rb() {
       print("DEC h");    
@@ -436,190 +436,74 @@
   invert_g();
 }
 
-  // void equals(val one, val two){
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
-
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //   }
-
-  //   print("SUB b");
-  //   k++;
-  //   print("SWP c");
-  //   k++;
-    
-    
-  //   if(one.is_num){
-  //     print("SWP b");
-  //     k++;
-  //     gen_const_to_reg(one.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
-
-  //   print("SUB b");
-  //   k++;
-  //   print("ADD c");
-  //   k++;
-  //   print("RST g");
-  //   k++;
-  //   unsigned long jset = pc(); 
-  //   print("JPOS 0");
-  //   k++;
-  //   print("INC g");
-  //   k++;
-  //   patch(jset, pc());
-  // }
-
   void equals(val one, val two){
-  // equals: (one==two) <=> max(one-two,0)+max(two-one,0) == 0
-  // r1 = max(one-two,0) -> c
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
+    if(two.is_num){
+      gen_const_to_reg(two.bag,'b');
+    }else{
+      print("LOAD " + std::to_string(two.bag)); k++;
+      print("SWP b"); k++;
+    }
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
+
+    print("SUB b"); k++;
+    print("SWP c"); k++;
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
     print("SWP b"); k++;
-  }
 
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-  }
+    print("SUB b"); k++;
+    print("ADD c"); k++;
 
-  print("SUB b"); k++;
-  print("SWP c"); k++; // c = r1
-
-  // r2 = max(two-one,0) -> a
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-    print("SWP b"); k++;
-  }
-
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
-  }
-
-  print("SUB b"); k++;  // a = r2
-  print("ADD c"); k++;  // a = r1+r2 (sum)
-
-  // g = 1 jeśli sum==0, inaczej 0
-  print("RST g"); k++;
-  print("INC g"); k++;            // g=1
-  unsigned long j_end = (unsigned long)pc();
-  print("JZERO 0"); k++;          // jeśli sum==0 -> zostaw g=1 i skocz na koniec
-  print("RST g"); k++;            // sum>0 -> g=0
-  patch(j_end, pc());
+    print("RST g"); k++;
+    print("INC g"); k++;
+    unsigned long j_end = (unsigned long)pc();
+    print("JZERO 0"); k++;
+    print("RST g"); k++;
+    patch(j_end, pc());
 }
 
-  // void ne(val one, val two){
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
-
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //   }
-
-  //   print("SUB b");
-  //   k++;
-  //   print("SWP c");
-  //   k++;
-
-  //   if(one.is_num){
-  //     gen_const_to_reg(one.bag,'b');
-  //   }else{
-  //     print("LOAD " + std::to_string(one.bag));
-  //     k++;
-  //     print("SWP b");
-  //     k++;
-  //   }
-
-  //   if(two.is_num){
-  //     gen_const_to_reg(two.bag,'a');
-  //   }else{
-  //     print("LOAD " + std::to_string(two.bag));
-  //     k++;
-  //   }
-  //   print("ADD c");
-  //   k++;
-  //   print("RST g");
-  //   k++;
-  //   unsigned long jset = pc();
-  //   print("JZERO 0");
-  //   k++;
-  //   print("INC g");
-  //   k++;
-  //   patch(jset, pc());
-  // }
-
   void ne(val one, val two){
-  // ne: (one!=two) <=> r1+r2 > 0
-  // r1 = max(one-two,0) -> c
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
+    if(two.is_num){
+      gen_const_to_reg(two.bag,'b');
+    }else{
+      print("LOAD " + std::to_string(two.bag)); k++;
+      print("SWP b"); k++;
+    }
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
+
+    print("SUB b"); k++;
+    print("SWP c"); k++;
+
+    if(one.is_num){
+      gen_const_to_reg(one.bag,'a');
+    }else{
+      print("LOAD " + std::to_string(one.bag)); k++;
+    }
     print("SWP b"); k++;
-  }
 
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-  }
+    print("SUB b"); k++;
+    print("ADD c"); k++;
 
-  print("SUB b"); k++;
-  print("SWP c"); k++; // c = r1
-
-  // r2 = max(two-one,0) -> a
-  if(one.is_num){
-    gen_const_to_reg(one.bag,'b');
-  }else{
-    print("LOAD " + std::to_string(one.bag)); k++;
-    print("SWP b"); k++;
-  }
-
-  if(two.is_num){
-    gen_const_to_reg(two.bag,'a');
-  }else{
-    print("LOAD " + std::to_string(two.bag)); k++;
-  }
-
-  print("SUB b"); k++;  // a = r2
-  print("ADD c"); k++;  // a = sum
-
-  // g = 1 jeśli sum>0, inaczej 0
-  print("RST g"); k++;
-  unsigned long jskip = (unsigned long)pc();
-  print("JZERO 0"); k++;  // sum==0 -> pomiń INC
-  print("INC g"); k++;    // sum>0 -> true
-  patch(jskip, pc());
+    print("RST g"); k++;
+    print("INC g"); k++;
+    unsigned long j_end = (unsigned long)pc();
+    print("JPOS 0"); k++;
+    print("RST g"); k++;
+    patch(j_end, pc());
 }
 
 
@@ -819,7 +703,7 @@
   }
   
 
-#line 823 "parser.cpp"
+#line 707 "parser.cpp"
 
 
 #ifndef YY_
@@ -892,7 +776,7 @@
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 896 "parser.cpp"
+#line 780 "parser.cpp"
 
   /// Build a parser object.
   parser::parser ()
@@ -1396,106 +1280,104 @@ namespace yy {
           switch (yyn)
             {
   case 2: // $@1: %empty
-#line 912 "parser.yy"
+#line 802 "parser.yy"
 {
-    gen_const_to_reg(100000UL , 'h');
+    // gen_const_to_reg(100000UL , 'h');
     start_point =(unsigned long) pc();
     //std::cerr<<"SAM START "<<start_point<<std::endl;
     print("JUMP 0"); k++;
 }
-#line 1407 "parser.cpp"
+#line 1291 "parser.cpp"
     break;
 
   case 3: // program_all: $@1 procedures main
-#line 918 "parser.yy"
+#line 808 "parser.yy"
                 {
     //std::cerr<<"START "<<start_point<<std::endl;
     patch(start_point, (int)procedures["PROGRAM"]);
     print("HALT");
     k++;
 }
-#line 1418 "parser.cpp"
+#line 1302 "parser.cpp"
     break;
 
   case 4: // procedures: procedures PROCEDURE proc_head IS declarations IN commands END
-#line 927 "parser.yy"
+#line 817 "parser.yy"
                                                                { 
-  pop_ra();
   print("RTRN");    k++;
 
   end_scope(false);
  }
-#line 1429 "parser.cpp"
+#line 1312 "parser.cpp"
     break;
 
   case 5: // procedures: procedures PROCEDURE proc_head IS IN commands END
-#line 933 "parser.yy"
+#line 822 "parser.yy"
                                                     { 
-  pop_ra();
   print("RTRN");    k++;
 
   end_scope(false); 
   }
-#line 1440 "parser.cpp"
+#line 1322 "parser.cpp"
     break;
 
   case 7: // $@2: %empty
-#line 943 "parser.yy"
+#line 831 "parser.yy"
            {
   procedures["PROGRAM"]=pc();
   begin_scope();
 }
-#line 1449 "parser.cpp"
+#line 1331 "parser.cpp"
     break;
 
   case 8: // main: PROGRAM IS $@2 declarations IN commands END
-#line 946 "parser.yy"
+#line 834 "parser.yy"
                                {
 
 }
-#line 1457 "parser.cpp"
+#line 1339 "parser.cpp"
     break;
 
   case 9: // $@3: %empty
-#line 949 "parser.yy"
+#line 837 "parser.yy"
              {
   procedures["PROGRAM"]=pc();
   begin_scope();
 }
-#line 1466 "parser.cpp"
+#line 1348 "parser.cpp"
     break;
 
   case 10: // main: PROGRAM IS $@3 IN commands END
-#line 952 "parser.yy"
+#line 840 "parser.yy"
                   {}
-#line 1472 "parser.cpp"
+#line 1354 "parser.cpp"
     break;
 
   case 11: // commands: commands command
-#line 956 "parser.yy"
+#line 844 "parser.yy"
                  {}
-#line 1478 "parser.cpp"
+#line 1360 "parser.cpp"
     break;
 
   case 12: // commands: command
-#line 957 "parser.yy"
+#line 845 "parser.yy"
           {}
-#line 1484 "parser.cpp"
+#line 1366 "parser.cpp"
     break;
 
   case 13: // subroutine: %empty
-#line 961 "parser.yy"
+#line 849 "parser.yy"
        {print("SWP g");
   k++;
   if_false_stack.push((unsigned long)pc());
   print("JZERO 0");
   k++;
   }
-#line 1495 "parser.cpp"
+#line 1377 "parser.cpp"
     break;
 
   case 14: // command: identifier ":=" expression ";"
-#line 970 "parser.yy"
+#line 858 "parser.yy"
                                     {
   VAR* v = get_variable(yystack_[3].value.as < pid > ().address);
   if (v && v->type == I) YYERROR; // I nie może być nadpisywane
@@ -1511,76 +1393,76 @@ namespace yy {
     store_scalar_by_addr_or_ref(yystack_[3].value.as < pid > ().address);
   }
 }
-#line 1515 "parser.cpp"
+#line 1397 "parser.cpp"
     break;
 
   case 15: // command: IF condition subroutine THEN commands ENDIF
-#line 985 "parser.yy"
+#line 873 "parser.yy"
                                               {
   patch(if_false_stack.top(), pc());
   if_false_stack.pop();
   }
-#line 1524 "parser.cpp"
+#line 1406 "parser.cpp"
     break;
 
   case 16: // $@4: %empty
-#line 989 "parser.yy"
+#line 877 "parser.yy"
                                              {
   if_end_stack.push((unsigned long)pc());
   print("JUMP 0"); k++;
   patch(if_false_stack.top(), pc());
   if_false_stack.pop();
 }
-#line 1535 "parser.cpp"
+#line 1417 "parser.cpp"
     break;
 
   case 17: // command: IF condition subroutine THEN commands ELSE $@4 commands ENDIF
-#line 994 "parser.yy"
+#line 882 "parser.yy"
                  {
   patch(if_end_stack.top(), pc());
   if_end_stack.pop();
 }
-#line 1544 "parser.cpp"
+#line 1426 "parser.cpp"
     break;
 
   case 18: // $@5: %empty
-#line 998 "parser.yy"
+#line 886 "parser.yy"
         {
   while_patches.push(LoopPatch{(unsigned long)pc(), 0});   // start pętli
 }
-#line 1552 "parser.cpp"
+#line 1434 "parser.cpp"
     break;
 
   case 19: // $@6: %empty
-#line 1000 "parser.yy"
+#line 888 "parser.yy"
                {
   print("SWP g"); k++;
   while_patches.top().jexit = (unsigned long)pc();
   print("JZERO 0"); k++;
 }
-#line 1562 "parser.cpp"
+#line 1444 "parser.cpp"
     break;
 
   case 20: // command: WHILE $@5 condition DO $@6 commands ENDWHILE
-#line 1004 "parser.yy"
+#line 892 "parser.yy"
                     {
   auto lp = while_patches.top(); while_patches.pop();
   print("JUMP " + std::to_string(lp.start)); k++;
   patch(lp.jexit, pc());
 }
-#line 1572 "parser.cpp"
+#line 1454 "parser.cpp"
     break;
 
   case 21: // $@7: %empty
-#line 1009 "parser.yy"
+#line 897 "parser.yy"
          {
   repeat_stack.push((unsigned long)pc()); // początek pętli (body)
 }
-#line 1580 "parser.cpp"
+#line 1462 "parser.cpp"
     break;
 
   case 22: // command: REPEAT $@7 commands UNTIL condition ";"
-#line 1011 "parser.yy"
+#line 899 "parser.yy"
                                      {
   print("SWP g");
   k++;
@@ -1588,11 +1470,11 @@ namespace yy {
   k++;
   repeat_stack.pop();
 }
-#line 1592 "parser.cpp"
+#line 1474 "parser.cpp"
     break;
 
   case 23: // $@8: %empty
-#line 1018 "parser.yy"
+#line 906 "parser.yy"
                                          {
   begin_scope();
 
@@ -1623,11 +1505,11 @@ namespace yy {
   for_patches.push(LoopPatch{jstart, jexit});
   for_stack.push(it.memory_address);
 }
-#line 1627 "parser.cpp"
+#line 1509 "parser.cpp"
     break;
 
   case 24: // $@9: %empty
-#line 1047 "parser.yy"
+#line 935 "parser.yy"
            {
 
   print("LOAD " + std::to_string(for_stack.top())); k++;
@@ -1641,21 +1523,21 @@ namespace yy {
   auto lp = for_patches.top(); // nie pop jeszcze (pop w ENDFOR)
   print("JUMP " + std::to_string(lp.start)); k++;
 }
-#line 1645 "parser.cpp"
+#line 1527 "parser.cpp"
     break;
 
   case 25: // command: FOR PIDENTIFIER FROM value TO value DO $@8 commands $@9 ENDFOR
-#line 1059 "parser.yy"
+#line 947 "parser.yy"
          {
   auto lp = for_patches.top(); for_patches.pop();
   patch(lp.jexit, pc());
   end_scope(true);
 }
-#line 1655 "parser.cpp"
+#line 1537 "parser.cpp"
     break;
 
   case 26: // $@10: %empty
-#line 1064 "parser.yy"
+#line 952 "parser.yy"
                                              {
   begin_scope();
 
@@ -1686,11 +1568,11 @@ namespace yy {
   for_patches.push(LoopPatch{jstart, jexit});
   for_stack.push(it.memory_address);
 }
-#line 1690 "parser.cpp"
+#line 1572 "parser.cpp"
     break;
 
   case 27: // $@11: %empty
-#line 1093 "parser.yy"
+#line 981 "parser.yy"
            {
   print("LOAD " + std::to_string(for_stack.top())); k++;
   print("DEC a"); k++;
@@ -1703,29 +1585,29 @@ namespace yy {
   auto lp = for_patches.top(); // nie pop jeszcze (pop w ENDFOR)
   print("JUMP " + std::to_string(lp.start)); k++;
 }
-#line 1707 "parser.cpp"
+#line 1589 "parser.cpp"
     break;
 
   case 28: // command: FOR PIDENTIFIER FROM value DOWNTO value DO $@10 commands $@11 ENDFOR
-#line 1104 "parser.yy"
+#line 992 "parser.yy"
          {
   auto lp = for_patches.top(); for_patches.pop();
   patch(lp.jexit, pc());
   end_scope(true);
 }
-#line 1717 "parser.cpp"
+#line 1599 "parser.cpp"
     break;
 
   case 29: // command: proc_call ";"
-#line 1109 "parser.yy"
+#line 997 "parser.yy"
                       {
   //end_scope(false);
 }
-#line 1725 "parser.cpp"
+#line 1607 "parser.cpp"
     break;
 
   case 30: // command: READ identifier ";"
-#line 1112 "parser.yy"
+#line 1000 "parser.yy"
                             {
   print("READ"); k++;
   // READ do tablicy też powinien działać: jeśli tab[i], to RSTORE pod adres elementu.
@@ -1739,11 +1621,11 @@ namespace yy {
     print("STORE " + std::to_string(yystack_[1].value.as < pid > ().address)); k++;
   }
 }
-#line 1743 "parser.cpp"
+#line 1625 "parser.cpp"
     break;
 
   case 31: // command: WRITE value ";"
-#line 1125 "parser.yy"
+#line 1013 "parser.yy"
                         {
   if(yystack_[1].value.as < val > ().is_num){
     gen_const_to_reg(yystack_[1].value.as < val > ().bag,'a');
@@ -1755,49 +1637,47 @@ namespace yy {
   print("WRITE");
   k++;
 }
-#line 1759 "parser.cpp"
+#line 1641 "parser.cpp"
     break;
 
   case 32: // command: error ";"
-#line 1136 "parser.yy"
+#line 1024 "parser.yy"
                   { yyerrok;}
-#line 1765 "parser.cpp"
+#line 1647 "parser.cpp"
     break;
 
   case 33: // $@12: %empty
-#line 1140 "parser.yy"
+#line 1028 "parser.yy"
                    {
   procedures[yystack_[1].value.as < std::string > ()] = (unsigned long)pc();
 
   begin_scope();
 
-  push_ra();
-
   current_proc_name = yystack_[1].value.as < std::string > ();
   current_formals.clear();
 }
-#line 1780 "parser.cpp"
+#line 1660 "parser.cpp"
     break;
 
   case 34: // proc_head: PIDENTIFIER "(" $@12 args_decl ")"
-#line 1149 "parser.yy"
+#line 1035 "parser.yy"
                    {
   proc_formals[current_proc_name] = current_formals;
 }
-#line 1788 "parser.cpp"
+#line 1668 "parser.cpp"
     break;
 
   case 35: // $@13: %empty
-#line 1155 "parser.yy"
+#line 1041 "parser.yy"
             {
   current_call_name = yystack_[0].value.as < std::string > ();
   current_call_args.clear();
 }
-#line 1797 "parser.cpp"
+#line 1677 "parser.cpp"
     break;
 
   case 36: // proc_call: PIDENTIFIER $@13 "(" args ")"
-#line 1158 "parser.yy"
+#line 1044 "parser.yy"
                     {
   const auto& formals = proc_formals[current_call_name];
   if (formals.size() != current_call_args.size()) YYERROR;
@@ -1825,11 +1705,11 @@ namespace yy {
 
   print("CALL " + std::to_string(procedures[current_call_name])); k++;
 }
-#line 1829 "parser.cpp"
+#line 1709 "parser.cpp"
     break;
 
   case 37: // declarations: declarations "," PIDENTIFIER
-#line 1188 "parser.yy"
+#line 1074 "parser.yy"
                                {
   VAR t;
   t.memory_address = memory_offset++;
@@ -1838,11 +1718,11 @@ namespace yy {
   t.array_end = 0;
   declare_var_in_scope(t, yystack_[0].value.as < std::string > ());
 }
-#line 1842 "parser.cpp"
+#line 1722 "parser.cpp"
     break;
 
   case 38: // declarations: declarations "," PIDENTIFIER "[" NUM ":" NUM "]"
-#line 1196 "parser.yy"
+#line 1082 "parser.yy"
                                                                {
   VAR t;
   t.array_start = yystack_[3].value.as < unsigned long > ();
@@ -1853,11 +1733,11 @@ namespace yy {
   t.type = T;
   declare_var_in_scope(t, yystack_[5].value.as < std::string > ());
 }
-#line 1857 "parser.cpp"
+#line 1737 "parser.cpp"
     break;
 
   case 39: // declarations: PIDENTIFIER
-#line 1206 "parser.yy"
+#line 1092 "parser.yy"
               {
   VAR t;
   t.memory_address = memory_offset++;
@@ -1866,11 +1746,11 @@ namespace yy {
   t.array_end = 0;
   declare_var_in_scope(t, yystack_[0].value.as < std::string > ());
 }
-#line 1870 "parser.cpp"
+#line 1750 "parser.cpp"
     break;
 
   case 40: // declarations: PIDENTIFIER "[" NUM ":" NUM "]"
-#line 1214 "parser.yy"
+#line 1100 "parser.yy"
                                             {
   VAR t; 
   t.type = T; 
@@ -1881,11 +1761,11 @@ namespace yy {
   memory_offset += (t.array_end + 1);
   declare_var_in_scope(t, yystack_[5].value.as < std::string > ());
   }
-#line 1885 "parser.cpp"
+#line 1765 "parser.cpp"
     break;
 
   case 41: // args_decl: args_decl "," type PIDENTIFIER
-#line 1227 "parser.yy"
+#line 1113 "parser.yy"
                                  {
 VAR p;
   p.memory_address = memory_offset++;
@@ -1900,11 +1780,11 @@ VAR p;
 
   current_formals.push_back(FormalParam{p.type, p.memory_address});
   }
-#line 1904 "parser.cpp"
+#line 1784 "parser.cpp"
     break;
 
   case 42: // args_decl: type PIDENTIFIER
-#line 1241 "parser.yy"
+#line 1127 "parser.yy"
                    {
   VAR p;
   p.memory_address = memory_offset++;
@@ -1918,47 +1798,47 @@ VAR p;
 
   current_formals.push_back(FormalParam{p.type, p.memory_address});
 }
-#line 1922 "parser.cpp"
+#line 1802 "parser.cpp"
     break;
 
   case 43: // type: typeT
-#line 1257 "parser.yy"
+#line 1143 "parser.yy"
       {yylhs.value.as < TYPE > ()=T;}
-#line 1928 "parser.cpp"
+#line 1808 "parser.cpp"
     break;
 
   case 44: // type: typeI
-#line 1258 "parser.yy"
+#line 1144 "parser.yy"
         {yylhs.value.as < TYPE > ()=I;}
-#line 1934 "parser.cpp"
+#line 1814 "parser.cpp"
     break;
 
   case 45: // type: typeO
-#line 1259 "parser.yy"
+#line 1145 "parser.yy"
         {yylhs.value.as < TYPE > ()=O;}
-#line 1940 "parser.cpp"
+#line 1820 "parser.cpp"
     break;
 
   case 46: // type: %empty
-#line 1260 "parser.yy"
+#line 1146 "parser.yy"
          {yylhs.value.as < TYPE > ()=U;}
-#line 1946 "parser.cpp"
+#line 1826 "parser.cpp"
     break;
 
   case 47: // args: args "," PIDENTIFIER
-#line 1264 "parser.yy"
+#line 1150 "parser.yy"
                        {current_call_args.push_back(yystack_[0].value.as < std::string > ());}
-#line 1952 "parser.cpp"
+#line 1832 "parser.cpp"
     break;
 
   case 48: // args: PIDENTIFIER
-#line 1265 "parser.yy"
+#line 1151 "parser.yy"
               {current_call_args.push_back(yystack_[0].value.as < std::string > ());}
-#line 1958 "parser.cpp"
+#line 1838 "parser.cpp"
     break;
 
   case 49: // expression: value
-#line 1269 "parser.yy"
+#line 1155 "parser.yy"
       {
   if(yystack_[0].value.as < val > ().is_num){
     gen_const_to_reg(yystack_[0].value.as < val > ().bag,'a');
@@ -1967,11 +1847,11 @@ VAR p;
     k++;
   }
 }
-#line 1971 "parser.cpp"
+#line 1851 "parser.cpp"
     break;
 
   case 50: // expression: value "+" value
-#line 1277 "parser.yy"
+#line 1163 "parser.yy"
                    {
   val one = yystack_[2].value.as < val > ();
   val two = yystack_[0].value.as < val > ();
@@ -1995,11 +1875,11 @@ VAR p;
   print("ADD b");
   k++;
 }
-#line 1999 "parser.cpp"
+#line 1879 "parser.cpp"
     break;
 
   case 51: // expression: value "-" value
-#line 1300 "parser.yy"
+#line 1186 "parser.yy"
                     {
   val one = yystack_[2].value.as < val > ();
   val two = yystack_[0].value.as < val > ();
@@ -2023,11 +1903,11 @@ VAR p;
   print("SUB b");
   k++;
 }
-#line 2027 "parser.cpp"
+#line 1907 "parser.cpp"
     break;
 
   case 52: // expression: value "*" value
-#line 1323 "parser.yy"
+#line 1209 "parser.yy"
                    {
   gen_mul(yystack_[2].value.as < val > (), yystack_[0].value.as < val > ());
   // print("LOAD " + std::to_string($3.bag));
@@ -2035,11 +1915,11 @@ VAR p;
   // print("SHL a");
   // k++;
 }
-#line 2039 "parser.cpp"
+#line 1919 "parser.cpp"
     break;
 
   case 53: // expression: value "/" value
-#line 1330 "parser.yy"
+#line 1216 "parser.yy"
                     {
   gen_divmod(yystack_[2].value.as < val > (), yystack_[0].value.as < val > (), true);
   // print("LOAD " + std::to_string($1.bag));
@@ -2047,78 +1927,78 @@ VAR p;
   // print("SHR a");
   // k++;
 }
-#line 2051 "parser.cpp"
+#line 1931 "parser.cpp"
     break;
 
   case 54: // expression: value "%" value
-#line 1337 "parser.yy"
+#line 1223 "parser.yy"
                   {
   gen_divmod(yystack_[2].value.as < val > (), yystack_[0].value.as < val > (), false);
 }
-#line 2059 "parser.cpp"
+#line 1939 "parser.cpp"
     break;
 
   case 55: // condition: value "=" value
-#line 1343 "parser.yy"
+#line 1229 "parser.yy"
                    {//do optymalizacji
   equals(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2067 "parser.cpp"
+#line 1947 "parser.cpp"
     break;
 
   case 56: // condition: value "!=" value
-#line 1346 "parser.yy"
+#line 1232 "parser.yy"
                  {//do optymalizacji
   ne(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2075 "parser.cpp"
+#line 1955 "parser.cpp"
     break;
 
   case 57: // condition: value ">" value
-#line 1349 "parser.yy"
+#line 1235 "parser.yy"
                  {
   gt(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2083 "parser.cpp"
+#line 1963 "parser.cpp"
     break;
 
   case 58: // condition: value "<" value
-#line 1352 "parser.yy"
+#line 1238 "parser.yy"
                  {
   lt(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2091 "parser.cpp"
+#line 1971 "parser.cpp"
     break;
 
   case 59: // condition: value ">=" value
-#line 1355 "parser.yy"
+#line 1241 "parser.yy"
                  {
   ge(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2099 "parser.cpp"
+#line 1979 "parser.cpp"
     break;
 
   case 60: // condition: value "<=" value
-#line 1358 "parser.yy"
+#line 1244 "parser.yy"
                  {
   le(yystack_[2].value.as < val > (),yystack_[0].value.as < val > ());
 }
-#line 2107 "parser.cpp"
+#line 1987 "parser.cpp"
     break;
 
   case 61: // value: NUM
-#line 1365 "parser.yy"
+#line 1251 "parser.yy"
     {
   val t;
   t.is_num=1;
   t.bag=yystack_[0].value.as < unsigned long > ();
   yylhs.value.as < val > ()=t;
 }
-#line 2118 "parser.cpp"
+#line 1998 "parser.cpp"
     break;
 
   case 62: // value: identifier
-#line 1371 "parser.yy"
+#line 1257 "parser.yy"
              {
   VAR* v = get_variable(yystack_[0].value.as < pid > ().address);
 
@@ -2155,11 +2035,11 @@ VAR p;
     }
   }
 }
-#line 2159 "parser.cpp"
+#line 2039 "parser.cpp"
     break;
 
   case 63: // identifier: PIDENTIFIER
-#line 1411 "parser.yy"
+#line 1297 "parser.yy"
             {
   //if(get_variable($1)->type==O)YYERROR;
   pid t;
@@ -2169,11 +2049,11 @@ VAR p;
   t.address=get_addr(yystack_[0].value.as < std::string > ());
   yylhs.value.as < pid > ()=t;
 }
-#line 2173 "parser.cpp"
+#line 2053 "parser.cpp"
     break;
 
   case 64: // identifier: PIDENTIFIER "[" PIDENTIFIER "]"
-#line 1420 "parser.yy"
+#line 1306 "parser.yy"
                                           {
   if(get_variable(yystack_[3].value.as < std::string > ())->type!=T)YYERROR;
   // print("LOAD " + get_addr($3));
@@ -2191,11 +2071,11 @@ VAR p;
   t.address=get_addr(yystack_[3].value.as < std::string > ());
   yylhs.value.as < pid > ()=t;
 }
-#line 2195 "parser.cpp"
+#line 2075 "parser.cpp"
     break;
 
   case 65: // identifier: PIDENTIFIER "[" NUM "]"
-#line 1437 "parser.yy"
+#line 1323 "parser.yy"
                                   {
   VAR* tab = get_variable(yystack_[3].value.as < std::string > ());
   if(tab->type!=T)YYERROR;
@@ -2208,11 +2088,11 @@ VAR p;
   t.address=get_addr(yystack_[3].value.as < std::string > ());
   yylhs.value.as < pid > ()=t;
 }
-#line 2212 "parser.cpp"
+#line 2092 "parser.cpp"
     break;
 
 
-#line 2216 "parser.cpp"
+#line 2096 "parser.cpp"
 
             default:
               break;
@@ -2761,13 +2641,13 @@ VAR p;
   const short
   parser::yyrline_[] =
   {
-       0,   912,   912,   912,   927,   933,   939,   943,   943,   949,
-     949,   956,   957,   961,   970,   985,   989,   989,   998,  1000,
-     998,  1009,  1009,  1018,  1047,  1018,  1064,  1093,  1064,  1109,
-    1112,  1125,  1136,  1140,  1140,  1155,  1155,  1188,  1196,  1206,
-    1214,  1227,  1241,  1257,  1258,  1259,  1260,  1264,  1265,  1269,
-    1277,  1300,  1323,  1330,  1337,  1343,  1346,  1349,  1352,  1355,
-    1358,  1365,  1371,  1411,  1420,  1437
+       0,   802,   802,   802,   817,   822,   827,   831,   831,   837,
+     837,   844,   845,   849,   858,   873,   877,   877,   886,   888,
+     886,   897,   897,   906,   935,   906,   952,   981,   952,   997,
+    1000,  1013,  1024,  1028,  1028,  1041,  1041,  1074,  1082,  1092,
+    1100,  1113,  1127,  1143,  1144,  1145,  1146,  1150,  1151,  1155,
+    1163,  1186,  1209,  1216,  1223,  1229,  1232,  1235,  1238,  1241,
+    1244,  1251,  1257,  1297,  1306,  1323
   };
 
   void
@@ -2799,9 +2679,9 @@ VAR p;
 
 
 } // yy
-#line 2803 "parser.cpp"
+#line 2683 "parser.cpp"
 
-#line 1451 "parser.yy"
+#line 1337 "parser.yy"
 
 
 namespace yy {

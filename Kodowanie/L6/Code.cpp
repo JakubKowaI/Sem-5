@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <limits>
 #include <string>
+#include <random>
+#include <chrono>
 #include "TGA.h"
 
 using namespace std;
@@ -59,7 +61,7 @@ vector<double> trainLBG(const vector<double>& data, int k) {
         // Split
         vector<double> nextCodebook;
         for (double c : codebook) {
-            nextCodebook.push_back(c * (1.0 + EPSILON));
+            nextCodebook.push_back(c * (1.0 + 3*EPSILON));
             nextCodebook.push_back(c * (1.0 - EPSILON));
         }
         codebook = nextCodebook;
@@ -116,6 +118,108 @@ int quantize(double value, const vector<double>& codebook) {
     return bestIdx;
 }
 
+u_int8_t new1(u_int8_t w, u_int8_t n, u_int8_t nw){
+    int neww=w;
+    int newn=n;
+    int newnw=nw;
+    if(newnw>=max(newn,neww))return min(newn,neww);
+    if(newnw<=min(newn,neww))return max(newn,neww);
+    return neww+newn-newnw;//Na wykładzie był błąd w zapisie
+}
+
+int getVal(const vector<Pixel>& pixels, int x, int y, int width, int height, int channel) {
+    if (x < 0 || y < 0 || x >= width || y >= height) return 0;
+    const Pixel& p = pixels[y * width + x];
+    if (channel == 0) return p.b;
+    if (channel == 1) return p.g;
+    return p.r;
+}
+
+u_int8_t clamp(double v) {
+    if (v < 0) return 0;
+    if (v > 255) return 255;
+    return (u_int8_t)v;
+}
+
+vector<u_int8_t> LBG(vector<double> H,int k){
+    vector<double> slownik;
+    mt19937 rng(std::chrono::system_clock::now().time_since_epoch().count());
+    slownik.push_back((u_int8_t)(rng()%256));
+
+    int targetSize = 1 << k;
+    
+    const double Stala = 0.01; 
+
+    while (slownik.size() < targetSize) {
+        // dzielimy slownik +- epsilon
+        vector<double> nextslownik;
+        nextslownik.reserve(slownik.size() * 2);
+        for (const auto& c : slownik) {
+            nextslownik.push_back(c * (1 + 3*Stala));
+            nextslownik.push_back(c * (1 - Stala));
+        }
+        slownik = nextslownik;
+
+        double prevD = numeric_limits<double>::max();
+        const double LBGEpsilon = 0.01;
+        int maxIters = 50;
+
+        for (int iter = 0; iter < maxIters; ++iter) {
+            vector<int> sums(slownik.size(), 0);
+            vector<int> counts(slownik.size(), 0);
+            double D = 0;
+
+            for (const auto& h : H) {
+                int bestIdx = 0;
+                int bestDist = numeric_limits<int>::max();
+                
+                for (size_t i = 0; i < slownik.size(); ++i) {
+                    int d = abs(h - slownik[i]);
+                    if (d < bestDist) {
+                        bestDist = d;
+                        bestIdx = i;
+                    }
+                }
+                
+                sums[bestIdx] += h;
+                counts[bestIdx]++;
+                D += bestDist;
+            }
+
+            for (size_t i = 0; i < slownik.size(); ++i) {
+                if (counts[i] > 0) {
+                    slownik[i] = sums[i] / counts[i];
+                } 
+            }
+
+            D /= H.size();
+            if (abs(prevD - D) / prevD < LBGEpsilon) {
+                break;
+            }
+            prevD = D;
+        }
+    }
+   
+    vector<u_int8_t> output(H.size(),0);
+ 
+
+    for (int i =0;i<H.size();i++) {
+        int bestIdx = 0;
+        double bestDist = numeric_limits<double>::max();
+
+        for (size_t j = 0; j < slownik.size(); ++j) {
+            double d = abs(H[i] - slownik[j]);
+            if (d < bestDist) {
+                bestDist = d;
+                bestIdx = j;
+            }
+        }
+        
+        output[i]= clamp(slownik[bestIdx]);
+    }
+    return output;
+}
+
 int main(int argc, char** argv) {
     if (argc < 4) {
         cerr << "Usage: " << argv[0] << " <input_file> <output_file> <k>" << endl;
@@ -127,7 +231,7 @@ int main(int argc, char** argv) {
     int k = stoi(argv[3]);
 
     if (k < 1 || k > 7) {
-        cerr << "k must be between 1 and 7" << endl;
+        cerr << "k ma byc miedzy 1 a 7" << endl;
         return 1;
     }
 
@@ -148,21 +252,12 @@ int main(int argc, char** argv) {
     input.read(reinterpret_cast<char*>(image.data()), pixelCount * sizeof(Pixel));
     input.close();
 
-    // Separate channels
     vector<double> R, G, B;
     for (const auto& p : image) {
-        B.push_back(p.b);
-        G.push_back(p.g);
         R.push_back(p.r);
+        G.push_back(p.g);
+        B.push_back(p.b);
     }
-
-    // Process each channel
-    // We need to store codebooks and indices for each channel's L and H bands
-    // Structure:
-    // Header
-    // k (1 byte)
-    // Codebooks: 6 * (2^k * sizeof(float))
-    // Data: Packed indices
 
     ofstream output(outputFile, ios::binary);
     if (!output) {
@@ -177,63 +272,39 @@ int main(int argc, char** argv) {
     vector<vector<double>> channels = {B, G, R}; // Order B, G, R
     vector<vector<double>> codebooks;
     vector<vector<int>> allIndices;
-
+    vector<vector<double>> L,H;
+    vector<vector<u_int8_t>> outputL,outputH;
+    
     for (int c = 0; c < 3; ++c) {
-        vector<double>& pixels = channels[c];
-        vector<double> L, H;
-        
-        // Transform
-        for (size_t i = 0; i < pixels.size(); i += 2) {
-            double p1 = pixels[i];
-            double p2 = (i + 1 < pixels.size()) ? pixels[i+1] : p1;
-            
-            double l_val = (p1 + p2) / 2.0;
-            double h_val = (p1 - p2) / 2.0;
-            
-            L.push_back(l_val);
-            H.push_back(h_val);
+        //vector<double>& pixels = channels[c];
+        //vector<u_int8_t> L, H;
+        double prev=255;    
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                for (int c = 0; c < 3; ++c) { // 0=B, 1=G, 2=R
+                    int X = getVal(image, x, y, width, height, c);
+                    int w = getVal(image, x - 1, y, width, height, c); // Gora
+                    int n = getVal(image, x, y - 1, width, height, c); // Lewo
+                    int nw = getVal(image, x - 1, y - 1, width, height, c); // Skos
+
+                    double pred = (w+n+nw)/3;
+                    double diff = prev - pred;
+                    prev=pred;
+                    double HP = X - pred;
+                    L[c].push_back(diff);
+                    H[c].push_back(HP);
+                }
+            }
         }
 
-        // Prepare data for training LBG
-        // For L, we use differences (DPCM)
-        vector<double> L_diffs;
-        double prevL = 0; // Assuming starting prediction is 0 or 128? Let's use 0.
-        // Actually, for training, we can use open loop differences
-        // But for better quality, maybe just raw differences
-        prevL = 0;
-        for (double val : L) {
-            L_diffs.push_back(val - prevL);
-            prevL = val;
+        outputH[0]=LBG(H[0],k);
+        outputH[1]=LBG(H[1],k);
+        outputH[2]=LBG(H[2],k);
+        for(int i=0;i<3;i++){
+            for(auto l : L[i]){
+                outputL[i].push_back(clamp(l));
+            }
         }
-
-        // Train Codebooks
-        vector<double> cb_L = trainLBG(L_diffs, k);
-        vector<double> cb_H = trainLBG(H, k);
-
-        codebooks.push_back(cb_L);
-        codebooks.push_back(cb_H);
-
-        // Encode
-        vector<int> indices_L;
-        vector<int> indices_H;
-
-        // DPCM Encoding for L (Closed Loop)
-        double reconL = 0;
-        for (double val : L) {
-            double diff = val - reconL;
-            int idx = quantize(diff, cb_L);
-            indices_L.push_back(idx);
-            reconL += cb_L[idx];
-        }
-
-        // Direct Encoding for H
-        for (double val : H) {
-            int idx = quantize(val, cb_H);
-            indices_H.push_back(idx);
-        }
-
-        allIndices.push_back(indices_L);
-        allIndices.push_back(indices_H);
     }
 
     // Write Codebooks

@@ -24,7 +24,7 @@ struct TGAHeader {
 #pragma pack(pop)
 
 struct Pixel {
-    uint8_t b, g, r;
+    uint8_t r, g, b;
 };
 
 #endif

@@ -272,7 +272,7 @@ function generate_plots(flow_results, matching_results)
     p2 = plot(
         [r.size for r in ek_res], [r.augmenting_paths for r in ek_res], 
         label="Edmonds-Karp", xlabel="k", ylabel="Paths",
-        title="Augmenting Paths Count", marker=:circle, yscale=:log10, dpi=500
+        title="Agmented Paths Value", marker=:circle, yscale=:log10, dpi=500
     )
     plot!(p2, [r.size for r in dinic_res], [r.augmenting_paths for r in dinic_res], label="Dinic", marker=:square)
     savefig(p2, joinpath(PLOTS_DIR, "flow_paths.png"))
