@@ -3,18 +3,18 @@ using GLPK
 model = Model(GLPK.Optimizer)
 set_silent(model)
 G = zeros(Int, 8, 8)
-G[1,2]=7
-G[1,3]=4
-G[1,5]=1
+G[1,2]=8
+G[1,3]=8
+G[1,5]=8
 G[2,4]=4
-G[2,6]=2
+G[2,6]=1
 G[3,4]=3
 G[3,7]=3
-G[4,8]=3
-G[5,6]=1
+G[4,8]=7
+G[5,6]=4
 G[5,7]=4
-G[6,8]=6
-G[7,8]=8
+G[6,8]=2
+G[7,8]=4
 # Nodes: 8, Edges: 12
 @variable(model, f[1:8, 1:8] >= 0)
 @constraint(model, [i = 1:8, j = 1:8], f[i, j] <= G[i, j])
