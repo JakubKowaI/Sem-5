@@ -1,0 +1,6 @@
+lp - srednia
+hp - x - lp
+x = hp + lp
+255-0=255
+0-255=0
+

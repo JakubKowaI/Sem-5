@@ -24,10 +24,11 @@ using Plots
 #println(solved_lu)
 
 # print(get_b_from_ones("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane16_1_1/A.txt"))
-# test_solve_Gauss("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane16_1_1/A.txt")
-#test_solve_Gauss_pivot("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane1000000_1_1/A.txt")
-#test_solve_LU("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane16_1_1/A.txt")
-#test_solve_LU_pivot("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane16_1_1/A.txt")
+
+# test_solve_Gauss("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane1000000_1_1/A.txt")
+# test_solve_Gauss_pivot("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane1000000_1_1/A.txt")
+# test_solve_LU("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane1000000_1_1/A.txt")
+# test_solve_LU_pivot("/home/kuba/Projects/Sem-5/Obliczenia Naukowe/L5/dane/Dane1000000_1_1/A.txt")
 
 Ns =[16,10000,50000,100000,500000,750000,1000000]
 

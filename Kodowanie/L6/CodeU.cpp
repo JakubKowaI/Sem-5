@@ -78,24 +78,25 @@ static uint8_t fromS8(int v) {
     return static_cast<uint8_t>(static_cast<int8_t>(v));
 }
 
-pair<vector<uint8_t>, vector<int16_t>> LBG(const vector<uint8_t>& data, int k) {
+pair<vector<uint8_t>, vector<uint8_t>> LBG(const vector<uint8_t>& data, int k) {
     int targetSize = 1 << k;
-    vector<int16_t> codebook;
+    vector<uint8_t> codebook;
 
     double mean = 0;
     for (uint8_t v : data) mean += toS8(v);
     mean /= data.size();
-    codebook.push_back((int16_t)std::clamp<int>((int)std::lround(mean), -128, 127));
+    codebook.push_back(fromS8((int)lround(mean)));
 
     mt19937 rng(std::chrono::system_clock::now().time_since_epoch().count());
     uniform_int_distribution<int> dist(1, 15);
 
     while ((int)codebook.size() < targetSize) {
-        vector<int16_t> newCodebook;
-        for (int16_t c : codebook) {
+        vector<uint8_t> newCodebook;
+        for (uint8_t c : codebook) {
             int delta = dist(rng);
-            newCodebook.push_back((int16_t)std::clamp<int>(c + delta, -128, 127));
-            newCodebook.push_back((int16_t)std::clamp<int>(c - delta, -128, 127));
+            int cs = toS8(c);
+            newCodebook.push_back(fromS8(cs + dist(rng)));
+            newCodebook.push_back(fromS8(cs - dist(rng)));
         }
         codebook = newCodebook;
 
@@ -113,7 +114,7 @@ pair<vector<uint8_t>, vector<int16_t>> LBG(const vector<uint8_t>& data, int k) {
                 int bestDist = numeric_limits<int>::max();
 
                 for (size_t i = 0; i < codebook.size(); ++i) {
-                    int d = abs(toS8(val) - (int)codebook[i]);
+                    int d = abs(toS8(val) - toS8(codebook[i]));
                     if (d < bestDist) {
                         bestDist = d;
                         bestIdx = (int)i;
@@ -127,8 +128,7 @@ pair<vector<uint8_t>, vector<int16_t>> LBG(const vector<uint8_t>& data, int k) {
 
             for (size_t i = 0; i < codebook.size(); ++i) {
                 if (counts[i] > 0) {
-                    int c = (int)std::lround(sums[i] / counts[i]);
-                    codebook[i] = (int16_t)std::clamp<int>(c, -128, 127);
+                    codebook[i] = fromS8((int)lround(sums[i] / counts[i]));
                 }
             }
 
@@ -146,7 +146,7 @@ pair<vector<uint8_t>, vector<int16_t>> LBG(const vector<uint8_t>& data, int k) {
         int bestDist = numeric_limits<int>::max();
 
         for (size_t j = 0; j < codebook.size(); ++j) {
-            int d = abs(toS8(data[i]) - (int)codebook[j]);
+            int d = abs(toS8(data[i]) - toS8(codebook[j]));
             if (d < bestDist) {
                 bestDist = d;
                 bestIdx = (int)j;
@@ -173,6 +173,8 @@ pair<vector<uint8_t>, vector<uint8_t>> LBG_normal(const vector<uint8_t>& data, i
     while ((int)codebook.size() < targetSize) {
         vector<uint8_t> newCodebook;
         for (uint8_t c : codebook) {
+            int delta = dist(rng);
+            int cs = toS8(c);
             newCodebook.push_back(c * (1 + dist(rng)));
             newCodebook.push_back(c * (1 - dist(rng)));
         }
@@ -299,7 +301,7 @@ int main(int argc, char** argv) {
     }
 
     vector<uint8_t> indicesLP[3], indicesHP[3];
-    vector<int16_t> codebookLP[3], codebookHP[3];
+    vector<uint8_t> codebookLP[3], codebookHP[3];
     for (int ch = 0; ch < 3; ++ch) {
         auto [idxLP, cbLP] = LBG(LP_diff[ch], k);
         // auto [idxLP, cbLP] = LBG_normal(LP[ch], k);
@@ -324,16 +326,10 @@ int main(int argc, char** argv) {
     int codebookSize = 1 << k;
 
     for (int ch = 0; ch < 3; ++ch) {
-        output.write(
-            reinterpret_cast<const char*>(codebookLP[ch].data()),
-            (streamsize)(codebookLP[ch].size() * sizeof(int16_t))
-        );
+        output.write(reinterpret_cast<const char*>(codebookLP[ch].data()), (streamsize)codebookLP[ch].size());
     }
     for (int ch = 0; ch < 3; ++ch) {
-        output.write(
-            reinterpret_cast<const char*>(codebookHP[ch].data()),
-            (streamsize)(codebookHP[ch].size() * sizeof(int16_t))
-        );
+        output.write(reinterpret_cast<const char*>(codebookHP[ch].data()), (streamsize)codebookHP[ch].size());
     }
 
     BitWriter bw(output);
@@ -345,10 +341,19 @@ int main(int argc, char** argv) {
     }
     bw.flush();
 
+    for(auto c : codebookHP[1]){
+        cout<<(int)c<<endl;
+    }
+
     output.close();
     
     cout << "Encoded with k=" << k << endl;
     cout << "Codebook size: " << codebookSize << endl;
+
+    cout<< 120 << " : " << (int)fromS8(120)<<endl;
+    cout<< -120 << " : " << (int)fromS8(-120)<<endl;
+    cout<< 128 << " : " << (int)fromS8(128)<<endl;
+    cout<< -1 << " : " << (int)fromS8(-1)<<endl;
 
     return 0;
 }

@@ -36,6 +36,10 @@ struct BitReader {
 	}
 };
 
+static int toS8(uint8_t v) {
+	return static_cast<int>(static_cast<int8_t>(v));
+}
+
 static uint8_t clampToU8(int v) {
 	if (v < 0) return 0;
 	if (v > 255) return 255;
@@ -86,13 +90,10 @@ int main(int argc, char** argv) {
 	int codebookSize = 1 << k;
 	int pixelCount = width * height;
 
-	vector<int16_t> codebookLP[3], codebookHP[3];
+	vector<uint8_t> codebookLP[3], codebookHP[3];
 	for (int ch = 0; ch < 3; ++ch) {
 		codebookLP[ch].resize(codebookSize);
-		input.read(
-			reinterpret_cast<char*>(codebookLP[ch].data()),
-			(streamsize)(codebookLP[ch].size() * sizeof(int16_t))
-		);
+		input.read(reinterpret_cast<char*>(codebookLP[ch].data()), (streamsize)codebookLP[ch].size());
 		if (!input) {
 			cerr << "Unexpected EOF while reading LP codebook." << endl;
 			return 1;
@@ -100,10 +101,7 @@ int main(int argc, char** argv) {
 	}
 	for (int ch = 0; ch < 3; ++ch) {
 		codebookHP[ch].resize(codebookSize);
-		input.read(
-			reinterpret_cast<char*>(codebookHP[ch].data()),
-			(streamsize)(codebookHP[ch].size() * sizeof(int16_t))
-		);
+		input.read(reinterpret_cast<char*>(codebookHP[ch].data()), (streamsize)codebookHP[ch].size());
 		if (!input) {
 			cerr << "Unexpected EOF while reading HP codebook." << endl;
 			return 1;
@@ -128,8 +126,8 @@ int main(int argc, char** argv) {
 				return 1;
 			}
 
-			int diff = (int)codebookLP[ch][idxLP];
-			int hp = (int)codebookHP[ch][idxHP];
+			int diff = toS8(codebookLP[ch][idxLP]);
+			int hp = toS8(codebookHP[ch][idxHP]);
             // if(!i%width)prevLP[ch]=128;
 			int lp = prevLP[ch] + diff;
 			lp = (int)clampToU8(lp);
