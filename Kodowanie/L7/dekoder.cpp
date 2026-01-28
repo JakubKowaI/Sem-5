@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "hamming_ext74.h"
+#include "hamming.h"
 
 int main(int argc, char** argv) {
 	if (argc != 3) {
@@ -27,6 +27,8 @@ int main(int argc, char** argv) {
 
 	std::uint64_t two_errors = 0;
 
+	hamming::gen_matrix();
+
 	char c1;
 	char c2;
 	while (true) {
@@ -41,8 +43,8 @@ int main(int argc, char** argv) {
 		uint8_t b1 = static_cast<uint8_t>(static_cast<unsigned char>(c1));
 		uint8_t b2 = static_cast<uint8_t>(static_cast<unsigned char>(c2));
 
-		auto r1 = hamming_ext74::decode_codeword(b1);
-		auto r2 = hamming_ext74::decode_codeword(b2);
+		auto r1 = hamming::decode_codeword(b1);
+		auto r2 = hamming::decode_codeword(b2);
 		if (r1.detected_double_error) {
 			++two_errors;
 		}
@@ -54,7 +56,6 @@ int main(int argc, char** argv) {
 		out.put(static_cast<char>(out_byte));
 	}
 
-	// As per spec: print how many times we hit 2 errors.
 	std::cout << two_errors << "\n";
 	return 0;
 }

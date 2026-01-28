@@ -27,33 +27,39 @@ int main(int argc, char** argv) {
 	}
 
 	try {
-		auto a = read_all(argv[1]);
-		auto b = read_all(argv[2]);
+		auto in1 = read_all(argv[1]);
+		auto in2 = read_all(argv[2]);
 
-		const size_t max_bytes = (a.size() > b.size()) ? a.size() : b.size();
-		std::uint64_t mismatched_nibbles = 0;
+		const size_t max_bytes = (in1.size() > in2.size()) ? in1.size() : in2.size();
+		std::uint64_t errors = 0;
 
 		for (size_t i = 0; i < max_bytes; ++i) {
-			bool have_a = i < a.size();
-			bool have_b = i < b.size();
+			bool hasblockin1 = i < in1.size();
+			bool hasblockin2 = i < in2.size();
 
-			uint8_t ba = have_a ? a[i] : 0;
-			uint8_t bb = have_b ? b[i] : 0;
+			uint8_t in1block = hasblockin1 ? in1[i] : 0;
+			uint8_t in2block = hasblockin2 ? in2[i] : 0;
 
-			uint8_t a_hi = static_cast<uint8_t>((ba >> 4) & 0x0F);
-			uint8_t a_lo = static_cast<uint8_t>(ba & 0x0F);
-			uint8_t b_hi = static_cast<uint8_t>((bb >> 4) & 0x0F);
-			uint8_t b_lo = static_cast<uint8_t>(bb & 0x0F);
+			uint8_t in1low = in1block & 0x0f;
+			uint8_t in1high = in1block >>4;		
 
-			if (!have_a || !have_b || a_hi != b_hi) {
-				++mismatched_nibbles;
+			uint8_t in2low = in2block & 0x0f;
+			uint8_t in2high = in2block >>4;		
+
+			// uint8_t a_hi = static_cast<uint8_t>((ba >> 4) & 0x0F);
+			// uint8_t a_lo = static_cast<uint8_t>(ba & 0x0F);
+			// uint8_t b_hi = static_cast<uint8_t>((bb >> 4) & 0x0F);
+			// uint8_t b_lo = static_cast<uint8_t>(bb & 0x0F);
+
+			if (!hasblockin1 || !hasblockin2 || in1high != in2high) {
+				++errors;
 			}
-			if (!have_a || !have_b || a_lo != b_lo) {
-				++mismatched_nibbles;
+			if (!hasblockin1 || !hasblockin2 || in1low != in2low) {
+				++errors;
 			}
 		}
 
-		std::cout << mismatched_nibbles << "\n";
+		std::cout << errors << "\n";
 		return 0;
 	} catch (const std::exception& e) {
 		std::cerr << e.what() << "\n";

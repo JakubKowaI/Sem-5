@@ -20,9 +20,12 @@ int main(int argc, char** argv) {
 		return 2;
 	}
 
-	double p = 0.0;
-	if (!parse_probability(argv[1], p) || p < 0.0 || p > 1.0) {
-		std::cerr << "Invalid p (expected 0..1): " << argv[1] << "\n";
+	double p = std::stod(argv[1]);
+
+	std::cout<<"Using propability: "<<p<<std::endl;
+
+	if (p < 0.0 || p > 1.0) {
+		std::cerr << "Invalid p (expected [0,1]): " << argv[1] << "\n";
 		return 2;
 	}
 

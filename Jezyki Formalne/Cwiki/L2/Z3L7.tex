@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[polish,shorthands=off]{babel}
+\usepackage{amsmath,mathtools,amsfonts,stackengine}
+\stackMath
+\usepackage{amssymb}
+\title{Zadanie 6 z listy 2}
+\author{Jakub Kowal}
+\date{}
+
+\begin{document}
+
+\section*{Gramatyka}
+Rozważana gramatyka (z rozszerzonym symbolem startowym $E'$):
+\begin{center}
+\begin{enumerate}
+\item E' $\to$ E \\
+\item E $\to$ E\ \text{or}\ T \\
+\item E $\to$ T \\
+\item T $\to$ T\ \text{and}\ F \\
+\item T $\to$ F \\
+\item F $\to$ \text{not}\ F \\
+\item F $\to$ (E) \\
+\item F $\to$ \text{true} \\
+\item F $\to$ \text{false}
+\end{enumerate}
+\end{center}
+
+\section*{Kolekcja kanoniczna zbiorów LR(0)}
+$I_0 = closure({E' \to \cdot E})$
+\begin{align*}
+E' &\to \cdot E \\
+E &\to \cdot E\ \text{or}\ T \\
+E &\to \cdot T \\
+T &\to \cdot T\ \text{and}\ F \\
+T &\to \cdot F \\
+F &\to \cdot \text{not}\ F \\
+F &\to \cdot (E) \\
+F &\to \cdot \text{true} \\
+F &\to \cdot \text{false}
+\end{align*}
+
+\subsection*{Przejścia (GOTO)}
+Zdefiniowane przejścia pomiędzy stanami (skrócona lista):
+\begin{itemize}
+\item $goto(I_0, E) = I_1$
+\item $goto(I_0, T) = I_2$
+\item $goto(I_0, F) = I_3$
+\item $goto(I_0, \text{not}) = I_4$
+\item $goto(I_0, \text{(}) = I_5$
+\item $goto(I_0, \text{true}) = I_6$
+\item $goto(I_0, \text{false}) = I_7$
+\end{itemize}
+
+\[
+\begin{aligned}
+E' &\to \cdot E \\
+\begin{rcases}
+E &\to \cdot E\ \text{or}\ T \\
+E &\to \cdot T \\
+\begin{rcases}
+T &\to \cdot T\ \text{and}\ F \\
+T &\to \cdot F \\
+\begin{rcases}
+F &\to \cdot \text{not}\ F \\
+F &\to \cdot (E) \\
+F &\to \cdot \text{true} \\
+F &\to \cdot \text{false}
+\end{rcases} & \text{$\mu_{F}$}
+\end{rcases} & \text{$\mu_{T}$}
+\end{rcases} & \text{$\mu_{E}$}
+\end{aligned}
+\]
+
+
+\section*{Zbiory FIRST}
+\begin{align*}
+FIRST(F) &= \{\text{not}, \text{(}, \text{true}, \text{false}\} \\
+FIRST(T) &= FIRST(F) \\
+FIRST(E) &= FIRST(T)
+\end{align*}
+
+\section*{Zbiory FOLLOW}
+\begin{align*}
+FOLLOW(E) &= \{\$, \text{)}, \text{or}\} \\
+FOLLOW(T) &= \{\$, \text{)}, \text{or}, \text{and}\} \\
+FOLLOW(F) &= \{\$, \text{)}, \text{or}, \text{and}\}
+\end{align*}
+
+\section*{Tablica SLR}
+Terminale: $\text{or}, \text{and}, \text{not}, (, ), \text{true}, \text{false}, \$$\\
+Nieterminale: $E, T, F$
+
+\begin{center}
+\begin{tabular}{c|cccccccc|ccc}
+Stan & not & \text{(} & true & false & \text{)} & or & and & \$ & E & T & F \\
+\cline{1 - 12}
+0 & s4 & s5 & s6 & s7 &  &  &  &  & 1 & 2 & 3 \\
+1 &  &  &  &  &  & s8 &  & acc &  &  &  \\
+2 &  &  &  &  & r3 & r3 & s9 & r3 &  &  &  \\
+3 &  &  &  &  & r5 & r5 & r5 & r5 &  &  &  \\
+4 & s4 & s5 & s6 & s7 &  &  &  &  & 11 &  & 10 \\ 
+5 & s4 & s5 & s6 & s7 &  &  &  &  &  & 2 & 3 \\
+6 &  &  &  &  & r8 & r8 & r8 & r8 &  &  &  \\
+7 &  &  &  &  & r9 & r9 & r9 & r9 &  &  &  \\
+8 & s4 & s5 & s6 & s7 &  &  &  &  &  & 2 & 3 \\
+9 & s4 & s5 & s6 & s7 &  &  &  &  &  &  & 13 \\
+10 &  &  &  &  & r6 & r6 & r6 & r6 &  &  &  \\
+11 &  &  &  &  & s14 & s8 &  &  &  &  &  \\
+12 &  &  &  &  & r2 & r2 & s9 & r2 &  &  &  \\
+13 &  &  &  &  & r4 & r4 & r4 & r4 &  &  &  \\
+14 &  &  &  &  & r7 & r7 & r7 & r7 &  &  &  
+\end{tabular}
+\end{center}
+
+\end{document}

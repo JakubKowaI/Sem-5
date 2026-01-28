@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "hamming_ext74.h"
+#include "hamming.h"
 
 int main(int argc, char** argv) {
 	if (argc != 3) {
@@ -25,14 +25,16 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	hamming::gen_matrix();
+	
 	char c;
 	while (in.get(c)) {
 		uint8_t b = static_cast<uint8_t>(static_cast<unsigned char>(c));
 		uint8_t high = static_cast<uint8_t>((b >> 4) & 0x0F);
 		uint8_t low = static_cast<uint8_t>(b & 0x0F);
 
-		uint8_t enc_high = hamming_ext74::encode_nibble(high);
-		uint8_t enc_low = hamming_ext74::encode_nibble(low);
+		uint8_t enc_high = hamming::encode(high);
+		uint8_t enc_low = hamming::encode(low);
 
 		out.put(static_cast<char>(enc_high));
 		out.put(static_cast<char>(enc_low));
