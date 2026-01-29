@@ -28,32 +28,8 @@ Rozważana gramatyka (z rozszerzonym symbolem startowym $E'$):
 \end{enumerate}
 \end{center}
 
-\section*{Kolekcja kanoniczna zbiorów LR(0)}
-$I_0 = closure({E' \to \cdot E})$
-\begin{align*}
-E' &\to \cdot E \\
-E &\to \cdot E\ \text{or}\ T \\
-E &\to \cdot T \\
-T &\to \cdot T\ \text{and}\ F \\
-T &\to \cdot F \\
-F &\to \cdot \text{not}\ F \\
-F &\to \cdot (E) \\
-F &\to \cdot \text{true} \\
-F &\to \cdot \text{false}
-\end{align*}
-
-\subsection*{Przejścia (GOTO)}
-Zdefiniowane przejścia pomiędzy stanami (skrócona lista):
-\begin{itemize}
-\item $goto(I_0, E) = I_1$
-\item $goto(I_0, T) = I_2$
-\item $goto(I_0, F) = I_3$
-\item $goto(I_0, \text{not}) = I_4$
-\item $goto(I_0, \text{(}) = I_5$
-\item $goto(I_0, \text{true}) = I_6$
-\item $goto(I_0, \text{false}) = I_7$
-\end{itemize}
-
+\section*{Zbiory sytuacji i przejścia goto:}
+$I_0$:\\
 \[
 \begin{aligned}
 E' &\to \cdot E \\
@@ -72,8 +48,68 @@ F &\to \cdot \text{false}
 \end{rcases} & \text{$\mu_{T}$}
 \end{rcases} & \text{$\mu_{E}$}
 \end{aligned}
-\]
+\]\\
 
+
+$goto(I_0, E) = I_1$\\
+$E' \to E \cdot$\\
+$E \to E\cdot \text{or} T$\\\\
+$goto(I_0, T) = I_2$\\
+$E\to T\cdot$\\
+$T\to T \cdot \text{and}F$\\\\
+$goto(I_0, F) = I_3$\\
+$T\to F\cdot$\\\\
+$goto(I_0, \text{not}) = I_4$\\
+$F\to \text{not}\cdot F$\\
+$F\to \cdot \text{not} F$\\
+$F\to \cdot \lparen E \rparen $\\
+$F\to \cdot \text{true}$\\
+$F\to \cdot \text{false}$\\\\
+$goto(I_0, \lparen) = I_5$\\
+$F\to \lparen \cdot E \rparen$\\
+$\mu_{E}$\\\\
+$goto(I_0, \text{true}) = I_6$\\
+$F\to \text{true} \cdot $\\\\
+$goto(I_0, \text{false}) = I_7$\\
+$F\to \text{false}\cdot$\\\\
+$goto(I_1, \text{or}) = I_8$\\
+$E\to E \text{or} \cdot T$\\
+$\mu_{T}$\\\\
+$goto(I_2, \text{and}) = I_9$\\
+$T\to T\text{and}\cdot F$\\\\
+$goto(I_4, F) = I_{10}$\\
+$F\to \text{not} F \cdot$\\\\
+$goto(I_4, \text{not}) : I_{4}$\\
+$goto(I_4, \lparen) : I_{5}$\\
+$goto(I_4, \text{true}) : I_{6}$\\
+$goto(I_4, \text{false}) : I_{7}$\\
+$goto(I_5, E) = I_{11}$\\
+$F\to \lparen E \cdot \rparen$\\
+$E\to E \cdot \text{or} T$\\\\
+$goto(I_5, T) : I_{2}$\\
+$goto(I_5, F) : I_{3}$\\
+$goto(I_5, \text{not}) : I_{4}$\\
+$goto(I_5, \lparen) : I_{5}$\\
+$goto(I_5, \text{true}) : I_{6}$\\
+$goto(I_5, \text{false}) : I_{7}$\\
+$goto(I_8, T) = I_{12}$\\
+$E\to \text{or} T \cdot $\\
+$T\to T \cdot \text{and} F$\\\\
+$goto(I_8, F) : I_{3}$\\
+$goto(I_8, \text{not}) : I_{4}$\\
+$goto(I_8, \lparen) : I_{5}$\\
+$goto(I_8, \text{true}) : I_{6}$\\
+$goto(I_8, \text{false}) : I_{7}$\\
+$goto(I_9, F) = I_{13}$\\
+$T\to T \text{and} F \cdot$\\\\
+$goto(I_9, \text{not}) : I_{4}$\\
+$goto(I_9, \lparen) : I_{5}$\\
+$goto(I_9, \text{true}) : I_{6}$\\
+$goto(I_9, \text{false}) : I_{7}$\\
+$goto(I_{11}, \rparen) = I_{14}$\\
+$F\to \lparen E \rparen \cdot$\\\\
+$goto(I_{11}, \text{or}) : I_{8}$\\
+$goto(I_{12}, \text{and}) : I_{9}$\\
 
 \section*{Zbiory FIRST}
 \begin{align*}
@@ -84,9 +120,9 @@ FIRST(E) &= FIRST(T)
 
 \section*{Zbiory FOLLOW}
 \begin{align*}
-FOLLOW(E) &= \{\$, \text{)}, \text{or}\} \\
-FOLLOW(T) &= \{\$, \text{)}, \text{or}, \text{and}\} \\
-FOLLOW(F) &= \{\$, \text{)}, \text{or}, \text{and}\}
+FOLLOW(E) &= \{\$, \rparen, \text{or}\} \\
+FOLLOW(T) &= \{\$, \rparen, \text{or}, \text{and}\} \\
+FOLLOW(F) &= \{\$, \rparen, \text{or}, \text{and}\}
 \end{align*}
 
 \section*{Tablica SLR}
@@ -95,7 +131,7 @@ Nieterminale: $E, T, F$
 
 \begin{center}
 \begin{tabular}{c|cccccccc|ccc}
-Stan & not & \text{(} & true & false & \text{)} & or & and & \$ & E & T & F \\
+Stan & not & \lparen & true & false & \rparen & or & and & \$ & E & T & F \\
 \cline{1 - 12}
 0 & s4 & s5 & s6 & s7 &  &  &  &  & 1 & 2 & 3 \\
 1 &  &  &  &  &  & s8 &  & acc &  &  &  \\
