@@ -1,0 +1,154 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[polish,shorthands=off]{babel}
+\usepackage{amsmath,mathtools,amsfonts,stackengine}
+\stackMath
+\usepackage{amssymb}
+\title{Zadanie 3 z listy 7}
+\author{Jakub Kowal}
+\date{}
+
+\begin{document}
+\maketitle
+\section*{Gramatyka}
+Rozważana gramatyka (z rozszerzonym symbolem startowym $E'$):
+\begin{center}
+\begin{enumerate}
+\item E' $\to$ E \\
+\item E $\to$ E\ \text{or}\ T \\
+\item E $\to$ T \\
+\item T $\to$ T\ \text{and}\ F \\
+\item T $\to$ F \\
+\item F $\to$ \text{not}\ F \\
+\item F $\to$ (E) \\
+\item F $\to$ \text{true} \\
+\item F $\to$ \text{false}
+\end{enumerate}
+\end{center}
+
+\section*{Zbiory sytuacji i przejścia goto:}
+$I_0$:\\
+\[
+\begin{aligned}
+E' &\to \cdot E \\
+\begin{rcases}
+E &\to \cdot E\ \text{or}\ T \\
+E &\to \cdot T \\
+\begin{rcases}
+T &\to \cdot T\ \text{and}\ F \\
+T &\to \cdot F \\
+\begin{rcases}
+F &\to \cdot \text{not}\ F \\
+F &\to \cdot (E) \\
+F &\to \cdot \text{true} \\
+F &\to \cdot \text{false}
+\end{rcases} & \text{$\mu_{F}$}
+\end{rcases} & \text{$\mu_{T}$}
+\end{rcases} & \text{$\mu_{E}$}
+\end{aligned}
+\]\\
+
+
+$goto(I_0, E) = I_1$\\
+$E' \to E \cdot$\\
+$E \to E\cdot \text{or} T$\\\\
+$goto(I_0, T) = I_2$\\
+$E\to T\cdot$\\
+$T\to T \cdot \text{and}F$\\\\
+$goto(I_0, F) = I_3$\\
+$T\to F\cdot$\\\\
+$goto(I_0, \text{not}) = I_4$\\
+$F\to \text{not}\cdot F$\\
+$F\to \cdot \text{not} F$\\
+$F\to \cdot \lparen E \rparen $\\
+$F\to \cdot \text{true}$\\
+$F\to \cdot \text{false}$\\\\
+$goto(I_0, \lparen) = I_5$\\
+$F\to \lparen \cdot E \rparen$\\
+$\mu_{E}$\\\\
+$goto(I_0, \text{true}) = I_6$\\
+$F\to \text{true} \cdot $\\\\
+$goto(I_0, \text{false}) = I_7$\\
+$F\to \text{false}\cdot$\\\\
+$goto(I_1, \text{or}) = I_8$\\
+$E\to E \text{or} \cdot T$\\
+$\mu_{T}$\\\\
+$goto(I_2, \text{and}) = I_9$\\
+$T\to T\text{and}\cdot F$\\\\
+$goto(I_4, F) = I_{10}$\\
+$F\to \text{not} F \cdot$\\\\
+$goto(I_4, \text{not}) : I_{4}$\\
+$goto(I_4, \lparen) : I_{5}$\\
+$goto(I_4, \text{true}) : I_{6}$\\
+$goto(I_4, \text{false}) : I_{7}$\\
+$goto(I_5, E) = I_{11}$\\
+$F\to \lparen E \cdot \rparen$\\
+$E\to E \cdot \text{or} T$\\\\
+$goto(I_5, T) : I_{2}$\\
+$goto(I_5, F) : I_{3}$\\
+$goto(I_5, \text{not}) : I_{4}$\\
+$goto(I_5, \lparen) : I_{5}$\\
+$goto(I_5, \text{true}) : I_{6}$\\
+$goto(I_5, \text{false}) : I_{7}$\\
+$goto(I_8, T) = I_{12}$\\
+$E\to \text{or} T \cdot $\\
+$T\to T \cdot \text{and} F$\\\\
+$goto(I_8, F) : I_{3}$\\
+$goto(I_8, \text{not}) : I_{4}$\\
+$goto(I_8, \lparen) : I_{5}$\\
+$goto(I_8, \text{true}) : I_{6}$\\
+$goto(I_8, \text{false}) : I_{7}$\\
+$goto(I_9, F) = I_{13}$\\
+$T\to T \text{and} F \cdot$\\\\
+$goto(I_9, \text{not}) : I_{4}$\\
+$goto(I_9, \lparen) : I_{5}$\\
+$goto(I_9, \text{true}) : I_{6}$\\
+$goto(I_9, \text{false}) : I_{7}$\\
+$goto(I_{11}, \rparen) = I_{14}$\\
+$F\to \lparen E \rparen \cdot$\\\\
+$goto(I_{11}, \text{or}) : I_{8}$\\
+$goto(I_{12}, \text{and}) : I_{9}$\\
+
+\section*{Zbiory FIRST}
+\begin{align*}
+FIRST(F) &= \{\text{not}, \text{(}, \text{true}, \text{false}\} \\
+FIRST(T) &= FIRST(F) \\
+FIRST(E) &= FIRST(T)
+\end{align*}
+
+\section*{Zbiory FOLLOW}
+\begin{align*}
+FOLLOW(E) &= \{\$, \rparen, \text{or}\} \\
+FOLLOW(T) &= \{\$, \rparen, \text{or}, \text{and}\} \\
+FOLLOW(F) &= \{\$, \rparen, \text{or}, \text{and}\}
+\end{align*}
+
+\section*{Tablica SLR}
+Terminale: $\text{or}, \text{and}, \text{not}, (, ), \text{true}, \text{false}, \$$\\
+Nieterminale: $E, T, F$
+
+\begin{center}
+\begin{tabular}{c|cccccccc|ccc}
+Stan & not & \lparen & true & false & \rparen & or & and & \$ & E & T & F \\
+\cline{1 - 12}
+0 & s4 & s5 & s6 & s7 &  &  &  &  & 1 & 2 & 3 \\
+1 &  &  &  &  &  & s8 &  & acc &  &  &  \\
+2 &  &  &  &  & r3 & r3 & s9 & r3 &  &  &  \\
+3 &  &  &  &  & r5 & r5 & r5 & r5 &  &  &  \\
+4 & s4 & s5 & s6 & s7 &  &  &  &  & 11 &  & 10 \\ 
+5 & s4 & s5 & s6 & s7 &  &  &  &  &  & 2 & 3 \\
+6 &  &  &  &  & r8 & r8 & r8 & r8 &  &  &  \\
+7 &  &  &  &  & r9 & r9 & r9 & r9 &  &  &  \\
+8 & s4 & s5 & s6 & s7 &  &  &  &  &  & 2 & 3 \\
+9 & s4 & s5 & s6 & s7 &  &  &  &  &  &  & 13 \\
+10 &  &  &  &  & r6 & r6 & r6 & r6 &  &  &  \\
+11 &  &  &  &  & s14 & s8 &  &  &  &  &  \\
+12 &  &  &  &  & r2 & r2 & s9 & r2 &  &  &  \\
+13 &  &  &  &  & r4 & r4 & r4 & r4 &  &  &  \\
+14 &  &  &  &  & r7 & r7 & r7 & r7 &  &  &  
+\end{tabular}
+\end{center}
+
+\end{document}

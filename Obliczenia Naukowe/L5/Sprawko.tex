@@ -157,7 +157,7 @@ W pliku z eksperymentami (\textbf{Usage.jl}) wykonane zostały pomiary czasu i a
 Obserwacje istotne dla wniosków:
 \begin{enumerate}
   \item Implementacje operują wewnątrz bloków, stąd złożoność rośnie liniowo z $n$, a nie jak w zwykłej macierzy gęstej $n^{3}$. Potwierdza to wykres \hyperref[fig:times]{\textbf{wykres czasu}}, na którym widać jasno, że czas rośnie liniowo wraz z rozmiarem macierzy.
-  \item \textbf{LU} zapisuje mnożniki L w macierzy (dolna trójkątna część jest wypełniana wartościami różnymi od zera), co zmienia strukturę danych po obliczeniach w porównaniu do \textbf{Gauss}, który ustawia część eliminowaną na zera. W praktyce jednak pamięć bloków jest wcześniej zaalokowana, więc nie ma specjalnych różnic w użyciu pamięci.
+  \item \textbf{LU} zapisuje mnożniki L w macierzy ( dolna trójkątna część jest wypełniana wartościami różnymi od zera), co zmienia strukturę danych po obliczeniach w porównaniu do \textbf{Gauss}, który ustawia część eliminowaną na zera. W praktyce jednak pamięć bloków jest wcześniej zaalokowana, więc nie ma specjalnych różnic w użyciu pamięci.
   \item Wpływ pivotingu: pivoting wymusza dodatkowe zamiany wierszy ( funkcje \textbf{matrix\_swap} i \textbf{matrix\_LU\_swap} ), co zwiększa liczbę odczytów/zapisów.  \textbf{matrix\_LU\_swap} operuje na nieco szerszym zakresie indeksów (musi również przestawiać poprzednio wyliczone mnożniki), co zwiększa koszty przy pivotingu w LU.
 \end{enumerate}
 
